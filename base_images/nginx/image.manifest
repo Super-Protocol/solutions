@@ -1,0 +1,52 @@
+sgx.nonpie_binary = true
+sgx.enclave_size = "16G"
+sgx.thread_num = 256
+loader.pal_internal_mem_size = "512M"
+
+sgx.trusted_files = [
+  "file:/lib/x86_64-linux-gnu/",
+
+  "file:/etc/apt/apt.conf.d/",
+# "file:/etc/apt/apt.conf",
+# "file:/etc/default/apport",
+  "file:/etc/nsswitch.conf",
+  "file:/etc/group",
+  "file:/etc/passwd",
+  "file:/etc/host.conf",
+  "file:/etc/gai.conf",
+  "file:/etc/resolv.conf",
+  "file:/etc/fstab",
+]
+
+sys.enable_sigterm_injection = true
+
+# sys.insecure__allow_eventfd = true
+# sgx.insecure__protected_files_key = "000102030405060708090a0b0c0d0e0f"
+
+loader.env.LD_PRELOAD = "libsecret_prov_attest.so"
+
+loader.env.SECRET_PROVISION_CONSTRUCTOR = "1"
+loader.env.SECRET_PROVISION_SET_PF_KEY = "1"
+loader.env.SECRET_PROVISION_CA_CHAIN_PATH = "/sp/session/tls/tls-ca.pem"
+loader.env.SECRET_PROVISION_SERVERS = { passthrough = true }
+
+#loader.env.SECRET_PROVISION_SERVERS = "127.0.0.1:12321"
+
+loader.env.INPUT_DATA_FOLDER = "/sp/inputs"
+loader.env.RUN_FOLDER = "/sp/run"
+loader.env.OUTPUT_DATA_FOLDER = "/sp/output"
+
+sgx.protected_files = [
+  "file:/sp/inputs",
+  "file:/sp/run",
+  "file:/sp/output",
+]
+
+sgx.allowed_files = [
+  "file:/etc/hosts",
+  "file:/sp/session/tls/"
+]
+
+sgx.remote_attestation = true
+sgx.ra_client_spid = ""
+sgx.ra_client_linkable = 0
