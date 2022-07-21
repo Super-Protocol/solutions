@@ -1,0 +1,19 @@
+{
+  "resource":{
+    "type":"STORAGE_PROVIDER",
+    "storageType":"STORJ",
+    "credentials":{
+      "token":"1Y8YfNFY3VDrmvRSDJh4U1WFBBrHFdouRNgfikbe3JwfC1hMLG5jwiTEaGC3vwzZVCy3C1SUewoVyBx2UimbeMmNAcv7SUtQjDwH5Je2ChLbZWtnmvWinYVcvbwvTbDHcN6Hv63GZxB9xQzAsGwMhP52v879F1bEumcTKJbcMYaRPkynrJP3QqHJwUcF4PxC4mBKBrbwiv6R3a9vVnhJQu3qKRwUuCSxK35veL3d9QZPVb1NAuAtQnSYt3ob9iJWt7biP5gXoELXQrdyCvQD1zu48z6w9MPeQPsrprZQibxmP5crGXtqj",
+      "storageId":"default"
+    },
+    "filepath":"pfs/images-recognize-v0.2.0-python3.8-base.tar.gz.encrypted"
+  },
+  "encryption":{
+    "algo": "AES",
+    "encoding": "base64",
+    "cipher": "aes-256-gcm",
+    "iv": "Xh7x6jE2x8KUjkFv",
+    "mac": "cjizQ+DYg0eXu6tcMQJmpg==",
+    "key": "EggVbcjGF3Vq6cdrN0QqGheOPyPMXErIo959pMYoliM="
+  }
+}
