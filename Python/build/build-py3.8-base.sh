@@ -7,7 +7,7 @@ docker rmi gsc-python3.8-base-solution -f
 docker rmi gsc-python3.8-base-solution-unsigned -f
 docker rmi python3.8-base-solution -f
 
-docker build -t python3.8-base-solution .
+docker build -t python3.8-base-solution --rm .
 
 rm -f enclave-key.pem
 openssl genrsa -3 -out enclave-key.pem 3072
