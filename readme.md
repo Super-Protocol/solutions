@@ -1,28 +1,41 @@
+## Introduction
+
+There are the solutions that are already deployed on Super Protocol and are available to all testnet participants. Some solutions designed for end users and require only some input data to function. Then there are base images used by other solutions which could only be accessed through [Command-line Interface (CLI)](https://github.com/Super-Protocol/spctl).
+
+|Solution|Description|
+| :- | :- |
+|[Python](./Python)|Base image for Python solutions.|
+|[Dog Breed Classification](./Dog%20Breed%20Classification)|Machine learning algorithm that determines the breed of a dog from a photo.|
+|[Face Recognition](./Face%20Recognition)|Machine learning algorithm that calculates the probability that two photos contain the same person.|
+|[Speech Recognition](./Speech%20Recognition)|Machine learning algorithm that transforms speech into text.|
+
 ## Steps to download solution
+
 1. Clone this repository
    ```
    git clone https://github.com/Super-Protocol/solutions
    ```
 
-2. Download SuperProtocol Command Line Tool for your OS from [GitHub releases](https://github.com/Super-Protocol/spctl/releases)
-   > **WARNING**: Currently build located in private GitHub releases, so you need to login in your GitHub account to download it
+2. Download Super Protocol [CLI](https://github.com/Super-Protocol/spctl/releases) for your OS
+   > **WARNING**: Currently the build is located in private GitHub releases, so you need GitHub account to access it
 
    For Linux:
    ```
-   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/v0.0.8/spctl-linux-x64
+   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/<version>/spctl-linux-x64
    ```
 
    For MacOS:
    ```
-   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/v0.0.8/spctl-macos-x64
+   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/<version>/spctl-macos-x64
    chmod 755 spctl
    ```
    Windows is not supported, please use WSL
-4. Download and decrypt solution you need using SuperProtocol Command Line Tool
+
+3. Download and decrypt solution
    ```
    ./spctl files download ./'Speech Recognition'/resource.json ./SpeechRecognition.gz
    ```
-5. Unzip solution
+4. Unzip solution
    ```
    mkdir SpeechRecognition && tar -xzf SpeechRecognition.gz -C SpeechRecognition
    ```
