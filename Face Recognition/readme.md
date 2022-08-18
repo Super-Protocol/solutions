@@ -4,7 +4,7 @@ Machine learning algorithm that calculates the probability that two photos conta
 
 ## Input
 
-The solution require the following data as an input:
+The solution requires the following data as an input:
 1. Photos of people you want to compare in JPG or PNG format.
 2. A file pairs.csv that contains pares of photos to compare (filename with format). For example, if you have a database of N photos, and you want to check if a new photo matches any of the photos in your database then your pairs.csv file should look like this:
 
@@ -33,3 +33,7 @@ Every folder contains output.csv file and processing.error file in case there we
 |New photo.jpg|Database photo 2.jpg|3%|
 |...|...|...|
 |New photo.jpg|Database photo N.jpg|10%|
+
+## How to download the source code
+
+To download the source code of the solution please use [this manual](https://github.com/Super-Protocol/solutions#steps-to-download-solution).
