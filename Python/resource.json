@@ -1,11 +1,12 @@
 {
-  "resource":{
-    "type":"STORAGE_PROVIDER",
-    "storageType":"STORJ",
-    "credentials":{
-      "token":"1Y8YfNFY3VDrmvRSDJh4U1WFBBrHFdouRNgfikbe3JwfC1hMLG5jwiTEaGC3vwzZVCy3C1SUewoVyBx2UimbeMmNAcv7SUtQjDwH5Je2ChLbZWtnmvWinYVcvbwvTbDHcN6Hv63GZxB9xQzAsGwMhP52v879F1bEumcTKJbcMYaRPkynrJP3QqHJwUcF4PxC4mBKBrbwiv6R3a9vVnhJQu3qKRwUuCSxK35veL3d9QZPVb1NAuAtQnSYt3ob9iJWt7biP5gXoELXQrdyCvQD1zu48z6w9MPeQPsrprZQibxmP5crGXtqj",
-      "storageId":"default"
-    },
-    "filepath":"pfs/python3.8-base-solution-image-0.1.0.image.tar.gz"
+  "resource": {
+    "type": "STORAGE_PROVIDER",
+    "storageType": "STORJ",
+    "filepath": "pfs/python3.8-base-solution-image-0.2.0.image.tar.gz",
+    "credentials": {
+      "token": "1cCYAHiNyogwPRkZbkpo8C6txEeJ4cktWZoHzwAKTwNzGeAKhXyJZojfb8jSGGFSAc5M3zGgswJQXVEkrJ8na6nj4aeRRdtwvjgGFC5GafZ35EZHvUQSPvVcQwhSWR7LFHHHBsB5VoeNpQ12nfLyhYz15fhVk3ofcQZ2w3oRh6ENCJTbdcrR9TFmokeoM2QA961pv3fFU5sqidBmkif7TQa948bzpxWpKQ4GLnLXe84vX4PPBKXadZ61QAL7Ux3TgtiZwrkL1Sw3",
+      "bucket": "default",
+      "prefix": ""
+    }
   }
 }
