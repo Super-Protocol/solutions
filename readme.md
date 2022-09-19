@@ -5,7 +5,7 @@ This repository contains solutions that are already deployed on Super Protocol a
 |Solution|Description|
 | :- | :- |
 |[Python](./Python)|Base image for Python solutions.|
-|[Dog Breed Classification](./Dog%20Breed%20Classification)|Machine learning algorithm that determines the breed of a dog from a photo.|
+|[Image Recognition](./Image%20Recognition)|Machine learning algorithm that determines what is shown in the picture.|
 |[Face Recognition](./Face%20Recognition)|Machine learning algorithm that calculates the probability that two photos contain the same person.|
 |[Speech Recognition](./Speech%20Recognition)|Machine learning algorithm that transforms speech into text.|
 
@@ -29,13 +29,9 @@ This repository contains solutions that are already deployed on Super Protocol a
    curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/<version>/spctl-macos-x64
    chmod 755 spctl
    ```
-   Windows is not supported, please use WSL
+   > Windows is not supported, please use WSL
 
 3. Download and decrypt solution
    ```
-   ./spctl files download ./'Speech Recognition'/resource.json ./SpeechRecognition.gz
-   ```
-4. Unzip solution
-   ```
-   mkdir SpeechRecognition && tar -xzf SpeechRecognition.gz -C SpeechRecognition
+   ./spctl files download ./resource.json  ./
    ```
