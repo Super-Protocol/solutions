@@ -5,7 +5,7 @@ This repository contains solutions that are already deployed on Super Protocol a
 |Solution|Description|
 | :- | :- |
 |[Python](./Python)|Base image for Python solutions.|
-|[Image Recognition](./Image%20Recognition)|Machine learning algorithm that determines what is shown in the picture.|
+|[Image Classification](./Image%20Classification)|Machine learning algorithm that determines what is shown in the picture.|
 |[Face Recognition](./Face%20Recognition)|Machine learning algorithm that calculates the probability that two photos contain the same person.|
 |[Speech Recognition](./Speech%20Recognition)|Machine learning algorithm that transforms speech into text.|
 
