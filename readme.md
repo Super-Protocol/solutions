@@ -16,21 +16,22 @@ This repository contains solutions that are already deployed on Super Protocol a
    git clone https://github.com/Super-Protocol/solutions
    ```
 
-2. Download [Super Protocol CLI](https://github.com/Super-Protocol/ctl) for your OS:
+2. Download and install [Super Protocol CLI](https://github.com/Super-Protocol/ctl) for your OS:
    
-   For Linux:
+   Linux:
    ```
-   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/<version>/spctl-linux-x64
+   curl -L https://github.com/Super-Protocol/ctl/releases/latest/download/spctl-linux-x64 -o spctl
+   sudo install spctl /usr/local/bin/spctl
    ```
 
-   For MacOS:
+   macOS:
    ```
-   curl -o spctl  https://github.com/Super-Protocol/spctl/releases/download/<version>/spctl-macos-x64
-   chmod 755 spctl
+   curl -L https://github.com/Super-Protocol/ctl/releases/latest/download/spctl-macos-x64 -o spctl
+   sudo install spctl /usr/local/bin/spctl
    ```
    > Windows is not supported, please use WSL
 
 3. Download and decrypt solution using `resource.json` file in the solution directory:
    ```
-   ./spctl files download resource.json ./
+   spctl files download resource.json ./
    ```
