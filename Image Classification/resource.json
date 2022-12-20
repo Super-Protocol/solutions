@@ -3,14 +3,14 @@
     "algo": "AES",
     "encoding": "base64",
     "cipher": "aes-256-gcm",
-    "iv": "9bbRc/vd5thyst/7",
-    "mac": "amG+9F/BarYpUlJToCaP/A==",
-    "key": "44orEXLSK9Y30rEmJ8XAK7CIYynE/MjxDQHQweUi3qE="
+    "iv": "BtKp57AGWAfO+2Sg",
+    "mac": "lUh6fqS8MapWSskUvyWqZA==",
+    "key": "J/zCX2TymGshfeN1GIFavhMBfEJzNXQEZrPbpN0EfgI="
   },
   "resource": {
     "type": "STORAGE_PROVIDER",
     "storageType": "STORJ",
-    "filepath": "image-classification-v0.4-python3.8-base.tar.gz.encrypted",
+    "filepath": "image-classification-v0.6-python3.10-base.tar.gz.encrypted",
     "credentials": {
       "token": "1sWnhBRaFcsEDjwbDeCqbs6RXbkGW22ZebMc9TMvf6CPJvgPg6MjvVyQByMTBdZ7tnESFK2YCc3iEo4kds2M174fn3kXHaXH7mqEBLepPnUX7Q3QysQe7hSoea7L5dW11eYtxw19WhQCTFLSuCP5uuwup2wktpLe7KNP2E4umBcpbQsWN2cL15Nm1wP5MqLHvdwfLZ4cmRQPC1D3EgjWiedYesYSuPTtbPX9FstVaiKDFhL44rN9AMeQ9TXM2JvvrPG9YzCyN83vyMM1uSfCp7kZqefgCScJG6nQMau5py9s9hdgJ4iUCfrpeKZq76NQg1ZrseAE",
       "storageId": "offers-testnet"
