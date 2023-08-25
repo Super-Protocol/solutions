@@ -68,7 +68,7 @@ jobs:
       - name: Prepare tunnel client data
         if: inputs.solution == 'minecraft'
         run: |
-          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/minecraft/scripts/prepare-solution.sh" >> $GITHUB_ENV
+          echo "SOLUTION_BUILD_SCRIPT='Tunnel Client/minecraft/scripts/prepare-solution.sh'" >> $GITHUB_ENV
           echo "SOLUTION_SERVER_TOKEN=${{ secrets.MINECRAFT_SERVER_TOKEN }}" >> $GITHUB_ENV
 
           echo "${{ secrets.MINECRAFT_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
