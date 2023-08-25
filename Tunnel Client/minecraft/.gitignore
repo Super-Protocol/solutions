@@ -1,0 +1,5 @@
+tsconfig.build.tsbuildinfo
+node_modules/
+logs/
+dist/
+client/public/

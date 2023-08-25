@@ -1,0 +1,108 @@
+name: Run tunnel server on SuperProtocol
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution:
+        description: 'Select name of solution'
+        required: true
+        default: ''
+        type: choice
+        options:
+          - minecraft
+
+env:
+  ORDER_ID: ''
+  SOLUTION_DATA_FILE: ''
+  LAST_ORDER_FILENAME: last-orders.txt
+  BASE_IMAGE_OFFER: ''
+  TUNNEL_SERVER_OFFER: ''
+  STORAGE_OFFER: ''
+
+jobs:
+  start-tunnel-server:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      repository-projects: read
+
+    steps:
+      - name: Get previous build for solution
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.NPM_TOKEN_GH }}
+          GH_ACTION_REPOSITORY: ${{ github.repository }}
+          GH_WORKFLOW_NAME: ${{ github.workflow }}
+        run: |
+          LAST_RUN_ID=$(gh run --repo ${{ env.GH_ACTION_REPOSITORY }} list --workflow "${{ env.GH_WORKFLOW_NAME }}" -s success --json databaseId --jq .[0].databaseId)
+          gh run --repo ${{ env.GH_ACTION_REPOSITORY }} download $LAST_RUN_ID -n last-orders
+          echo "Artifact downloaded"
+          ls -la
+
+      - name: Download SPCTL
+        run: |
+          curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.6.8/spctl-linux-x64 -o ./spctl 
+          chmod +x ./spctl
+
+          SPCTL_CONFIG=$(echo "${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}" | base64 --decode)
+          BASE_IMAGE_OFFER=5,2
+          TUNNEL_SERVER_OFFER=10,7
+          STORAGE_OFFER=20,17
+          echo "$SPCTL_CONFIG" > ./config.json
+
+          echo "Spctl" version
+          ./spctl --version
+
+          echo "BASE_IMAGE_OFFER=$BASE_IMAGE_OFFER" >> $GITHUB_ENV
+          echo "TUNNEL_SERVER_OFFER=$TUNNEL_SERVER_OFFER" >> $GITHUB_ENV
+          echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
+
+      - name: Prepare tunnel server data
+        if: inputs.solution == 'minecraft'
+        run: |
+          mkdir solution-data
+          echo "${{ secrets.MINECRAFT_SERVER_TOKEN }}" > solution-data/auth-token
+          SOLUTION_DATA_FILE=${{ inputs.solution }}-server-data-b${{ github.run_id }}.tar.gz
+          tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
+          ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
+
+          echo "SOLUTION_DATA_FILE=$SOLUTION_DATA_FILE.json" >> $GITHUB_ENV
+
+      - name: Run tunnel server for ${{ inputs.solution }}
+        run: |
+          if [ -f ${{ env.LAST_ORDER_FILENAME }} ]; then
+            echo "${{ env.LAST_ORDER_FILENAME }} file found"
+            PREVOIUS_ORDER=$(grep "^${{ inputs.solution }}=" ${{ env.LAST_ORDER_FILENAME }} | cut -d'=' -f2)
+            if [[ -n "$PREVOIUS_ORDER" ]]; then
+              echo "Cancelling order $PREVOIUS_ORDER"
+              ./spctl orders cancel $PREVOIUS_ORDER || true
+            fi
+          fi
+
+          ./spctl workflows create --tee 1,1 --tee-slot-count 3 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+
+          ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
+
+          echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
+
+          if sed -n "/^${{ inputs.solution }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
+            sed -i "s/^${{ inputs.solution }}=.*$/${{ inputs.solution }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
+          else
+            echo "${{ inputs.solution }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
+          fi
+
+      - name: Archive created order
+        uses: actions/upload-artifact@v3
+        with:
+          name: last-orders
+          path: ${{ env.LAST_ORDER_FILENAME }}
+
+      - name: Result
+        run: |
+          if [ -n "${{ env.ORDER_ID }}" ]; then
+            echo "Order succesfully created. Order id: ${{ env.ORDER_ID }}"
+          else
+            echo "Failed to create order"
+            exit 1
+          fi

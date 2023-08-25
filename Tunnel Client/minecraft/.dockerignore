@@ -1,0 +1,25 @@
+**/.DS_Store
+client/README.md
+**/LICENSE
+**/.vscode
+**/.idea
+**/npm-debug.log
+**/coverage
+**/.editorconfig
+**/.aws
+**/dist
+**/node_modules
+**/test
+**/Dockerfile
+**/HISTORY.md
+
+docker-compose.yml
+client/public
+
+logs/*
+.env
+yarn.lock
+tsconfig.build.tsbuildinfo
+# TODO: Remove it from project
+TLauncher-2.885.jar
+server-java
