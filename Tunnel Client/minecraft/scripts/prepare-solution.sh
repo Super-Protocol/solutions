@@ -5,8 +5,8 @@ solution_path=$1
 #solution_name=$2
 
 # cd to one directory up of current script
-# shellcheck disable=SC2046
-cd $(dirname $(realpath "$0"))/..
+LOCAL_PATH=$(dirname "$(realpath $0)")
+cd "$LOCAL_PATH"/..
 
 echo "Install dependencies for client & sever module"
 yarn dependencies-scripts
