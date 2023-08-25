@@ -6,6 +6,10 @@ solution_path=$1
 
 # cd to one directory up of current script
 LOCAL_PATH=$(dirname "$(realpath $0)")
+
+echo LOCAL_PATH:
+echo "$LOCAL_PATH"
+
 cd "$LOCAL_PATH"
 cd ..
 
