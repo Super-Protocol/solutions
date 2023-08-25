@@ -6,7 +6,11 @@ solution_path=$1
 
 # cd to one directory up of current script
 LOCAL_PATH=$(dirname "$(realpath $0)")
-cd "$LOCAL_PATH"/..
+cd "$LOCAL_PATH"
+cd ..
+
+echo Current Path:
+pwd
 
 echo "Install dependencies for client & sever module"
 yarn dependencies-scripts
