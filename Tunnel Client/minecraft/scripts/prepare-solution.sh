@@ -4,25 +4,11 @@ set -e
 solution_path=$1
 #solution_name=$2
 
-echo first patam:
-echo "$0"
-
 # cd to one directory up of current script
 REAL_PATH=$(realpath "$0")
-
-echo REAL_PATH:
-echo "$REAL_PATH"
-
 LOCAL_PATH=$(dirname "$REAL_PATH")
-
-echo LOCAL_PATH:
-echo "$LOCAL_PATH"
-
 cd "$LOCAL_PATH"
 cd ..
-
-echo Current Path:
-pwd
 
 echo "Install dependencies for client & sever module"
 yarn dependencies-scripts
