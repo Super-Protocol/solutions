@@ -8,7 +8,12 @@ echo first patam:
 echo "$0"
 
 # cd to one directory up of current script
-LOCAL_PATH=$(dirname "$(realpath $0)")
+REAL_PATH=$(realpath "$0")
+
+echo REAL_PATH:
+echo "$REAL_PATH"
+
+LOCAL_PATH=$(dirname "$REAL_PATH")
 
 echo LOCAL_PATH:
 echo "$LOCAL_PATH"
