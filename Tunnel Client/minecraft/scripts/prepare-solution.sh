@@ -4,6 +4,9 @@ set -e
 solution_path=$1
 #solution_name=$2
 
+echo first patam:
+echo "$0"
+
 # cd to one directory up of current script
 LOCAL_PATH=$(dirname "$(realpath $0)")
 
