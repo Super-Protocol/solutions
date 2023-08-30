@@ -102,3 +102,4 @@ data
 # Prepare solution default folder
 sp-run
 tools
+.idea
