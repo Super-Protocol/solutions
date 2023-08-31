@@ -33,19 +33,22 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.crt -sha256 -days 3
 ```
 Then create `docker-compose.yml` file with data:
 ```yml
-version: "3.8"
+version: '3.8'
 
 services:
   sp-minecraft:
-    image: node:18-buster
+    image: node:16-buster
     container_name: sp-minecraft
-    environment:
-      HTTPS_PORT: 8888
-      TLS_CERT: {data from cert.crt file}
-      TLS_KEY: {data from key.pem file}
+    platform: linux/amd64
+    env_file:
+      - .env
     volumes:
       - ./:/sp/run
-    entrypoint: yarn build && yarn dev
+    entrypoint: ["/bin/sh","-c"]
+    command:
+      - |
+        yarn --cwd /sp/run build:all 
+        yarn --cwd /sp/run start
     ports:
       - "8888:8888"
 ```

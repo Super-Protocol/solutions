@@ -5,7 +5,9 @@ import pino from "pino";
 
 const logger = pino().child({ class: "server" });
 
-if (process.argv[2] === "dev") {
+const dev = process.argv[2] === "dev";
+
+if (dev) {
   dotenv.config();
 }
 
@@ -14,11 +16,17 @@ const env: any = {};
 if (process.env.HTTPS_PORT) {
   env.HTTPS_PORT = process.env.HTTPS_PORT;
 }
+
 if (process.env.TLS_CERT) {
-  env.TLS_CERT = process.env.TLS_CERT;
+  env.TLS_CERT = dev
+    ? Buffer.from(process.env.TLS_CERT, "base64").toString("ascii")
+    : process.env.TLS_CERT;
 }
+
 if (process.env.TLS_KEY) {
-  env.TLS_KEY = process.env.TLS_KEY;
+  env.TLS_KEY = dev
+    ? Buffer.from(process.env.TLS_KEY, "base64").toString("ascii")
+    : process.env.TLS_KEY;
 }
 
 function runWorker(path: string) {

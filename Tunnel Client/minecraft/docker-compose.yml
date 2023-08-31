@@ -2,14 +2,17 @@ version: '3.8'
 
 services:
   sp-minecraft:
-    image: sp-minecraft:0.0.1
+    image: node:16-buster
     container_name: sp-minecraft
-    environment:
-      HTTPS_PORT: 8888
-      TLS_CERT:
-      TLS_KEY:
-    build: .
-    #volumes:
-    #  - ${HOME}/minecraft/world:/app/world
+    platform: linux/amd64
+    env_file:
+      - .env
+    volumes:
+      - ./:/sp/run
+    entrypoint: ["/bin/sh","-c"]
+    command:
+      - |
+        yarn --cwd /sp/run build:all 
+        yarn --cwd /sp/run start
     ports:
       - "8888:8888"
