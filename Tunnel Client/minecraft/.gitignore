@@ -3,5 +3,3 @@ node_modules/
 logs/
 dist/
 client/public/
-world/stats/
-world/session.lock
