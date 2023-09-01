@@ -12,26 +12,65 @@ The client includes a web-server that connects to the MS Server and provides the
 
 ## Local run
 Prerequisites:
-- Node.js (>18)
+- Node.js (>16)
 - Yarn (v.1)
 
 
-To build and run in dev mode, rename the *.env.example* file to *.env* and fill in the appropriate parameters.
-
-Next, run the commands:
+To build and run in dev mode, copy the *.env.example* file to *.env*.
 ```shell
-cd minecraft
-yarn dependencies
-yarn build:all
-yarn dev
+$ cp .env.example .env
 ```
 
-## docker-compose
-Generate self-signed key and ssl-certificate for localhost:
+Since the web client will connect to the web server over a secure https channel, we need to generate a private key and certificate.
+You can do this with the following command:
+
 ```shell
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.crt -sha256 -days 365 -nodes -subj "/CN=localhost"
+$ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.crt -sha256 -days 365 -nodes -subj "/CN=localhost"
 ```
-Then create `docker-compose.yml` file with data:
+
+As a result, you will have two files, ```cert.crt``` and ```key.pem``` in the directory from which you ran this command.
+
+In order to put the key and certificate in our .env file, we need to convert the contents of these files to a single line. You can do this with the following command:
+```shell
+$ awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' cert.crt
+# -----BEGIN CERTIFICATE-----\nMIIFCTCCAvGgAwIBA...
+```
+```shell
+$ awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' key.pem
+# -----BEGIN PRIVATE KEY-----\nMIIJQwIBADANBgkqh...
+```
+
+The result of the output of these commands should be copied to the ```.env``` file:
+```text
+HTTPS_PORT=8888
+TLS_CERT="-----BEGIN CERTIFICATE-----\nMIIFCTCCAvGgAwIBA..."
+TLS_KEY="-----BEGIN PRIVATE KEY-----\nMIIJQwIBADANBgkqh..."
+```
+
+> Note that the values for TLS_CERT and TLS_KEY must be specified in quotes.
+
+After that you can delete the ```cert.crt``` and ```key.pem``` files.
+
+To install all dependencies, run the command:
+```shell
+$ yarn dependencies
+$ yarn build:all
+```
+
+To run the solution in dev mode, run the command:
+
+```shell
+$ yarn dev
+```
+
+To run the solution in production mode, run the command:
+
+```shell
+$ yarn start
+```
+
+Or you can use docker-compose, for running the solution in a container:
+
 ```yml
 version: '3.8'
 
@@ -53,22 +92,12 @@ services:
       - "8888:8888"
 ```
 
-and run:
 ```shell
-docker-compose up
+$ docker-compose up
 ```
+
+> Note that the ```platform: linux/amd64``` line is needed to run the solution on M1/M2 CPUs
 
 ## Run on SuperProtocol
 
 to be continued...
-<!--
-Информация о запуске на Супере. 
-Подготовка токена для тунель-сервера, сборка солюшена для туннель-клиента и команды запуска.
-Нужно указать, как подготовить и с какими аргументами создавать workflow.
-Нужно описать этапы сборки проекта для граминизации через spctl.
--->
-
-
-
-
-

@@ -5,3 +5,4 @@ dist/
 client/public/
 world/stats/*
 world/session.lock
+.env
