@@ -1,15 +1,7 @@
 name: Run tunnel-client on SuperProtocol
 
 on:
-  workflow_dispatch:
-    inputs:
-      solution:
-        description: 'Select name of solution'
-        required: true
-        default: ''
-        type: choice
-        options:
-          - minecraft
+  workflow_dispatch
 
 env:
   ORDER_ID: ''
@@ -22,6 +14,7 @@ env:
   SOLUTION_SSL_KEY_FILE: ''
   SOLUTION_SSL_CERT_FILE: ''
   SOLUTION_BUILD_SCRIPT: ''
+  SOLUTION_NAME: minecraft
 
 jobs:
   start-tunnel-client:
@@ -66,9 +59,9 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel client data
-        if: inputs.solution == 'minecraft'
+        if: env.SOLUTION_NAME == 'minecraft'
         run: |
-          echo 'SOLUTION_BUILD_SCRIPT="Tunnel Client/minecraft/scripts/prepare-solution.sh"' >> $GITHUB_ENV
+          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/minecraft/scripts/prepare-solution.sh" >> $GITHUB_ENV
           echo "SOLUTION_SERVER_TOKEN=${{ secrets.MINECRAFT_SERVER_TOKEN }}" >> $GITHUB_ENV
 
           echo "${{ secrets.MINECRAFT_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
@@ -81,7 +74,7 @@ jobs:
         run: |
           mkdir -p solution-data/content
           chmod +x ${{ env.SOLUTION_BUILD_SCRIPT }}
-          ${{ env.SOLUTION_BUILD_SCRIPT }} $(realpath solution-data/content) ${{ inputs.solution }}
+          ${{ env.SOLUTION_BUILD_SCRIPT }} $(realpath solution-data/content) ${{ env.SOLUTION_NAME }}
 
           cp ${{ env.SOLUTION_SSL_KEY_FILE }} solution-data/
           cp ${{ env.SOLUTION_SSL_CERT_FILE }} solution-data/
@@ -104,17 +97,17 @@ jobs:
           )
           echo "$CONFIG" > solution-data/config.json
 
-          SOLUTION_DATA_FILE=${{ inputs.solution }}-client-data-b${{ github.run_id }}.tar.gz
+          SOLUTION_DATA_FILE=${{ env.SOLUTION_NAME }}-client-data-b${{ github.run_id }}.tar.gz
           tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
           ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
 
           echo "SOLUTION_DATA_FILE=$SOLUTION_DATA_FILE.json" >> $GITHUB_ENV
 
-      - name: Run tunnel client for ${{ inputs.solution }}
+      - name: Run tunnel client for ${{ env.SOLUTION_NAME }}
         run: |
           if [ -f ${{ env.LAST_ORDER_FILENAME }} ]; then
             echo "${{ env.LAST_ORDER_FILENAME }} file found"
-            PREVOIUS_ORDER=$(grep "^${{ inputs.solution }}=" ${{ env.LAST_ORDER_FILENAME }} | cut -d'=' -f2)
+            PREVOIUS_ORDER=$(grep "^${{ env.SOLUTION_NAME }}=" ${{ env.LAST_ORDER_FILENAME }} | cut -d'=' -f2)
                 if [[ -n "$PREVOIUS_ORDER" ]]; then
                     echo "Cancelling order $PREVOIUS_ORDER"
                     ./spctl orders cancel $PREVOIUS_ORDER || true
@@ -127,10 +120,10 @@ jobs:
 
           echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
 
-          if sed -n "/^${{ inputs.solution }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
-            sed -i "s/^${{ inputs.solution }}=.*$/${{ inputs.solution }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
+          if sed -n "/^${{ env.SOLUTION_NAME }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
+            sed -i "s/^${{ env.SOLUTION_NAME }}=.*$/${{ env.SOLUTION_NAME }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
             else
-            echo "${{ inputs.solution }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
+            echo "${{ env.SOLUTION_NAME }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
           fi
 
       - name: Archive created order

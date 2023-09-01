@@ -1,15 +1,7 @@
 name: Run tunnel-server on SuperProtocol
 
 on:
-  workflow_dispatch:
-    inputs:
-      solution:
-        description: 'Select name of solution'
-        required: true
-        default: ''
-        type: choice
-        options:
-          - minecraft
+  workflow_dispatch
 
 env:
   ORDER_ID: ''
@@ -18,6 +10,7 @@ env:
   BASE_IMAGE_OFFER: ''
   TUNNEL_SERVER_OFFER: ''
   STORAGE_OFFER: ''
+  SOLUTION_NAME: minecraft
 
 jobs:
   start-tunnel-server:
@@ -59,21 +52,21 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel server data
-        if: inputs.solution == 'minecraft'
+        if: env.SOLUTION_NAME == 'minecraft'
         run: |
           mkdir solution-data
           echo "${{ secrets.MINECRAFT_SERVER_TOKEN }}" > solution-data/auth-token
-          SOLUTION_DATA_FILE=${{ inputs.solution }}-server-data-b${{ github.run_id }}.tar.gz
+          SOLUTION_DATA_FILE=${{ env.SOLUTION_NAME }}-server-data-b${{ github.run_id }}.tar.gz
           tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
           ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
 
           echo "SOLUTION_DATA_FILE=$SOLUTION_DATA_FILE.json" >> $GITHUB_ENV
 
-      - name: Run tunnel server for ${{ inputs.solution }}
+      - name: Run tunnel server for ${{ env.SOLUTION_NAME }}
         run: |
           if [ -f ${{ env.LAST_ORDER_FILENAME }} ]; then
             echo "${{ env.LAST_ORDER_FILENAME }} file found"
-            PREVOIUS_ORDER=$(grep "^${{ inputs.solution }}=" ${{ env.LAST_ORDER_FILENAME }} | cut -d'=' -f2)
+            PREVOIUS_ORDER=$(grep "^${{ env.SOLUTION_NAME }}=" ${{ env.LAST_ORDER_FILENAME }} | cut -d'=' -f2)
             if [[ -n "$PREVOIUS_ORDER" ]]; then
               echo "Cancelling order $PREVOIUS_ORDER"
               ./spctl orders cancel $PREVOIUS_ORDER || true
@@ -86,10 +79,10 @@ jobs:
 
           echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
 
-          if sed -n "/^${{ inputs.solution }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
-            sed -i "s/^${{ inputs.solution }}=.*$/${{ inputs.solution }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
+          if sed -n "/^${{ env.SOLUTION_NAME }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
+            sed -i "s/^${{ env.SOLUTION_NAME }}=.*$/${{ env.SOLUTION_NAME }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
           else
-            echo "${{ inputs.solution }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
+            echo "${{ env.SOLUTION_NAME }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
           fi
 
       - name: Archive created order

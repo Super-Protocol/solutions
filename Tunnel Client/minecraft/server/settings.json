@@ -1,0 +1,29 @@
+{
+  "motd": "A Minecraft Server \nRunning flying-squid",
+  "port": 25565,
+  "max-players": 1000,
+  "online-mode": false,
+  "encryption": true,
+  "logging": "trace",
+  "gameMode": 1,
+  "difficulty": 1,
+  "worldFolder":"./dist/world",
+  "generation": {
+    "name": "diamond_square",
+    "options":{
+      "worldHeight": 80
+    }
+  },
+  "kickTimeout": 10000,
+  "plugins": {},
+  "modpe": true,
+  "view-distance": 10,
+  "player-list-text": {
+    "header":{"text": "Flying squid"},
+    "footer":{"text": "Test server"}
+  },
+  "everybody-op":true,
+  "max-entities":10000,
+  "version": "1.16.1",
+  "hideErrors": false
+}
