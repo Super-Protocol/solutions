@@ -2,8 +2,8 @@
   "name": "@super-protocol/minecraft-lib",
   "version": "0.1.1",
   "description": "Minecraft Solution",
-  "main": "dist/server.js",
-  "types": "dist/server.d.ts",
+  "main": "dist/app.js",
+  "types": "dist/app.d.ts",
   "directories": {
     "lib": "dist"
   },
@@ -20,8 +20,8 @@
     "build": "tsc --build --force tsconfig.build.json",
     "build:clean": "rm -rf ./dist && yarn build",
     "build:all": "yarn build:clean && cp -r world ./dist/ && cd ./client && yarn build",
-    "start": "node ./dist/server.js",
-    "dev": "nodemon src/server.ts dev | pino-pretty"
+    "start": "node ./dist/app.js",
+    "dev": "nodemon src/app.ts dev | pino-pretty"
   },
   "dependencies": {
     "@types/node": "^20.5.0",
