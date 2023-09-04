@@ -5,6 +5,7 @@
 
 # Logs
 logs
+!minecraft/logs
 *.log
 npm-debug.log*
 yarn-debug.log*
