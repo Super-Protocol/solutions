@@ -1,5 +1,7 @@
 tsconfig.build.tsbuildinfo
 node_modules/
+logs/*
+!logs/.gitkeep
 dist/
 client/public/
 world/stats/*
