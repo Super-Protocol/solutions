@@ -1,4 +1,4 @@
-name: Run tunnel-client on SuperProtocol
+name: Run minecraft-tunnel-client on SuperProtocol
 
 on:
   workflow_dispatch

@@ -42,5 +42,5 @@ function runWorker(path: string) {
   });
 }
 
-runWorker(resolve(__dirname, "..", "server/app.js"));
+runWorker(resolve(__dirname, "..", "server/mc-server.js"));
 runWorker(resolve(__dirname, "..", "client/server.js"));
