@@ -1,4 +1,4 @@
-name: Run tunnel-server on SuperProtocol
+name: Run minecraft-tunnel-server on SuperProtocol
 
 on:
   workflow_dispatch
