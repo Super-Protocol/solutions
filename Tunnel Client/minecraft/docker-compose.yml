@@ -5,14 +5,13 @@ services:
     image: node:16-buster
     container_name: sp-minecraft
     platform: linux/amd64
-    env_file:
-      - .env
+    environment:
+      - HTTPS_PORT=8888
     volumes:
       - ./:/sp/run
-    entrypoint: ["/bin/sh","-c"]
+    entrypoint: ['/bin/sh', '-c']
     command:
       - |
-        yarn --cwd /sp/run build:all 
         yarn --cwd /sp/run start
     ports:
-      - "8888:8888"
+      - '8888:8888'
