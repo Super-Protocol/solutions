@@ -21,17 +21,15 @@ This repository contains solutions that are already deployed on Super Protocol a
    Linux:
    ```
    curl -L https://github.com/Super-Protocol/ctl/releases/latest/download/spctl-linux-x64 -o spctl
-   sudo install spctl /usr/local/bin/spctl
    ```
 
    macOS:
    ```
    curl -L https://github.com/Super-Protocol/ctl/releases/latest/download/spctl-macos-x64 -o spctl
-   sudo install spctl /usr/local/bin/spctl
    ```
    > Windows is not supported, please use WSL
 
 3. Download and decrypt solution using `resource.json` file in the solution directory:
    ```
-   spctl files download resource.json ./
+   ./spctl files download resource.json ./
    ```
