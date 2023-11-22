@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  sp-minecraft:
+    image: node:16-buster
+    container_name: sp-minecraft
+    platform: linux/amd64
+    env_file:
+      - .env
+    volumes:
+      - ./:/sp/run
+    entrypoint: ["/bin/sh","-c"]
+    command:
+      - |
+        yarn --cwd /sp/run build:all 
+        yarn --cwd /sp/run start
+    ports:
+      - "8888:8888"

@@ -3,17 +3,18 @@
     "algo": "AES",
     "encoding": "base64",
     "cipher": "aes-256-gcm",
-    "iv": "R+7AgYa2EAU68DN/",
-    "mac": "9+eN5X6tFXXP2WufUqcDpw==",
-    "key": "920V2jr2QSNlxA6eRXLZ1YT5undGl134tJV5dMYcp6s="
+    "iv": "VWMNUsPGNBcZRupT",
+    "mac": "ACa0vmttiCwP+Xrq9KR5DA==",
+    "key": "J/N2mRr69HTaC+rwuf2sFTIKIKsYW9EBNQZhBdpyodE="
   },
   "resource": {
     "type": "STORAGE_PROVIDER",
     "storageType": "STORJ",
-    "filepath": "speech-recognition-v0.4-python3.8-base.tar.gz.encrypted",
+    "filepath": "speech-recognition-v0.7-python3.10-base.tar.gz.encrypted",
     "credentials": {
       "token": "1sWnhBRaFcsEDjwbDeCqbs6RXbkGW22ZebMc9TMvf6CPJvgPg6MjvVyQByMTBdZ7tnESFK2YCc3iEo4kds2M174fn3kXHaXH7mqEBLepPnUX7Q3QysQe7hSoea7L5dW11eYtxw19WhQCTFLSuCP5uuwup2wktpLe7KNP2E4umBcpbQsWN2cL15Nm1wP5MqLHvdwfLZ4cmRQPC1D3EgjWiedYesYSuPTtbPX9FstVaiKDFhL44rN9AMeQ9TXM2JvvrPG9YzCyN83vyMM1uSfCp7kZqefgCScJG6nQMau5py9s9hdgJ4iUCfrpeKZq76NQg1ZrseAE",
-      "storageId": "offers-testnet"
+      "bucket": "offers-testnet",
+      "prefix":""
     }
   }
 }

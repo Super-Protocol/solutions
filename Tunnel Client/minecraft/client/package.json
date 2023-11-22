@@ -1,0 +1,79 @@
+{
+  "name": "prismarine-web-client",
+  "version": "1.5.0",
+  "description": "A minecraft client running in a browser",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "build-dev": "webpack --config webpack.dev.js",
+    "start": "node --max-old-space-size=8192 server.js 8080 dev",
+    "prod-start": "node server.js",
+    "build-dev-start": "npm run build-dev && npm run prod-start",
+    "build-start": "npm run build && npm run prod-start",
+    "prepublishOnly": "npm run build",
+    "lint": "standard",
+    "fix": "standard --fix",
+    "test": "npm run lint && mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrismarineJS/prismarine-web-client.git"
+  },
+  "keywords": [
+    "prismarine",
+    "web",
+    "client"
+  ],
+  "author": "PrismarineJS",
+  "license": "MIT",
+  "bin": {
+    "prismarine-web-client": "server.js"
+  },
+  "bugs": {
+    "url": "https://github.com/PrismarineJS/prismarine-web-client/issues"
+  },
+  "homepage": "https://github.com/PrismarineJS/prismarine-web-client#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
+    "ismobilejs": "^1.1.1",
+    "lit": "^2.0.2",
+    "net-browserify": "PrismarineJS/net-browserify",
+    "querystring": "^0.2.1",
+    "url": "^0.11.0",
+    "cross-env": "5.0.5"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "constants-browserify": "^1.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "crypto-browserify": "^3.12.0",
+    "events": "^3.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "http-browserify": "^1.7.0",
+    "http-server": "^14.1.0",
+    "https-browserify": "^1.0.0",
+    "lodash-webpack-plugin": "^0.11.6",
+    "memfs": "^3.2.0",
+    "mineflayer": "^4.1.0",
+    "mineflayer-pathfinder": "^2.0.0",
+    "mocha": "^10.0.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "prismarine-viewer": "^1.22.0",
+    "process": "PrismarineJS/node-process",
+    "standard": "^17.0.0",
+    "stream-browserify": "^3.0.0",
+    "three": "0.127.0",
+    "timers-browserify": "^2.0.12",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-middleware": "^6.0.0",
+    "webpack-dev-server": "^4.0.0",
+    "webpack-merge": "^5.7.3",
+    "workbox-webpack-plugin": "^6.1.2"
+  }
+}

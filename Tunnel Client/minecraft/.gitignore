@@ -1,0 +1,9 @@
+tsconfig.build.tsbuildinfo
+node_modules/
+logs/*
+!logs/.gitkeep
+dist/
+client/public/
+world/stats/*
+world/session.lock
+.env
