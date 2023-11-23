@@ -1,0 +1,18 @@
+.wrap {
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.text {
+  margin-bottom: 4px;
+}
+
+.textStatus {
+  font-size: 108px;
+}

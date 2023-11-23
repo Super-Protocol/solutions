@@ -1,0 +1,39 @@
+body {
+  font-size: 14px;
+  background: var(--black1);
+  color: var(--white);
+}
+
+html, body, #__next {
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+div[role="button"] {
+  outline: none;
+}
+
+.dark {
+  color: var(--white);
+  background-color: var(--black1);
+}
+
+.light {
+  color: var(--black);
+}
+
+body, div, span, p, input, button {
+  font-weight: 300;
+}
+
+html.is-locked,
+html.is-locked body {
+    /* want to fix the height to the window height */
+    height: calc(var(--window-inner-height) - 1px);
+
+    /* want to block all overflowing content */
+    overflow: hidden;
+
+    /* want to exclude padding from the height */
+    box-sizing: border-box;
+}

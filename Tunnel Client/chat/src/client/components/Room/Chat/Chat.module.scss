@@ -1,0 +1,24 @@
+.title {
+  border-bottom: 1px solid var(--grey4);
+  padding: 7px 20px;
+}
+
+.titleText {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.wrap {
+  width: 100%;
+}
+
+.messages {
+  flex: 1;
+}
+
+@media screen and (max-width: 1000px) {
+  .wrap {
+    border-radius: unset !important;
+  }
+}

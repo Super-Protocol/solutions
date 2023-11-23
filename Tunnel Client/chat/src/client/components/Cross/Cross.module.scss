@@ -1,0 +1,36 @@
+.container {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.cross::before, .cross::after {
+  content: "";
+  width: 20px;
+  height: 3px;
+  display: block;
+  position: absolute;
+  border-radius: 2px;
+}
+
+.light {
+  &.cross::before, &.cross::after {
+    background-color: var(--black);
+  }
+}
+.dark {
+  &.cross::before, &.cross::after  {
+    background-color: var(--white);
+  }
+}
+
+.cross::before {
+  transform: rotate(45deg);
+}
+
+.cross::after {
+  transform: rotate(-45deg);
+}

@@ -1,0 +1,14 @@
+.container {
+  cursor: pointer;
+  width: 150px;
+  height: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  &.light {
+    background-image: url('../../assets/chat_dark.png');
+  }
+  &.dark {
+    background-image: url('../../assets/chat_dark.png');
+  }
+}

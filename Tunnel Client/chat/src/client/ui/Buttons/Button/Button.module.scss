@@ -1,0 +1,100 @@
+.root {
+  color: var(--black);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 18px 27px;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  white-space: nowrap;
+  
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(.disabled) {
+    opacity: 0.8;
+  }
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+  &:hover, &:active {
+    color: inherit;
+  }
+}
+
+.base {
+  &.dark {
+    background: var(--grey);
+    color: var(--white);
+  }
+  &.light {
+    color: var(--black);
+  }
+}
+
+.base-link {
+  background-color: transparent;
+  padding: 0;
+  &.dark {
+    color: var(--white);
+  }
+  &.light {
+    color: var(--black);
+  }
+  &:hover:not(.disabled), &.active {
+    color: var(--blue1);
+  }
+}
+
+.white {
+  background-color: var(--white);
+  &:hover:not(.disabled) {
+    background-color: var(--white);
+  }
+}
+
+.black {
+  color: var(--white);
+  background-color: var(--black);
+  border: 1px solid var(--black);
+  &:hover:not(.disabled) {
+    background-color: var(--black);
+  }
+}
+
+.transparent {
+  background-color: transparent;
+}
+
+.wide {
+  padding: 10px 90px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.loading-center {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.loading {
+  margin-right: 9px;
+}

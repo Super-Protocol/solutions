@@ -1,0 +1,28 @@
+.inputLabel {
+  background: transparent !important;
+  border-color: transparent;
+  padding: 9px 20px 9px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.inputWrap {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.inputLabelFocused {
+  border-color: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.input {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.invalid {
+  border: 1px solid var(--red);
+}

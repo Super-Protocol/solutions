@@ -1,0 +1,26 @@
+.wrap {
+  background-color: var(--black1);
+  flex: 1;
+}
+
+.header {
+  padding: 0 20px;
+  height: 68px;
+}
+
+.content {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  padding: 0 20px 20px 20px;
+  flex: 1;
+}
+
+.membersCount {
+  margin-bottom: 15px;
+  align-self: flex-start;
+}
+
+.membersList {
+  align-self: flex-start;
+}

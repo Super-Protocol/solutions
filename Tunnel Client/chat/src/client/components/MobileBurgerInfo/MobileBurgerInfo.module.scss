@@ -1,0 +1,51 @@
+.wrap {
+  background-color: var(--black1);
+  flex: 1;
+}
+
+.header {
+  padding: 0 20px;
+  height: 68px;
+}
+
+.pageLinks {
+  margin-bottom: 25px;
+}
+
+.socialLinks {
+  column-gap: 24px;
+  margin-bottom: 30px;
+}
+
+.content {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  padding: 23px;
+  flex: 1;
+}
+
+.list {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.footer {
+  width: 100%;
+}
+
+.logo {
+  border: 1px solid transparent;
+}
+
+@media screen and (max-width: 1280px) {
+  .list {
+    width: 430px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .list {
+    width: 100%;
+  }
+}

@@ -1,0 +1,55 @@
+.container {
+  position: relative;
+  overflow: hidden;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+}
+
+.button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  z-index: 10;
+  color: #fff;
+  border: 2px solid #fff;
+  opacity: 1;
+  transition: transform .3s cubic-bezier(.21,.67,.58,1),opacity .18s linear;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  will-change: opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.left {
+  left: 15px;
+}
+
+.right {
+  right: 15px;
+}
+
+.transform {
+  transform: rotate(180deg);
+}
+
+@media screen and (max-width: 480px) {
+  .track {
+    height: 400px;
+  }
+  .button {
+    border: unset;
+  }
+  .left {
+    left: 0;
+  }
+  .right {
+    right: 0;
+  }
+}

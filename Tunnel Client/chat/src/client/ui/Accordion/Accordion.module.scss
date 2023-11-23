@@ -1,0 +1,25 @@
+.accordion {
+  background-color: transparent;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.accordion.open {
+  padding-bottom: 10px;
+}
+
+.dark {
+  color: var(--white);
+}
+
+.dark {
+  &.accordion {
+    border-bottom: 1px solid var(--grey4);
+  }
+}
+
+.children {
+  font-size: 12px;
+}

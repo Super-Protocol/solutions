@@ -1,0 +1,46 @@
+.wrap {
+  opacity: 0.5;
+}
+
+.message {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 70%;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.message > a, .message > a:visited, .message > a:hover {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.sent {
+  opacity: 1;
+}
+
+.time {
+  color: var(--grey5);
+}
+
+.hideTime {
+  visibility: hidden;
+}
+
+.wrap {
+  font-size: 12px;
+  width: 100%;
+}
+
+.messageContainer {
+  flex: 1;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.notSent {
+  display: none;
+}

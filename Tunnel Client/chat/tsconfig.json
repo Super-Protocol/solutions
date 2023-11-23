@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "es7"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/client/*"]
+    },
+    "target": "ES2021",
+    "module": "commonjs",
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.js"],
+  "exclude": ["node_modules"]
+}

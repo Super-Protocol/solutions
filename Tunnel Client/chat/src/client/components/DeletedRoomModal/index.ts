@@ -1,0 +1,1 @@
+export { DeletedRoomModal } from './DeletedRoomModal';

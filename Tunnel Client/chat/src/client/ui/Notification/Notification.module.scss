@@ -1,0 +1,15 @@
+.root {
+  width: 100%;
+  padding: 1px;
+  word-break: break-word;
+}
+
+.error {
+  color: var(--white);
+  border: 1px solid var(--red);
+  background-color: var(--red);
+}
+
+.icon {
+  margin: 5px 10px 0 0;
+}

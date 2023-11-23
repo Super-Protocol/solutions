@@ -1,0 +1,19 @@
+.slide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  width: fit-content;
+  height: fit-content;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+@media screen and (max-width: 775px) {
+  .image {
+    height: auto;
+  }
+}

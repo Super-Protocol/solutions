@@ -1,0 +1,1 @@
+export { InfoAccordion } from './InfoAccordion';
