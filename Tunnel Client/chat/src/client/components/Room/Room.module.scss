@@ -1,0 +1,72 @@
+@use '../Header/Header.variables.module.scss' as header;
+
+$members-mr-right: 20px;
+$info-mr-left: 20px;
+
+.chat {
+  flex: 1;
+}
+
+@mixin chatWidth($info-width) {
+  .chat {
+    width: calc(100% - #{header.$logo-width} - #{$info-width} - #{$members-mr-right} - #{$info-mr-left});
+  }
+  .info {
+    width: $info-width;
+    margin-left: $info-mr-left;
+  }
+}
+
+.members {
+  width: header.$logo-width;
+  margin-right: $members-mr-right
+}
+
+.wrap {
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+.wrapMobile {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.container {
+  flex: 1;
+  padding: 0 22px 22px 22px;
+  height: calc(100% - #{header.$height});
+}
+
+.mobileMembersCount {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+}
+
+@include chatWidth(400px);
+
+.containerMobile {
+  padding: 0;
+  flex-direction: column;
+}
+
+.chatMobile {
+  width: 100%;
+}
+
+.invationLinkMobile {
+  padding: 0;
+  background: transparent;
+}
+
+.mobileTop {
+  margin-bottom: 16px;
+  padding: 0 20px;
+}

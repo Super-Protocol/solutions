@@ -1,0 +1,27 @@
+.block {
+  flex: 1;
+}
+
+.attentionWrap {
+  max-width: 300px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.btn {
+  margin-top: 40px;
+}
+
+.input {
+  height: 166px;
+}
+
+.containerMobile {
+  flex-direction: column;
+  padding-top: 50px;
+  .blockAttention {
+    margin-bottom: 57px;
+  }
+}

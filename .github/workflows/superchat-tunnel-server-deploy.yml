@@ -1,4 +1,4 @@
-name: Run minecraft-tunnel-server on SuperProtocol
+name: Run superchat-tunnel-server on SuperProtocol
 
 on: workflow_dispatch
 
@@ -9,7 +9,7 @@ env:
   BASE_IMAGE_OFFER: ''
   TUNNEL_SERVER_OFFER: ''
   STORAGE_OFFER: ''
-  SOLUTION_NAME: minecraft
+  SOLUTION_NAME: superchat
 
 jobs:
   start-tunnel-server:
@@ -51,7 +51,7 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel server data
-        if: env.SOLUTION_NAME == 'minecraft'
+        if: env.SOLUTION_NAME == 'superchat'
         run: |
           mkdir solution-data
           echo "${{ secrets.SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token

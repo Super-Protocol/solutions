@@ -1,0 +1,15 @@
+.wrap {
+  align-self: flex-start;
+  align-items: center;
+}
+
+.count {
+  color: var(--white);
+}
+
+.desktop {
+  &:hover {
+    opacity: 1 !important;
+    cursor: default;
+  }
+}

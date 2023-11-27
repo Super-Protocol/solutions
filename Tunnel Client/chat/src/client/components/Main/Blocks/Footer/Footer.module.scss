@@ -1,0 +1,69 @@
+@use '../../../Header/Header.variables.module.scss' as header;
+
+.content {
+  width: 100%;
+}
+
+.wrapper {
+  padding: 20px;
+  width: 100%;
+}
+
+.wrap {
+  height: header.$height;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  width: header.$logo-width;
+  justify-content: flex-start;
+  margin-right: 17px;
+}
+
+.pageLinks {
+  margin-top: 4px;
+  flex: 1;
+}
+
+.logoMobile {
+  display: none;
+  margin-bottom: 15px;
+}
+
+.socialLinks {
+  column-gap: 24px;
+}
+
+@media screen and (max-width: 729px) {
+  .wrap {
+    justify-content: space-between;
+  }
+  .logo {
+    margin-right: 0;
+  }
+  .pageLinks {
+    flex: unset;
+  }
+  .logo {
+    width: auto;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .logoMobile {
+    display: flex;
+  }
+  .logo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 408px) {
+  .wrap {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    row-gap: 15px;
+  }
+}

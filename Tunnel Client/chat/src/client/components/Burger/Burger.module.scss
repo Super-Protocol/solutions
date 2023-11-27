@@ -1,0 +1,40 @@
+.wrap {
+  cursor: pointer;
+  height: 20px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  width: 22px;
+}
+
+.line, .line::before, .line::after {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.light {
+  &.line::before, &.line::after, &.line {
+    background-color: var(--blue9);
+  }
+}
+.dark {
+  &.line::before, &.line::after, &.line {
+    background-color: var(--white);
+  }
+}
+
+.line::before, .line::after {
+  content: "";
+}
+
+.line::before {
+  transform: translateY(-6px);
+}
+
+.line::after {
+  transform: translateY(3px);
+}

@@ -1,0 +1,18 @@
+.wrap {
+  width: 711px;
+  height: fit-content;
+  border: double 1px transparent;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  background-image: linear-gradient(var(--black1), var(--black1)), 
+                    linear-gradient(to right bottom, rgba(247, 172, 248, 0.3), rgba(180, 85, 58, 0.3), rgba(36, 68, 84, 0.3));
+}
+
+@media screen and (max-width: 775px) {
+  .wrap {
+    width: 100%;
+  }
+}

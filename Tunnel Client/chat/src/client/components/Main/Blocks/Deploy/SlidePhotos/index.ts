@@ -1,0 +1,1 @@
+export { SlidePhotos } from './SlidePhotos';

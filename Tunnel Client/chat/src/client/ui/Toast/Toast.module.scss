@@ -1,0 +1,44 @@
+.icon {
+  color: var(--white);
+}
+
+.iconWrap {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.iconSuccess {
+  background-color: var(--green);
+}
+
+.iconError {
+  background-color: var(--red);
+}
+
+.toastCommon {
+  border: 1px solid var(--grey);
+  backdrop-filter: blur(20px);
+  border-radius: 6px;
+  overflow: inherit;
+}
+
+.progress {
+  background-color: var(--blue);
+  height: 4px;
+  border-bottom-left-radius: 6px;
+}
+
+.dark {
+  &.toastCommon {
+    background-color: var(--grey);
+    color: var(--white);
+  }
+}
+
+.light {
+  &.toastCommon {
+    background-color: var(--white);
+    color: var(--black);
+  }
+}

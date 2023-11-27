@@ -1,0 +1,19 @@
+.wrap {
+  padding: 20px 20px 0 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.message {
+  padding-bottom: 16px;
+}
+
+.trigger {
+  visibility: hidden;
+}
+
+.content {
+  flex: 1;
+}

@@ -1,0 +1,9 @@
+.list {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.link, .link:visited, .link:hover {
+  text-decoration: none;
+  color: var(--blue);
+}

@@ -1,0 +1,10 @@
+.icon {
+  color: var(--grey3);
+  margin-right: 5px;
+}
+
+.name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

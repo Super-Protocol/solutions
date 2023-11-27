@@ -1,0 +1,49 @@
+.content {
+  height: 221px;
+}
+
+.textGroup {
+  margin-left: 10px;
+}
+
+.text {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+}
+
+.text::before {
+  content: '';
+  opacity: 0.3;
+  position: absolute;
+  width: 100%;
+  transform: scaleX(1);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--white);
+}
+
+.text::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--white);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.text:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.icon {
+  color: var(--white);
+}

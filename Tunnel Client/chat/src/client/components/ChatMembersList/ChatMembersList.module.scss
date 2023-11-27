@@ -1,0 +1,10 @@
+.list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.item {
+  margin-bottom: 5px;
+}

@@ -1,0 +1,10 @@
+.dialog {
+  max-width: 358px;
+}
+
+@media screen and (max-width: 576px) {
+  .dialog {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}

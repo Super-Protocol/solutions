@@ -1,0 +1,34 @@
+@use './Header.variables.module.scss' as header;
+.content {
+  width: 100%;
+}
+
+.wrap {
+  height: header.$height;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.logo {
+  width: header.$logo-width;
+  justify-content: flex-start;
+  margin-right: 17px;
+}
+
+.pageLinks {
+  flex: 1;
+}
+
+.mobileBurgerInfo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  right: 0;
+  bottom: 0;
+}
+
+.socialLinks {
+  column-gap: 24px;
+}

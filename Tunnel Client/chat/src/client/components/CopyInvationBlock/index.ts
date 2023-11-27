@@ -1,0 +1,1 @@
+export { CopyInvationBlock } from './CopyInvationBlock';

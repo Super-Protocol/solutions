@@ -1,4 +1,4 @@
-name: Run minecraft-tunnel-client on SuperProtocol
+name: Run superchat-tunnel-client on SuperProtocol
 
 on: workflow_dispatch
 
@@ -13,7 +13,7 @@ env:
   SOLUTION_SSL_KEY_FILE: ''
   SOLUTION_SSL_CERT_FILE: ''
   SOLUTION_BUILD_SCRIPT: ''
-  SOLUTION_NAME: minecraft
+  SOLUTION_NAME: superchat
 
 jobs:
   start-tunnel-client:
@@ -58,9 +58,9 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel client data
-        if: env.SOLUTION_NAME == 'minecraft'
+        if: env.SOLUTION_NAME == 'superchat'
         run: |
-          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/minecraft/scripts/prepare-solution.sh" >> $GITHUB_ENV
+          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/chat/scripts/prepare-solution.sh" >> $GITHUB_ENV
           echo "SOLUTION_SERVER_TOKEN=${{ secrets.SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
 
           echo "${{ secrets.SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
