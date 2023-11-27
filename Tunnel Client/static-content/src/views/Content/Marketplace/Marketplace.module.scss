@@ -1,0 +1,48 @@
+.content {
+  margin: 160px 0 120px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 44px;
+  line-height: 61.6px;
+  margin-bottom: 20px;
+}
+
+.line, .ul {
+  opacity: 0.7;
+}
+
+.ul {
+  padding: 0 0 0 30px;
+}
+
+.li:not(:first-child) {
+  margin-top: 10px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.describe {
+  width: 358px;
+}
+
+.footer {
+  color: var(--aqua);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500px;
+  margin-top: 40px;
+}
+
+@media screen and (max-width: 1028px) {
+  .content {
+    flex-direction: column;
+  }
+  .describe {
+    width: 100%;
+  }
+}

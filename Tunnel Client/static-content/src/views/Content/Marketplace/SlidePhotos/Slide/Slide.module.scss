@@ -1,0 +1,35 @@
+.slide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  width: fit-content;
+  height: fit-content;
+}
+
+.image {
+  width: 710px;
+  height: 415px;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media screen and (max-width: 1440px) {
+  .image {
+    width: 583px;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 1028px) {
+  .image {
+    width: 710px;
+    height: 415px;
+  }
+}
+
+@media screen and (max-width: 770px) {
+  .image {
+    height: auto;
+  }
+}
