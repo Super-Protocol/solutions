@@ -1,0 +1,43 @@
+.content {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.block {
+  width: 330px;
+}
+
+.title {
+  font-size: 26px;
+  line-height: 36px;
+}
+
+.text {
+  margin-top: 20px;
+  line-height: 22.4px;
+  opacity: 0.7;
+}
+
+@media screen and (max-width: 1440px) {
+  .block {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .content {
+    flex-direction: column;
+  }
+  .block {
+    width: 400px;
+  }
+  .block:not(:first-child) {
+    margin-top: 40px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .block {
+    width: 100%;
+  }
+}

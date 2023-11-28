@@ -1,0 +1,9 @@
+.link {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.link, .link:visited, .link:hover {
+  text-decoration: none;
+  color: inherit;
+}

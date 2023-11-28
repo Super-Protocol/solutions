@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--white);
+  background-color: var(--black1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.disable-scroll {
+  overflow: hidden;
+}
