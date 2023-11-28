@@ -1,6 +1,6 @@
 import { extractPublicKey, extractRS, parsePem, getPemCertsFromQuote } from './helper';
 import { Verificator } from '../typechain-types';
-import { TeeSgxParserV3 } from '../src/dist';
+import { TeeSgxParser } from '@super-protocol/sdk-js';
 import { ethers, network } from 'hardhat';
 import { ec as EC } from "elliptic";
 import { expect } from 'chai';
@@ -104,7 +104,7 @@ describe('x509', function () {
         const quote = fs.readFileSync(quoteFullPath);
         const [leafCert, intermediateCert, rootCert] = getPemCertsFromQuote(quoteFullPath);
 
-        const instance = new TeeSgxParserV3()
+        const instance = new TeeSgxParser()
         const parsedQuote = instance.parseQuote(quote);
         const isvReport = instance.parseReport(parsedQuote.report);
 
