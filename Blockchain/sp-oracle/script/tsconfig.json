@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "commonjs",
+      "lib": ["es7"],
+      "outDir": "run/dist",
+      "rootDir": "src",
+      "allowJs": true,
+      "strict": true,
+      "declaration": true,
+      "noImplicitAny": true,
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+    },
+    "include": ["src/**/*"]
+}
+  
