@@ -1,0 +1,4 @@
+/node_modules
+/run
+/dist
+inputs/input.json

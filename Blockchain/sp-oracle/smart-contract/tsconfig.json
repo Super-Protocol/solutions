@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "outDir": "dist",
+        "strictPropertyInitialization": false,
+        "resolveJsonModule": true,
+    },
+    "files": [
+        "./config.ts",
+    ],
+    "include": [
+        "./typechain-types/**/*",
+    ],
+    "exclude": [
+        "./typechain-types/hardhat-diamond-abi/**/*",
+        "./typechain-types/factories/hardhat-diamond-abi/**/*",
+    ]
+}
