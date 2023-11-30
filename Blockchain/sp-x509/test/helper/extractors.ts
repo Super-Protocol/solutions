@@ -5,7 +5,7 @@ export function extractPublicKey(cert: pkijs.Certificate): { x: string; y: strin
     const key = cert.subjectPublicKeyInfo.parsedKey;
     const hexedX = Buffer.from(key.x).toString('hex');
     const hexedY = Buffer.from(key!.y).toString('hex');
-    
+
     return {
         x: hexedX,
         y: hexedY,

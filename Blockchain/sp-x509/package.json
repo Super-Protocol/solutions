@@ -41,7 +41,7 @@
     "@openzeppelin/contracts": "^4.8.1",
     "@peculiar/asn1-schema": "^2.3.6",
     "@peculiar/asn1-x509": "^2.3.6",
-    "@super-protocol/tee-lib": "0.1.2",
+    "@super-protocol/sdk-js": "^1.1.0",
     "@typechain/ethers-v5": "^10.2.0",
     "@typechain/hardhat": "^6.1.5",
     "asn1.js": "^5.4.1",
