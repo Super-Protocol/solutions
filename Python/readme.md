@@ -1,3 +1,4 @@
-## Introduction
+## Python solutions
 
-Base image for Python solutions. See [these guides](https://docs.superprotocol.com/testnet/cli/guides/) to learn how to use it for deploying your own solutions on Super Protocol.
+This folder contains resource files with Machine Learning algorithm that you can use as example for you own solutions.
+For up and run guides, please follow to the folder you interested in.
