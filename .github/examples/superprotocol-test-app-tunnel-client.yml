@@ -44,7 +44,7 @@ jobs:
           curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.6.8/spctl-linux-x64 -o ./spctl 
           chmod +x ./spctl
 
-          SPCTL_CONFIG=$(echo "${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}" | base64 --decode)
+          SPCTL_CONFIG=$(echo "${{ secrets.SPCTL_CONFIG_BASE64 }}" | base64 --decode)
           BASE_IMAGE_OFFER=5,2
           STORAGE_OFFER=20,17
           TUNNEL_CLIENT_OFFER=24,20
@@ -113,7 +113,7 @@ jobs:
                 fi
           fi
 
-          ./spctl workflows create --tee 1,1 --tee-slot-count 3 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1,1 --tee-slot-count 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 
