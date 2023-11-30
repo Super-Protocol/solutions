@@ -8,7 +8,6 @@
     },
     "apiConfig": {
         "endpoint": "https://rest.coinapi.io/v1/exchangerate/BTC/USD",
-        "certFingerprint": "50:B0:64:B8:6E:D6:B8:EB:68:E5:8B:A3:F5:64:67:26:B4:60:70:00",
         "auth": {
             "header": "X-CoinAPI-Key",
             "key": "API_KEY"

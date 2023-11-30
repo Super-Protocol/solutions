@@ -1,12 +1,11 @@
-import '@typechain/hardhat';
-import '@nomicfoundation/hardhat-toolbox';
-import '@nomiclabs/hardhat-ethers';
+import "@nomiclabs/hardhat-etherscan";
+
 import { config } from './config';
 import { utils } from 'ethers';
 
-import './tasks/deployApp';
-import './tasks/deployOracle';
-import './tasks/callApp';
+import './tasks/deploy';
+import './tasks/call';
+import './tasks/verify';
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -46,8 +45,14 @@ export default {
             chainId: 80001,
             url: config.mumbaiUrl,
             accounts: [config.mumbaiDeployerPrivateKey],
-            gasPrice: 50_000_000_000,
-            gas: 30_000_000,
-        }
+            gas: 10_000_000,
+        },
     },
+    etherscan: {
+        apiKey: {
+            mainnet: config.ethereumApiKey,
+            polygon: config.polygonApiKey,
+            polygonMumbai: config.polygonApiKey,
+        }
+    }
 };

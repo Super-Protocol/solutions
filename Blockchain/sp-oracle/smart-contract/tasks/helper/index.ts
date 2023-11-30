@@ -6,7 +6,7 @@ export const deployContract = async (
     name: string, signer: Signer,
     ...args: any[]
 ): Promise<Contract> => {
-    console.log(name, 'start deploy...');
+    console.log(name, 'is deploying...');
     const factory = await hre.ethers.getContractFactory(name, signer);
     const contract = await factory.deploy(...args);
     await contract.deployed();
