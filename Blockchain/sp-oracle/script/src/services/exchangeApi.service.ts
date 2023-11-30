@@ -5,34 +5,33 @@ import { CoinApiExchangeRateType, ExchangeRateStructure } from '../dto/exchangeR
 import HttpsProvider from '../providers/https.provider';
 
 class ExchangeApiService implements IApiService {
-    private httpsProvider: IHttpsApiProvider;
+  private httpsProvider: IHttpsApiProvider;
 
-    constructor(apiConfig: ApiConfig, rootCertificates: Buffer[]) {
-        this.httpsProvider = new HttpsProvider(apiConfig, rootCertificates);
-    }
+  constructor(apiConfig: ApiConfig, rootCertificates: Buffer[]) {
+    this.httpsProvider = new HttpsProvider(apiConfig, rootCertificates);
+  }
 
-    private static transformExchangeRate(input: CoinApiExchangeRateType)
-    : ExchangeRateStructure {
-        const xStr = input.rate.toString();
-        const [, fraction] = xStr.split('.');
-        const fractionLength = fraction ? fraction.length : 0;
-        const denominator = Math.pow(10, fractionLength).toString();
-        const numerator = xStr.replace('.', '');
+  private static transformExchangeRate(input: CoinApiExchangeRateType): ExchangeRateStructure {
+    const rateString = input.rate.toString();
+    const [, fraction] = rateString.split('.');
+    const fractionLength = fraction ? fraction.length : 0;
+    const denominator = Math.pow(10, fractionLength).toString();
+    const numerator = rateString.replace('.', '');
 
-        const apiTimestamp = Math.floor(new Date(input.time).getTime()/1000).toString();
+    const apiTimestamp = Math.floor(new Date(input.time).getTime() / 1000).toString();
 
-        return {
-            apiTimestamp,
-            numerator,
-            denominator,
-        }
-    }
+    return {
+      apiTimestamp,
+      numerator,
+      denominator,
+    };
+  }
 
-    public async fetch(): Promise<Object> {
-        const rawData = await this.httpsProvider.get();
+  public async fetch(): Promise<object> {
+    const rawData = await this.httpsProvider.get();
 
-        return ExchangeApiService.transformExchangeRate(rawData.data);
-    }
+    return ExchangeApiService.transformExchangeRate(rawData.data as CoinApiExchangeRateType);
+  }
 }
 
 export default ExchangeApiService;

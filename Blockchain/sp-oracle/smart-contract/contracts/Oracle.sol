@@ -1,57 +1,74 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./types/OracleDataType.sol";
 import "./interfaces/IOracle.sol";
+import "./types/OracleData.sol";
+import "./Publisher.sol";
 
-contract Oracle is IOracle {
-    error AccessForbidden();
-    error NoDataAvailable();
+/// @notice the "view" part of oracle smart-contract
+contract Oracle is Publisher, IOracle {
+
+    error Empty();
     error OutOfIndex();
 
-    mapping(bytes32 => OracleData[]) public data;
-    address[] private publishers;
-    string constant appHash;
-    string constant mrSigner;
+    constructor(
+        address[] memory publishers,
+        address X509Verifier,
+        bytes32 mrEnclave,
+        bytes32 mrSigner
+    ) Publisher(publishers, X509Verifier, mrEnclave, mrSigner) {}
 
-    constructor(address[] memory _publishers, bytes _appHash, string _mrSigner) {
-        publishers = _publishers;
-        appHash = _appHash;
-        mrSigner = _mrSigner;
+    /// @notice getter
+    function getMrSigner() external view returns(bytes32) {
+        return Publisher.mrSigner;
     }
 
-    function add(bytes32 key, bytes memory value, bytes memory quote) public onlyPublisher {
-        OracleData memory newData;
-        newData.quote = quote;
-        newData.value = value;
-        newData.timestamp = uint32(block.timestamp);
-
-        data[key].push(newData);
+    /// @notice getter
+    function getMrEnclave() external view returns(bytes32) {
+        return Publisher.mrEnclave;
     }
 
-    function getCurrentData(bytes32 key) public view returns(OracleData memory) {
-        uint256 currentIndex = data[key].length - 1;
-        if (currentIndex == 0) revert NoDataAvailable();
+    /// @notice getter
+    function isPublisher(address publisher) public view returns(bool) {
+        return Publisher.publishers[publisher];
+    }
+
+    /// @notice
+    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    function getCurrentData(bytes32 key) public view returns (OracleData memory) {
+        uint256 dataLength = data[key].length;
+        if (dataLength == 0) {
+            revert Empty();
+        }
+        uint256 currentIndex = dataLength - 1;
 
         return data[key][currentIndex];
     }
 
-    function getCurrentRawData(bytes32 key) public view returns(bytes memory) {
-        uint256 currentIndex = data[key].length - 1;
-        if (currentIndex == 0) revert NoDataAvailable();
-
-        return data[key][currentIndex].value;
-    }
-
-    function getDataCounts(bytes key) public view returns(uint256) {
+    /// @notice
+    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    function getDataCounts(bytes32 key) public view returns (uint256) {
         return data[key].length;
     }
 
-    function getDataHistory(bytes32 key, uint256 from, uint256 to) public view returns(OracleData[] memory) {
-        uint256 currentIndex = data[key].length - 1;
-        if (currentIndex == 0) revert NoDataAvailable();
-        if (from > currentIndex) revert OutOfIndex();
+    /// @notice
+    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    /// @param from - 
+    /// @param to - 
+    function getDataHistory(
+        bytes32 key,
+        uint256 from,
+        uint256 to
+    ) public view returns (OracleData[] memory) {
+        uint256 dataLength = data[key].length;
+        if (dataLength == 0) {
+            revert Empty();
+        }
 
+        uint256 currentIndex = dataLength - 1;
+        if (from > currentIndex) {
+            revert OutOfIndex();
+        }
         if (to > currentIndex) {
             to = currentIndex;
         }
@@ -65,21 +82,5 @@ contract Oracle is IOracle {
         }
 
         return response;
-    }
-
-    modifier onlyPublisher {
-        bool isPublisher;
-        uint256 idx;
-
-        for (idx = 0; idx < publishers.length; idx++) {
-            if (publishers[idx] == msg.sender) {
-                isPublisher = true;
-                break;
-            }
-        }
-
-        if (!isPublisher) revert AccessForbidden();
-
-        _;
     }
 }

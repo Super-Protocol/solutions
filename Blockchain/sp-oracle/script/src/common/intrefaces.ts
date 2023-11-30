@@ -1,22 +1,36 @@
 import { HttpResponse } from './types';
+import { ChunkedSGXQuote } from '../dto/quote.dto';
+import { ChunkedX509Cert } from '../dto/cert.dto';
 
 export interface IHttpsApiProvider {
-    get(): Promise<HttpResponse>;
+  get(): Promise<HttpResponse>;
 }
 
 export interface IApiService {
-    fetch(): Promise<any>;
-}
-
-export interface IQuoteProvider {
-    genQuote(data: Buffer): Promise<Buffer>;
+  fetch(): Promise<object>;
 }
 
 export interface IBlockchainProvider {
-    formatObject(data: any, abi: object): string;
-    publish(key: string, data: string, quote: Buffer): Promise<void>;
+  initSessionKey(): void;
+  getSessionIdHash(): Buffer;
+  applyNewSession(
+    deviceCert: ChunkedX509Cert,
+    intermediateCert: ChunkedX509Cert,
+    parsedQuote: ChunkedSGXQuote,
+  ): Promise<void>;
+  publish(key: string, data: object): Promise<void>;
 }
 
 export interface IPubService {
-    startOracleLoop(key: string, api: IApiService): Promise<NodeJS.Timer>;
+  start(): Promise<void>;
+  stop(): void;
+}
+
+export interface IQuoteProvider {
+  genQuote(data: Buffer): Promise<Buffer>;
+}
+
+export interface IQuoteParser {
+  parseQuote(): ChunkedSGXQuote;
+  parseCerts(): ChunkedX509Cert[];
 }

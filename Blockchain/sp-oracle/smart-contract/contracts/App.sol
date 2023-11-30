@@ -3,50 +3,49 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IOracle.sol";
 import "./interfaces/IX509Verifier.sol";
-import "./types/OracleDataType.sol";
-import "./types/RateDataType.sol";
+import "./types/OracleData.sol";
+import "./types/RateData.sol";
 
-/**
- * Example of user application which realises oracle capabilities
- * 
- */
-
+/// @notice Example of user application which realises oracle capabilities
 contract App {
-    IOracle immutable oracle;
-    IX509Verifier immutable x509Verifier;
-    bytes immutable oracleAppHash;
-    bytes immutable oracleMrSigner;
-
     error RequestFailed(address endpoint, bytes request);
     error InvalidQuote(bytes quote);
     error OutdatedData(uint32 diff);
+    error InvalidMrEnclave();
+    error InvalidMrSigner();
 
-    constructor(address _oracle, address _x509Verifier) {
+    bytes32 private mrSigner;
+    bytes32 private mrEnclave;
+    address immutable appOwner;
+    IOracle immutable oracle;
+
+    constructor(address _oracle) {
         oracle = IOracle(_oracle);
-        x509Verifier = IX509Verifier(_x509Verifier);
-        oracleAppHash = oracle.appHash();
-        oracleMrSigner = oracle.oracleMrSigner();
+        appOwner = msg.sender;
     }
 
-    function _fetchRate(bytes32 key, bool verifyQuote, int32 maxTimeDiff) private view returns(uint256 numerator, uint256 denominator) { 
-        try oracle.getCurrent(key) returns (OracleData memory response) {
-            if (verifyQuote) {
-                // check if recived data from valid script and it was processed on TEE
-                try x509Verifier.checkTEEQuote(
-                    response.quote,
-                    response.value,
-                    oracleAppHash,
-                    oracleMrSigner
-                ) returns (bool verified) {
-                    if (!verified) revert InvalidQuote(response.quote);    
-                } catch {
-                    revert RequestFailed(address(x509Verifier), response.quote);
-                }
-            }
+    /// @notice
+    function _checkOracleScriptRestrictions() private view {
+        if (mrSigner != bytes32(0)) {
+            require(mrSigner == oracle.getMrSigner());
+        }
+        if (mrEnclave != bytes32(0)) {
+            require(mrEnclave == oracle.getMrEnclave());
+        }
+    }
 
-            RateDataType memory data = abi.decode(response.value, (RateDataType));
+    /// @notice helper for fetching exchange rates
+    /// @return numerator - ... 
+    /// @return denominator - ... 
+    function _fetchRate(bytes32 key, int32 maxTimeDiff) private view returns(uint256 numerator, uint256 denominator) {
+        // optional
+        _checkOracleScriptRestrictions();
 
-            // check timestamp shifit (between block and api server)
+        try oracle.getCurrentData(key) returns (OracleData memory response) {
+            // decode DTO
+            RateData memory data = abi.decode(response.value, (RateData));
+
+            // check timestamp shift (between block and api server)
             if (maxTimeDiff >= 0) {
                 uint32 diff = data.apiTimestamp > response.timestamp ?
                     data.apiTimestamp - response.timestamp :
@@ -54,7 +53,7 @@ contract App {
                 if (diff > uint32(maxTimeDiff)) revert OutdatedData(diff);
             }
 
-            // target
+            // target data from api
             numerator = data.numerator;
             denominator = data.denominator;
         } catch {
@@ -62,28 +61,44 @@ contract App {
         }
     }
 
-    // case with on-chain TEE quote checking
+    /// @notice request example with limited data shift
     function processA() public view returns(uint256) {
         bytes32 requestKey = keccak256("BTC/USD");
 
         // this is rate of BTC/USD transformed into two integers,
         // bcs Solidity isn't support a fractionals numbers.
-        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, true, 1 hours); 
+        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, 1 hours); 
 
-        // ... here will be business logic with fetched 'exchangeRate'
+        // ... here will be business logic with fetched 'exchangeRate', e.g.:
         return numerator / denominator + 1;
     }
 
-    // case without on-chain TEE quote checking and without timestamp shift checking
-    // this case cheaper, but not 100% secure
+    /// @notice request example with ignoring data shift
     function processB() public view returns(uint256) {
         bytes32 requestKey = keccak256("BTC/USD");
 
         // this is rate of BTC/USD transformed into two integers,
         // bcs Solidity isn't support a fractionals numbers.
-        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, false, -1);
+        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, -1);
 
-        // ... here will be business logic with fetched 'exchangeRate'
+        // ... here will be business logic with fetched 'exchangeRate', e.g.:
         return numerator / denominator  + 2;
+    }
+
+    uint256 public savedData; // data saved by oracle callback
+
+    /// @notice you can delegate to oracle callbacks
+    function callback() public onlyOracle {
+        savedData = processA();
+    }
+
+    modifier onlyOracle {
+        require(msg.sender == address(oracle), "Available only for oracle");
+        _;
+    }
+
+    modifier onlyAppOwner {
+        require(msg.sender == appOwner);
+        _;
     }
 }
