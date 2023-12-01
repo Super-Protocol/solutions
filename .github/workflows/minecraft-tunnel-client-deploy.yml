@@ -30,7 +30,7 @@ jobs:
       - name: Get previous build for solution
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.NPM_TOKEN_GH }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_ACTION_REPOSITORY: ${{ github.repository }}
           GH_WORKFLOW_NAME: ${{ github.workflow }}
         run: |
@@ -44,7 +44,7 @@ jobs:
           curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.6.8/spctl-linux-x64 -o ./spctl 
           chmod +x ./spctl
 
-          SPCTL_CONFIG=$(echo "${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}" | base64 --decode)
+          SPCTL_CONFIG=$(echo "${{ secrets.SPCTL_CONFIG_BASE64 }}" | base64 --decode)
           BASE_IMAGE_OFFER=5,2
           STORAGE_OFFER=20,17
           TUNNEL_CLIENT_OFFER=24,20
@@ -61,12 +61,12 @@ jobs:
         if: env.SOLUTION_NAME == 'minecraft'
         run: |
           echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/minecraft/scripts/prepare-solution.sh" >> $GITHUB_ENV
-          echo "SOLUTION_SERVER_TOKEN=${{ secrets.SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
+          echo "SOLUTION_SERVER_TOKEN=${{ secrets.MINECRAFT_SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
 
-          echo "${{ secrets.SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
+          echo "${{ secrets.MINECRAFT_SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
           echo "SOLUTION_SSL_KEY_FILE=private.pem" >> $GITHUB_ENV
 
-          echo "${{ secrets.SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
+          echo "${{ secrets.MINECRAFT_SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
           echo "SOLUTION_SSL_CERT_FILE=certificate.crt" >> $GITHUB_ENV
 
       - name: Build solution

@@ -23,7 +23,7 @@ jobs:
       - name: Get previous build for solution
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.NPM_TOKEN_GH }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_ACTION_REPOSITORY: ${{ github.repository }}
           GH_WORKFLOW_NAME: ${{ github.workflow }}
         run: |
@@ -37,7 +37,7 @@ jobs:
           curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.6.8/spctl-linux-x64 -o ./spctl 
           chmod +x ./spctl
 
-          SPCTL_CONFIG=$(echo "${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}" | base64 --decode)
+          SPCTL_CONFIG=$(echo "${{ secrets.SPCTL_CONFIG_BASE64 }}" | base64 --decode)
           BASE_IMAGE_OFFER=5,2
           TUNNEL_SERVER_OFFER=10,7
           STORAGE_OFFER=20,17
@@ -54,7 +54,7 @@ jobs:
         if: env.SOLUTION_NAME == 'minecraft'
         run: |
           mkdir solution-data
-          echo "${{ secrets.SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token
+          echo "${{ secrets.MINECRAFT_SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token
           SOLUTION_DATA_FILE=${{ env.SOLUTION_NAME }}-server-data-b${{ github.run_id }}.tar.gz
           tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
           ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
