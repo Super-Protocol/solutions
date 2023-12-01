@@ -30,7 +30,7 @@ jobs:
       - name: Get previous build for solution
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.NPM_TOKEN_GH }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_ACTION_REPOSITORY: ${{ github.repository }}
           GH_WORKFLOW_NAME: ${{ github.workflow }}
         run: |
