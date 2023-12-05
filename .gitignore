@@ -104,3 +104,7 @@ data
 sp-run
 tools
 .idea
+
+inputs
+run
+output
