@@ -1,4 +1,4 @@
-name: Run minecraft-tunnel-server on SuperProtocol
+name: Run Test App tunnel-server on SuperProtocol
 
 on: workflow_dispatch
 
@@ -9,7 +9,7 @@ env:
   BASE_IMAGE_OFFER: ''
   TUNNEL_SERVER_OFFER: ''
   STORAGE_OFFER: ''
-  SOLUTION_NAME: minecraft
+  SOLUTION_NAME: superpotocol-test-app
 
 jobs:
   start-tunnel-server:
@@ -51,10 +51,10 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel server data
-        if: env.SOLUTION_NAME == 'minecraft'
+        if: env.SOLUTION_NAME == 'superpotocol-test-app'
         run: |
           mkdir solution-data
-          echo "${{ secrets.MINECRAFT_SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token
+          echo "${{ secrets.SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token
           SOLUTION_DATA_FILE=${{ env.SOLUTION_NAME }}-server-data-b${{ github.run_id }}.tar.gz
           tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
           ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
@@ -72,7 +72,7 @@ jobs:
             fi
           fi
 
-          ./spctl workflows create --tee 1,1 --tee-slot-count 3 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1,1 --tee-slot-count 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 

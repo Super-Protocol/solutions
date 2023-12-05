@@ -1,4 +1,4 @@
-name: Run minecraft-tunnel-client on SuperProtocol
+name: Run Test App tunnel-client on SuperProtocol
 
 on: workflow_dispatch
 
@@ -13,7 +13,7 @@ env:
   SOLUTION_SSL_KEY_FILE: ''
   SOLUTION_SSL_CERT_FILE: ''
   SOLUTION_BUILD_SCRIPT: ''
-  SOLUTION_NAME: minecraft
+  SOLUTION_NAME: superpotocol-test-app
 
 jobs:
   start-tunnel-client:
@@ -58,15 +58,15 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel client data
-        if: env.SOLUTION_NAME == 'minecraft'
+        if: env.SOLUTION_NAME == 'superpotocol-test-app'
         run: |
-          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/minecraft/scripts/prepare-solution.sh" >> $GITHUB_ENV
-          echo "SOLUTION_SERVER_TOKEN=${{ secrets.MINECRAFT_SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
+          echo "SOLUTION_BUILD_SCRIPT=scripts/prepare-solution.sh" >> $GITHUB_ENV
+          echo "SOLUTION_SERVER_TOKEN=${{ secrets.SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
 
-          echo "${{ secrets.MINECRAFT_SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
+          echo "${{ secrets.SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
           echo "SOLUTION_SSL_KEY_FILE=private.pem" >> $GITHUB_ENV
 
-          echo "${{ secrets.MINECRAFT_SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
+          echo "${{ secrets.SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
           echo "SOLUTION_SSL_CERT_FILE=certificate.crt" >> $GITHUB_ENV
 
       - name: Build solution
@@ -113,7 +113,7 @@ jobs:
                 fi
           fi
 
-          ./spctl workflows create --tee 1,1 --tee-slot-count 3 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1,1 --tee-slot-count 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 

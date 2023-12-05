@@ -1,0 +1,17 @@
+{
+    "interval": 300,
+    "dataKey": "BTC/USD",
+    "smartContractAddress": "DEPLOYED_ORACLE_ADDRESS",
+    "publisher": {
+        "pk": "PRIVATE_KEY_OF_PUBLISHER_WALLET",
+        "address": "ADDRESS_OF_PUBLISHER_WALLET"
+    },
+    "apiConfig": {
+        "endpoint": "https://rest.coinapi.io/v1/exchangerate/BTC/USD",
+        "auth": {
+            "header": "X-CoinAPI-Key",
+            "key": "API_KEY"
+        }
+    },
+    "debugMode": false
+}

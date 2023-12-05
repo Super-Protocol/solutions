@@ -1,0 +1,26 @@
+{
+    "name": "@superprotocol/oracle-samples@contract",
+    "license": "ISC",
+    "dependencies": {
+        "@nomiclabs/hardhat-ethers": "^2.2.3",
+        "@nomiclabs/hardhat-etherscan": "^3.1.7",
+        "dotenv": "^11.0.0",
+        "hardhat": "^2.18.2"
+    },
+    "devDependencies": {
+        "@super-protocol/eslint-config-typescript": "^1.0.3",
+        "@types/chai": "^4.2.21",
+        "@types/mocha": "^9.0.0",
+        "@types/node": "^16.10.3",
+        "chai": "^4.3.6",
+        "mocha": "^9.1.1",
+        "ts-node": "^10.9.1"
+    },
+    "scripts": {
+        "test": "npx hardhat test",
+        "prepare": "rm -rf ./dist && tsc",
+        "compile": "rm -rf ./artifacts && npx hardhat compile",
+        "eslint": "eslint --ignore-path .gitignore --ext .js,.ts .",
+        "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(ts|js|sol)\""
+    }
+}
