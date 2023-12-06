@@ -34,13 +34,13 @@ jobs:
 
       - name: Download SPCTL
         run: |
-          curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.6.8/spctl-linux-x64 -o ./spctl 
+          curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.8.2/spctl-linux-x64 -o ./spctl 
           chmod +x ./spctl
 
           SPCTL_CONFIG=$(echo "${{ secrets.SPCTL_CONFIG_BASE64 }}" | base64 --decode)
-          BASE_IMAGE_OFFER=5,2
-          TUNNEL_SERVER_OFFER=10,7
-          STORAGE_OFFER=20,17
+          BASE_IMAGE_OFFER=6,2
+          TUNNEL_SERVER_OFFER=10,9
+          STORAGE_OFFER=23,27
           echo "$SPCTL_CONFIG" > ./config.json
 
           echo "Spctl" version
@@ -72,7 +72,7 @@ jobs:
             fi
           fi
 
-          ./spctl workflows create --tee 1,1 --tee-slot-count 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 

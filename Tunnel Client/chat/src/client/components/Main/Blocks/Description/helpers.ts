@@ -16,9 +16,9 @@ export const content = [
 
 export const contentLinkBoxes = [
   {
-    title: 'Participate in Testnet 3',
-    text: 'This chat app is offered for deployment on the Super Protocol Testnet. Want to have your own chat instances and domain for 72 hours? Try it with the Marketplace or CLI! It’s easier than it sounds.',
-    hrefText: 'Learn About Testnet 3',
+    title: 'Participate in Testnet 4',
+    text: 'This chat app is offered for deployment on the Super Protocol Testnet and it can be yours too. Deploy it with the Marketplace GUI or CLI and have it on your own domain. It’s easier than it sounds.',
+    hrefText: 'Learn About Testnet 4',
     href: 'https://docs.superprotocol.com/testnet',
   },
   {
