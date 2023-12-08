@@ -4,7 +4,8 @@ dotenv.config({ path: path.join(__dirname, '/.env') });
 
 export const config = {
     mumbaiUrl: process.env.MUMBAI_URL,
-    deployerPrivateKey: process.env.PRIVATE_KEY,
+    mumbaiDeployerPrivateKey: process.env.MUMBAI_DEPLOYER_PRIVATE_KEY,
+    localhostDeployerPrivateKey: process.env.LOCALHOST_DEPLOYER_PRIVATE_KEY,
     ethereumApiKey: process.env.ETHEREUM_API_KEY ?? '',
     polygonApiKey: process.env.POLYGON_API_KEY ?? '',
 };
