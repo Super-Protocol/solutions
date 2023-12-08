@@ -24,6 +24,31 @@ jobs:
       repository-projects: read
 
     steps:
+      - name: Check secrets and variables
+        run: |
+          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+            echo "Error: GH_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SERVER_TOKEN }}" ]; then 
+            echo "Error: SOLUTION_SERVER_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SPCTL_CONFIG_BASE64 }}" ]; then 
+            echo "Error: SPCTL_CONFIG_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SSL_CERTIFICATE_BASE64 }}" ]; then 
+            echo "Error: SOLUTION_SSL_CERTIFICATE_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SSL_KEY_BASE64 }}" ]; then 
+            echo "Error: SOLUTION_SSL_KEY_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ vars.TUNNEL_SERVER_MRSIGNER }}" ]; then 
+            echo "Error: TUNNEL_SERVER_MRSIGNER variable is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ vars.TUNNEL_SERVER_MRENCLAVE }}" ]; then 
+            echo "Error: TUNNEL_SERVER_MRENCLAVE variable is missing. Workflow will fail."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -115,7 +140,7 @@ jobs:
                 fi
           fi
 
-          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 --min-rent-minutes 60 > workflow_result.txt
 
           cat workflow_result.tx
 
