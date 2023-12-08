@@ -51,12 +51,12 @@ export default {
         },
         local: {
             url: 'http://localhost:8545',
-            account: config.mumbaiDeployerPrivateKey,
+            account: config.localhostDeployerPrivateKey,
         },
         mumbai: {
             chainId: 80001,
             url: config.mumbaiUrl,
-            accounts: [config.localhostDeployerPrivateKey],
+            accounts: [config.mumbaiDeployerPrivateKey],
         },
     },
     etherscan: {
