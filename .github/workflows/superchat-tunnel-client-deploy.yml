@@ -26,7 +26,10 @@ jobs:
     steps:
       - name: Check secrets and variables
         run: |
-          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+          if [ -z "${{ secrets.CHAT_ENV }}" ]; then
+             echo "Error: CHAT_ENV secret is missing. Workflow will fail."
+          exit 1
+          elif [ -z "${{ secrets.GH_TOKEN }}" ]; then
             echo "Error: GH_TOKEN secret is missing. Workflow will fail."
             exit 1
           elif [ -z "${{ secrets.SUPERCHAT_SOLUTION_SERVER_TOKEN }}" ]; then 
@@ -94,6 +97,8 @@ jobs:
           echo "${{ secrets.SUPERCHAT_SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
           echo "SOLUTION_SSL_CERT_FILE=certificate.crt" >> $GITHUB_ENV
 
+          echo "${{ secrets.CHAT_ENV }}" | base64 --decode > Tunnel\ Client/chat/.env
+
       - name: Build solution
         run: |
           mkdir -p solution-data/content
@@ -146,7 +151,7 @@ jobs:
 
           echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
 
-          if grep ${{ env.SOLUTION_NAME }}= ${{ env.LAST_ORDER_FILENAME }};; then
+          if grep ${{ env.SOLUTION_NAME }}= ${{ env.LAST_ORDER_FILENAME }}; then
             sed -i "s/^${{ env.SOLUTION_NAME }}=.*$/${{ env.SOLUTION_NAME }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
             else
             echo "${{ env.SOLUTION_NAME }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
