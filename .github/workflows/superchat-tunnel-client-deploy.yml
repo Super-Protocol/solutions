@@ -27,8 +27,8 @@ jobs:
       - name: Check secrets and variables
         run: |
           if [ -z "${{ secrets.CHAT_ENV }}" ]; then
-             echo "Error: CHAT_ENV secret is missing. Workflow will fail."
-          exit 1
+            echo "Error: CHAT_ENV secret is missing. Workflow will fail."
+            exit 1
           elif [ -z "${{ secrets.GH_TOKEN }}" ]; then
             echo "Error: GH_TOKEN secret is missing. Workflow will fail."
             exit 1
@@ -88,7 +88,9 @@ jobs:
       - name: Prepare tunnel client data
         if: env.SOLUTION_NAME == 'superchat-tunnel-client'
         run: |
-          echo "SOLUTION_BUILD_SCRIPT=Tunnel\ Client/chat/scripts/prepare-solution.sh" >> $GITHUB_ENV
+          mkdir solution-build
+          cp -R Tunnel\ Client/chat/* solution-build/
+          echo "SOLUTION_BUILD_SCRIPT=solution-build/scripts/prepare-solution.sh" >> $GITHUB_ENV
           echo "SOLUTION_SERVER_TOKEN=${{ secrets.SUPERCHAT_SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
 
           echo "${{ secrets.SUPERCHAT_SOLUTION_SSL_KEY_BASE64 }}" | base64 --decode > private.pem
@@ -97,7 +99,7 @@ jobs:
           echo "${{ secrets.SUPERCHAT_SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
           echo "SOLUTION_SSL_CERT_FILE=certificate.crt" >> $GITHUB_ENV
 
-          echo "${{ secrets.CHAT_ENV }}" | base64 --decode > Tunnel\ Client/chat/.env
+          echo "${{ secrets.CHAT_ENV }}" | base64 --decode > solution-build/.env
 
       - name: Build solution
         run: |
