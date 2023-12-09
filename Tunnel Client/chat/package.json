@@ -7,8 +7,9 @@
     "start": "node ./dist/server.js",
     "lint": "next lint --fix",
     "build:next": "next build",
-    "build:server": "npx tsc --project tsconfig.server.json",
-    "build": "npm run build:server && npx cross-env APP_NODE_ENV=production npm run build:next"
+    "build:server": "tsc --project tsconfig.server.json",
+    "build": "npm run build:server && node fix-import.cjs && cross-env APP_NODE_ENV=production npm run build:next",
+    "install:build:docker": "docker build --platform linux/amd64 -f build.dockerfile -t chat-builder:latest . && docker run --platform linux/amd64 -it --rm -w /home/node -v ${PWD}:/home/node -v ~/.npmrc:/root/.npmrc chat-builder:latest bash -c 'npm ci && npm run build'"
   },
   "dependencies": {
     "@next/font": "^13.2.4",

@@ -9,7 +9,7 @@ env:
   BASE_IMAGE_OFFER: ''
   TUNNEL_SERVER_OFFER: ''
   STORAGE_OFFER: ''
-  SOLUTION_NAME: superpotocol-test-app
+  SOLUTION_NAME: superpotocol-test-app-tunnel-server
 
 jobs:
   start-tunnel-server:
@@ -20,6 +20,19 @@ jobs:
       repository-projects: read
 
     steps:
+      - name: Check secrets and variables
+        run: |
+          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+            echo "Error: GH_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SERVER_TOKEN }}" ]; then 
+            echo "Error: SOLUTION_SERVER_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SPCTL_CONFIG_BASE64 }}" ]; then 
+            echo "Error: SPCTL_CONFIG_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          fi
+
       - name: Get previous build for solution
         continue-on-error: true
         env:
@@ -51,7 +64,7 @@ jobs:
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
       - name: Prepare tunnel server data
-        if: env.SOLUTION_NAME == 'superpotocol-test-app'
+        if: env.SOLUTION_NAME == 'superpotocol-test-app-tunnel-server'
         run: |
           mkdir solution-data
           echo "${{ secrets.SOLUTION_SERVER_TOKEN }}" > solution-data/auth-token
@@ -72,15 +85,19 @@ jobs:
             fi
           fi
 
-          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_SERVER_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 --min-rent-minutes 60 > workflow_result.txt
+
+          cat workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 
           echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
 
-          if sed -n "/^${{ env.SOLUTION_NAME }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
+          if grep ${{ env.SOLUTION_NAME }}= ${{ env.LAST_ORDER_FILENAME }}; then
+            echo "Updating exitsed row ${{ env.SOLUTION_NAME }}"
             sed -i "s/^${{ env.SOLUTION_NAME }}=.*$/${{ env.SOLUTION_NAME }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
           else
+            echo "adding new row ${{ env.SOLUTION_NAME }}"
             echo "${{ env.SOLUTION_NAME }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
           fi
 

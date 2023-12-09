@@ -13,7 +13,7 @@ env:
   SOLUTION_SSL_KEY_FILE: ''
   SOLUTION_SSL_CERT_FILE: ''
   SOLUTION_BUILD_SCRIPT: ''
-  SOLUTION_NAME: superpotocol-test-app
+  SOLUTION_NAME: superpotocol-test-app-tunnel-client
 
 jobs:
   start-tunnel-client:
@@ -24,6 +24,31 @@ jobs:
       repository-projects: read
 
     steps:
+      - name: Check secrets and variables
+        run: |
+          if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+            echo "Error: GH_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SERVER_TOKEN }}" ]; then 
+            echo "Error: SOLUTION_SERVER_TOKEN secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SPCTL_CONFIG_BASE64 }}" ]; then 
+            echo "Error: SPCTL_CONFIG_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SSL_CERTIFICATE_BASE64 }}" ]; then 
+            echo "Error: SOLUTION_SSL_CERTIFICATE_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ secrets.SOLUTION_SSL_KEY_BASE64 }}" ]; then 
+            echo "Error: SOLUTION_SSL_KEY_BASE64 secret is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ vars.TUNNEL_SERVER_MRSIGNER }}" ]; then 
+            echo "Error: TUNNEL_SERVER_MRSIGNER variable is missing. Workflow will fail."
+            exit 1
+          elif [ -z "${{ vars.TUNNEL_SERVER_MRENCLAVE }}" ]; then 
+            echo "Error: TUNNEL_SERVER_MRENCLAVE variable is missing. Workflow will fail."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -57,8 +82,8 @@ jobs:
           echo "TUNNEL_CLIENT_OFFER=$TUNNEL_CLIENT_OFFER" >> $GITHUB_ENV
           echo "STORAGE_OFFER=$STORAGE_OFFER" >> $GITHUB_ENV
 
-      - name: Prepare tunnel client data
-        if: env.SOLUTION_NAME == 'superpotocol-test-app'
+      - name: Prepare tunnel client variables
+        if: env.SOLUTION_NAME == 'superpotocol-test-app-tunnel-client'
         run: |
           echo "SOLUTION_BUILD_SCRIPT=scripts/prepare-solution.sh" >> $GITHUB_ENV
           echo "SOLUTION_SERVER_TOKEN=${{ secrets.SOLUTION_SERVER_TOKEN }}" >> $GITHUB_ENV
@@ -69,7 +94,7 @@ jobs:
           echo "${{ secrets.SOLUTION_SSL_CERTIFICATE_BASE64 }}" | base64 --decode > certificate.crt
           echo "SOLUTION_SSL_CERT_FILE=certificate.crt" >> $GITHUB_ENV
 
-      - name: Build solution
+      - name: Prepare tunnel client data
         run: |
           mkdir -p solution-data/content
           chmod +x ${{ env.SOLUTION_BUILD_SCRIPT }}
@@ -100,6 +125,8 @@ jobs:
           tar -czf $SOLUTION_DATA_FILE.tar.gz -C solution-data/ .
           ./spctl files upload $SOLUTION_DATA_FILE.tar.gz --output $SOLUTION_DATA_FILE.json --filename $SOLUTION_DATA_FILE.tar.gz
 
+          cat $SOLUTION_DATA_FILE.json
+
           echo "SOLUTION_DATA_FILE=$SOLUTION_DATA_FILE.json" >> $GITHUB_ENV
 
       - name: Run tunnel client for ${{ env.SOLUTION_NAME }}
@@ -113,13 +140,15 @@ jobs:
                 fi
           fi
 
-          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 > workflow_result.txt
+          ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 --min-rent-minutes 60 > workflow_result.txt
+
+          cat workflow_result.tx
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 
           echo "ORDER_ID=$ORDER_ID" >> $GITHUB_ENV
 
-          if sed -n "/^${{ env.SOLUTION_NAME }}=/p" ${{ env.LAST_ORDER_FILENAME }}; then
+          if grep ${{ env.SOLUTION_NAME }}= ${{ env.LAST_ORDER_FILENAME }}; then
             sed -i "s/^${{ env.SOLUTION_NAME }}=.*$/${{ env.SOLUTION_NAME }}=$(echo $ORDER_ID)/" ${{ env.LAST_ORDER_FILENAME }}
             else
             echo "${{ env.SOLUTION_NAME }}=$ORDER_ID" >> ${{ env.LAST_ORDER_FILENAME }}
