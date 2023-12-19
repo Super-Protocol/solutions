@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  build:
+    image: nikolaik/python-nodejs:python3.10-nodejs16-bullseye
+    container_name: sp-x509-builder
+    platform: linux/amd64
+    volumes:
+      - ./:/sp/run
+    working_dir: /sp/run
+    entrypoint: ['/bin/bash', '-c']
+    command:
+      - |
+        apt-get install g++ make
+        wget https://dl.google.com/go/go1.18.10.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.18.10.linux-amd64.tar.gz && rm go1.18.10.linux-amd64.tar.gz
+        export PATH="$PATH:/usr/local/go/bin"
+        npm i
+        npx hardhat compile
