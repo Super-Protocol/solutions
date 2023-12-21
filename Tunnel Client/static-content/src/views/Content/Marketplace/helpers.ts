@@ -23,5 +23,5 @@ export const list = [
 
 export const footer = {
   text: 'Learn About Marketplace',
-  href: 'https://docs.superprotocol.com/testnet/marketplace',
+  href: 'https://docs.superprotocol.com/developers/marketplace',
 };

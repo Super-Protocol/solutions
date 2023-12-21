@@ -40,7 +40,7 @@ export const MobileMenu = ({ onClick }: MobileMenuProps) => {
           <div className={classes.icon4} />
         </Link>
       </Box>
-      <Link href="https://superprotocol.typeform.com/testnet">
+      <Link href="https://docs.superprotocol.com/testnet">
         <Box className={classes.button} alignItems="center" justifyContent="center">
           Join Testnet
         </Box>

@@ -15,7 +15,7 @@
     "@next/font": "^13.2.4",
     "@super-protocol/addons-tee": "^0.8.7",
     "@super-protocol/dto-js": "^0.0.28",
-    "@super-protocol/sdk-js": "0.15.2-beta.0",
+    "@super-protocol/sdk-js": "2.0.2-beta.1",
     "@types/react": "18.0.29",
     "@types/react-dom": "18.0.11",
     "bcrypt": "^5.1.0",
@@ -31,7 +31,7 @@
     "jsonwebtoken": "^9.0.0",
     "lru-cache": "^9.1.2",
     "mongoose": "^7.1.0",
-    "next": "13.2.4",
+    "next": "13.4.9",
     "next-images": "^1.8.5",
     "nextjs-progressbar": "^0.0.16",
     "p-queue": "^6.6.2",
@@ -50,7 +50,8 @@
     "use-debounce": "^9.0.3",
     "uuid": "^9.0.0",
     "xss": "^1.0.14",
-    "yup": "^1.0.2"
+    "yup": "^1.0.2",
+    "net": "^1.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
