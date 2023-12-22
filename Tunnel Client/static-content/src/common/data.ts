@@ -15,8 +15,8 @@ export const links = [
     href: 'https://docs.superprotocol.com/faq',
   },
   {
-    id: 'contact-us',
-    title: 'Contact Us',
-    href: 'https://superprotocol.com/contact',
+    id: 'developers',
+    title: 'Developers',
+    href: 'https://docs.superprotocol.com/developers/',
   },
 ];

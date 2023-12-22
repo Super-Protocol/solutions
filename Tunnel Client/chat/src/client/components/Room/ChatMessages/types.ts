@@ -12,4 +12,5 @@ export interface ChatMessagesProps {
 
 export interface MessageRender extends Message {
   showSender: boolean;
+  showTime: boolean;
 }

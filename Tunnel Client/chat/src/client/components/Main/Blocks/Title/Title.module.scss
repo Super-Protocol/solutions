@@ -72,6 +72,12 @@
   display: none;
 }
 
+.img {
+  position: relative;
+  height: 466px;
+  min-width: 443px;
+}
+
 @media screen and (max-width: 1275px) {
   .content {
     padding: 0 20px;
@@ -165,9 +171,9 @@
     width: auto;
   }
   .img {
-    margin-top: 98px;
-    width: 100%;
-    height: auto;
+    margin-top: 78px;
+    min-width: 346px;
+    height: 335px;
   }
   .linkGuide {
     display: none;

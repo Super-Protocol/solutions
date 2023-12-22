@@ -6,6 +6,6 @@ const getUrlString = () => (isSSR() ? '' : `${window.location.protocol}//${windo
 
 export const getTwitterLink = () => {
   const host = encodeURIComponent(getUrlString());
-  const text = encodeURIComponent('💥Testnet Phase 3 is here – the new release from @Super__Protocol, the confidential Web3 super cloud! Introducing Super Chat: a decentralized group chat secured by #confidentialcomputing. DM me for password or create your own chat room.');
+  const text = encodeURIComponent('💥Testnet Phase 4 is here – the new release from @Super__Protocol, the confidential Web3 cloud! Developers can now deploy their own solutions, like this Super Chat app, secured by #confidentialcomputing. Check it out!');
   return `https://twitter.com/intent/tweet?text=${text}&url=${host}`;
 };

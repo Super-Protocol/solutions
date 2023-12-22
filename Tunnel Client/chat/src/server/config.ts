@@ -22,6 +22,7 @@ export const getConfig = () => ({
     secretAccessKey: process.env.S3_ACCESS_SECRET_KEY,
     endpoint: process.env.S3_ENDPOINT || 'https://gateway.storjshare.io',
     bucket: process.env.STORJ_BUCKET,
+    region: process.env.S3_REGION || 'us-east-1',
   },
   jwt: {
     expires: 14, // days

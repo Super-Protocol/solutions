@@ -18,24 +18,24 @@ export const ChatMessages = memo(forwardRef<VirtuosoHandle, ChatMessagesProps>((
 ) => {
   const messagesWithSender = useMemo(
     () => messages.map((message, index, list) => {
-      return list[index - 1]?.senderId !== message.senderId
-        ? { ...message, showSender: true }
-        : { ...message, showSender: false };
+      const showSender = list[index - 1]?.senderId !== message.senderId;
+      const showTime = showSender || index === 0 || isMoreThenMinutes(message?.createdAt, messages[index - 1]?.createdAt);
+      return { ...message, showSender, showTime };
     }),
     [messages],
   );
 
   const itemContent = useCallback(
-    (index: number, item: MessageRender) => {
+    (_: number, item: MessageRender) => {
       const {
-        id, createdAt, message, senderName, showSender,
+        id, createdAt, message, senderName, showSender, showTime,
       } = item;
       return (
         <Box direction="column">
           {showSender && <ChatMessageSender senderName={senderName} />}
           <ChatMessage
             isSent={!!id}
-            showTime={index === 0 || isMoreThenMinutes(createdAt, messages[index - 1]?.createdAt)}
+            showTime={showTime}
             classNameWrap={classes.message}
             text={message}
             createdAt={createdAt}
@@ -43,7 +43,7 @@ export const ChatMessages = memo(forwardRef<VirtuosoHandle, ChatMessagesProps>((
         </Box>
       );
     },
-    [messages],
+    [],
   );
 
   return (

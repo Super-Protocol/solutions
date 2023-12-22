@@ -34,12 +34,13 @@ export const Title = (props: TitleProps) => {
           <div className={classes.text}>{text}</div>
           <ButtonsJoinChat {...props} />
         </Box>
-        <Image
-          src="/chat_bg.webp"
-          alt=""
-          width={443}
-          height={466}
-        />
+        <Box className={classes.img}>
+          <Image
+            src="/chat_bg.webp"
+            alt=""
+            fill
+          />
+        </Box>
         <Link
           href={hrefGuide}
           target="_blank"
