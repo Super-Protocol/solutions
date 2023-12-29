@@ -7,15 +7,18 @@ services:
     platform: linux/amd64
     volumes:
       - ./:/sp/run
-    working_dir: /sp/run
     entrypoint: ['/bin/bash', '-c']
     command:
       - |
         apt-get install g++ make
         wget https://dl.google.com/go/go1.18.10.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.18.10.linux-amd64.tar.gz && rm go1.18.10.linux-amd64.tar.gz
         export PATH="$PATH:/usr/local/go/bin"
-        npm install
+        mkdir /app 
+        cp -r /sp/run/* /app
+        cd /app
+        npm ci
         npm run build
+        cp -r node_modules .next dist /sp/run
 
   chat:
     image: node:16-buster
