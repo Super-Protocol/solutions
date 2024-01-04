@@ -17,6 +17,6 @@ export const linksDoc = [
   },
   {
     text: 'Read CLI Deployment Guides',
-    href: 'https://docs.dev.superprotocol.com/developers/deployment_guides',
+    href: 'https://docs.superprotocol.com/developers/deployment_guides',
   },
 ];
