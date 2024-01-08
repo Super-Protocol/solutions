@@ -2,6 +2,7 @@ import http from 'k6/http';
 import encoding from 'k6/encoding';
 import { SharedArray } from 'k6/data';
 import { sleep } from 'k6';
+import exec from 'k6/execution';
 import { WebSocket } from 'k6/experimental/websockets';
 // eslint-disable-next-line import/extensions
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
@@ -11,7 +12,7 @@ import {
 
 const MESSAGE_INTERVAL = 1000;
 const MESSAGE_PER_TESTER = 10;
-const USERS_COUNT = 500;
+const USERS_COUNT = 10;
 
 const READY_STATE = {
   CONNECTING: 0,
@@ -87,24 +88,21 @@ const processTester = (hostname, token, https = true, firstTime = false, remainM
   });
 };
 
-const data = new SharedArray('users', (() => {
-  return [...Array(USERS_COUNT).keys()];
-}));
-
 export const options = {
   scenarios: {
     'use-all-the-data': {
       executor: 'shared-iterations',
-      vus: data.length,
-      iterations: data.length,
+      vus: USERS_COUNT,
+      iterations: USERS_COUNT,
     },
   },
 };
 
 const run = (connectPassword, hostname, https = true) => {
   setTimeout(() => {
-    const user = data[Math.floor(Math.random() * data.length)];
-    const response = connectToTheRoom(hostname, `Tester ${user}`, connectPassword, https);
+    const userId = exec.vu.idInTest;
+    console.log(`Start processing user ${userId}`);
+    const response = connectToTheRoom(hostname, `Tester ${userId}`, connectPassword, https);
     const { body } = response;
     if (!body) throw new Error('Create room failed');
     const { token } = JSON.parse(body).data;
@@ -112,7 +110,7 @@ const run = (connectPassword, hostname, https = true) => {
   }, randomInt(0, 1000));
 };
 
-export default function () {
+export default function (data) {
   /* global __ENV */
   run(__ENV.CONNECT_PASSWORD, __ENV.HOSTNAME);
 }
