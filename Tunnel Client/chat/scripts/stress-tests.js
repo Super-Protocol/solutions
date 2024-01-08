@@ -10,8 +10,15 @@ import {
 } from 'k6/experimental/timers';
 
 const MESSAGE_INTERVAL = 1000;
-const CLOSE_SOCKET_INTERVAL = 10000;
-const USERS_COUNT = 20;
+const MESSAGE_PER_TESTER = 10;
+const USERS_COUNT = 500;
+
+const READY_STATE = {
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3
+};
 
 const parseJwt = (token) => {
   const parts = token.split('.');
@@ -31,43 +38,52 @@ const connectToTheRoom = (url, userName, connectPassword, https = true) => {
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const DEFAULT_MESSAGE = '{"algo":"AES","encoding":"base64","cipher":"aes-256-gcm","ciphertext":"c5hwCIc0+94M/M9hy2VQl0xzJ1BAr8iQbzFt3lpV2bZErQDFycahKUEn/+27qlXdGoPaloE0DyAMuCUuTvFZhZUh3814D482u94YlJvSq5bzkxE8YcSoYYx1Ii/pwoJP/cRqFs7KcW2zWTdM0fqaXA8KRbJCkU9z8QbaJPUI0xQ0n2XjPywYG0HccN8mOeP7KjTiNT8TSG6i90VpTR6s9STPx7LGeuXdflIYyS4OuTw7QSGXJ8l5MK1WItypke0OL28a8qiSnUdQ2YRwMg06mb1k4Dc+KyQ2LH7DoyPTvOeao4samN/ZtW04OXR9wzSJKlOOS4v/y9Tgsi37+oi9w/3nSOAhCNHjuFqsgWtye0x8ovk/hueQM0FwvcOqPYZ3XyfT7jT41qVmlfFpV07ICeDD2763hAF4tukMpLy7qDTzU3mugT5UE0eALGwKLBcWviZcUX+TzaX0AkSNli1XKLTOmoRHKxVzEzEaphfJYrR1vJaOvYPEwDztpaFdS5phvm9QSJOAvLpzGXLr//VEUZTjJ1hINC3+JK481UmgqovB4B2StFqOXqGoj+p26uzLs31XaOBhBvMORyvKi0Yp8KoErSPq4RYhJlgtkjoFmt6JbjhksIgUncERH8BDDSrxYkYgcXoyQSeeGBmC0HhPoBte","iv":"q3Rt0N0+fC2t/8lB","mac":"AJ2LIlTeFjwfBsXvaCKIAg=="}';
+const DEFAULT_MESSAGE = '{"algo":"AES","encoding":"base64","cipher":"aes-256-gcm","ciphertext":"W7sZULdos1kJQPxvZPHvp4IVDw4gvrk1iLKYD1DiBn3ZN700SbZhYoAFY5JK4EgLXQo8BRsrbXz485CcCQYSMrnmR0dNYfni32b4ZQV+ASLSA6nvSRZjGOUSE8zwHrpyImt0q3ZxGnfuDkUGakUYTVWEk7SDwbCpW2Bo3UOYCNK384prQqboGTShJDSE5wUOuZ1wXQ8lMautbkHreFhmiv7Dub4f53s4Pf7OI7kp3aBdVmVBM/q16k1Ey0krjyvKZEjW9DrDElg12OISrL9T0bPEzbRjcaK0zqw8/xMVRIbT0YlYO9EAbR4E1gtD2kL+MxBBIm1Y9ARq9hXN0Dej693rs7n/0L/5Djki42njvgWUO1NBasVv7fHeRRgQuYMMeJWmAdUhzkkurGv6yzJ17dIOjcjlbQwVuyBtU1j8MdKQXrH7NGMKo8SOhCUEJCbGdh+9od9SstxLDRlG9rqJjvQQye0Gced17rDf8d+EafBiaKSQzmmZu5LJr1TK05npJfs6BJop8kfozOJa3DPdzSLHOtH9B9PziPKcMtePqeZR+Pnnx1/z+pBnZgX1rtHrCKtcaz8PTqoDClcfsJwfNJxkJLNh7p2WNcYx76Ex1xMpDc+HG7L5usaUr2I9SPz04dpbincmfRdDhk9tjZ0vDt0R","iv":"PkfagOLG4Kn+/VUG","mac":"AMBgpruwL8Fmz8u7idG0eg=="}';
 
 const generateMessage = () => {
   return `42["message", ${JSON.stringify({ encryption: DEFAULT_MESSAGE, messageClientId: uuidv4() })}]`;
 };
 
-const createSocket = (hostname, token, https = true) => {
+const processTester = (hostname, token, https = true, firstTime = false, remainMessages = MESSAGE_PER_TESTER) => {
   const url = `${https ? 'wss' : 'ws'}://${hostname}/socket.io/?token=${token}&EIO=4&transport=websocket`;
   const ws = new WebSocket(url);
   if (!token) throw new Error('Token required');
   const { userName } = parseJwt(token) || {};
-  let closeTimeoutId;
   let sendIntervalId;
+
   ws.addEventListener('open', () => {
-    ws.send('40');
-    sleep(1);
-    ws.send(`42["joinRoom", "${userName}"]`);
+    if (firstTime && ws.readyState && ws.readyState == READY_STATE.OPEN) {
+      ws.send('40');
+      sleep(1);
+      ws.send(`42["joinRoom", "${userName}"]`);
+    }
+
     sendIntervalId = setInterval(() => {
-      console.log(`user ${userName} send message`);
-      ws.send(generateMessage());
+      if (ws.readyState && ws.readyState == READY_STATE.OPEN) {
+        console.log(`user ${userName} send message with remain ${remainMessages}`);
+        ws.send(generateMessage());
+        remainMessages = remainMessages - 1;
+        if (remainMessages == 0) {
+          ws.send('42["leaveRoom"]');
+          ws.close();
+          return;
+        }
+      }
     }, MESSAGE_INTERVAL);
-    closeTimeoutId = setTimeout(() => {
-      clearInterval(sendIntervalId);
-      ws.send('42["leaveRoom"]');
-      ws.close();
-      console.log(`force socket close ${userName}`);
-    }, CLOSE_SOCKET_INTERVAL);
   });
+
   ws.addEventListener('close', () => {
-    console.log('socket close');
-    clearTimeout(closeTimeoutId);
+    //console.log('socket close');
     clearInterval(sendIntervalId);
   });
+
   ws.addEventListener('error', (e) => {
-    console.log('socket error', e);
-    clearTimeout(closeTimeoutId);
+    //console.log('socket error', e);
     clearInterval(sendIntervalId);
+
+    if (remainMessages > 0) {
+      return processTester(hostname, token, http, false, remainMessages);
+    }
   });
 };
 
@@ -92,7 +108,7 @@ const run = (connectPassword, hostname, https = true) => {
     const { body } = response;
     if (!body) throw new Error('Create room failed');
     const { token } = JSON.parse(body).data;
-    createSocket(hostname, token, https);
+    processTester(hostname, token, https, true);
   }, randomInt(0, 1000));
 };
 
