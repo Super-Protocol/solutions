@@ -7,7 +7,6 @@ services:
     platform: linux/amd64
     volumes:
       - ./:/sp/run
-    working_dir: /sp/run
     entrypoint: ['/bin/bash', '-c']
     command:
       - |
