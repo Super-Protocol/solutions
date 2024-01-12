@@ -14,5 +14,10 @@ services:
         apt-get install g++ make
         wget https://dl.google.com/go/go1.18.10.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.18.10.linux-amd64.tar.gz && rm go1.18.10.linux-amd64.tar.gz
         export PATH="$PATH:/usr/local/go/bin"
+        mkdir -p /app
+        shopt -s dotglob
+        cp -r /sp/run/* /app
+        cd /app
         npm i
         npm run build
+        cp -ru /app/* /sp/run
