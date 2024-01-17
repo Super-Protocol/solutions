@@ -142,7 +142,7 @@ jobs:
 
           ./spctl workflows create --tee 1 --solution ${{ env.BASE_IMAGE_OFFER }} --solution ${{ env.TUNNEL_CLIENT_OFFER  }} --data ${{ env.SOLUTION_DATA_FILE }} --storage ${{ env.STORAGE_OFFER }} --orders-limit 10000 --min-rent-minutes 60 > workflow_result.txt
 
-          cat workflow_result.tx
+          cat workflow_result.txt
 
           ORDER_ID=$(cat workflow_result.txt | grep -oP '\["\K\d+(?="\])') 
 
