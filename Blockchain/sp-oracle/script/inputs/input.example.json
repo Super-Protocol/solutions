@@ -7,11 +7,7 @@
         "address": "ADDRESS_OF_PUBLISHER_WALLET"
     },
     "apiConfig": {
-        "endpoint": "https://rest.coinapi.io/v1/exchangerate/BTC/USD",
-        "auth": {
-            "header": "X-CoinAPI-Key",
-            "key": "API_KEY"
-        }
+        "endpoint": "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=USD&apikey=YOUR_API_KEY"
     },
     "debugMode": false
 }
