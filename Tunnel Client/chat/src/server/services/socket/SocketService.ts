@@ -233,7 +233,6 @@ export class SocketService {
       socket.emit('getCurrentUser', savedUser);
       socket.emit('getRoomStatus', RoomStatus.AVAILABLE);
       socket.emit('getRoomUsers', room.users);
-      socket.emit('getRoomMessages', room.messages);
       this.logger.info({ socketId: socket?.id, roomId }, 'join room socket');
     } catch (err) {
       this.logger.error({ err }, 'join room socket');
