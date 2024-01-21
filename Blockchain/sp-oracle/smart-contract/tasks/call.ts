@@ -8,7 +8,7 @@ task('process-a', 'Call method processA()')
         const caller = signers[0];
 
         const app = await hre.ethers.getContractAt('App', address);
-        const answer = await app.connect(caller).processA().call();
+        const answer = await app.connect(caller).processA();
 
         console.log('Tx result:', answer);
     });

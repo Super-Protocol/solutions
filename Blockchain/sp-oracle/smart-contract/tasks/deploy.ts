@@ -32,6 +32,17 @@ task('deploy-mock', 'Deploy mock contract')
         console.log('Publisher mock address:', app.address);
     });
 
+task('deploy-x509-mock', 'Deploy mock x509 contract')
+    .setAction(async (args, hre) => {
+        const signers = await hre.ethers.getSigners();
+        const deployer = signers[0];
+    
+        const app = await deployContract(hre, 'VerificatorMock', deployer);
+    
+        console.log('x509 mock address:', app.address);
+      }
+    );
+
 task('deploy-oracle', 'Deploy oracle contract')
     .addParam('publishers', 'Publishers addresses (comma separated)')
     .addParam('verifier', 'Verifier smart-contract address')

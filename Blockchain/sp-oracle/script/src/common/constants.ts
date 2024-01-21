@@ -1,4 +1,7 @@
-export const HTTPS_NODE_URL = 'https://mumbai.polygon.superprotocol.com/hesoyam';
+export const HTTPS_NODE_URL =
+  process.env.NODE_ENV === 'test'
+    ? 'http://blockchain:8545'
+    : 'https://mumbai.polygon.superprotocol.com/hesoyam';
 export const GAS_LIMIT = 10_000_000;
 export const ORACLE_ABI = [
   {

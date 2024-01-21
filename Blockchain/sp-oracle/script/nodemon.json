@@ -1,0 +1,6 @@
+{
+  "exec": "npm run start:watch:debug",
+  "ext": "ts,json",
+  "verbose": false,
+  "watch": ["./src", "./inputs"]
+}

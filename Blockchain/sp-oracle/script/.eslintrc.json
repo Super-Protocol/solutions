@@ -1,6 +1,3 @@
 {
-    "extends": ["@super-protocol/eslint-config-typescript/eslint-config.js"],
-    "parserOptions": {
-        "project": "./script/tsconfig.json"
-    }
+  "extends": ["@super-protocol/eslint-config-typescript/eslint-config.js"]
 }

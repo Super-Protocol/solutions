@@ -1,36 +1,39 @@
 {
-    "name": "@super-protocol/oracle-sample",
-    "version": "0.0.1",
-    "main": "run/dist/index.js",
-    "files": [
-        "dist/**/*"
-    ],
-    "repository": "https://github.com/Super-Protocol/sp-oracle-sample",
-    "author": "Super Protocol",
-    "license": "ISC",
-    "engines": {
-        "node": ">=16.18",
-        "npm": ">=8.19.2"
-    },
-    "scripts": {
-        "lint": "eslint --ext .ts src",
-        "lint:fix": "eslint --ext .ts src --fix",
-        "clean": "rm -rf ./run/",
-        "build": "npm run clean && tsc --p ./tsconfig.build.json && cp -r ./node_modules ./run/node_modules",
-        "start": "node ./run/dist/index.js"
-    },
-    "devDependencies": {
-        "@super-protocol/eslint-config-typescript": "^1.0.3",
-        "@types/jest": "^29.5.7",
-        "@types/node": "^16.10.3",
-        "ts-jest": "^29.1.1"
-    },
-    "dependencies": {
-        "@super-protocol/sdk-js": "1.0.1-beta.17",
-        "@super-protocol/tee-lib": "^0.2.6",
-        "@types/asn1js": "3.0.7",
-        "axios": "1.4.0",
-        "fs": "^0.0.1-security",
-        "web3": "4.0.3"
-    }
+  "name": "@super-protocol/oracle-sample",
+  "version": "0.0.1",
+  "main": "run/dist/index.js",
+  "files": [
+    "dist/**/*"
+  ],
+  "repository": "https://github.com/Super-Protocol/sp-oracle-sample",
+  "author": "Super Protocol",
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.18",
+    "npm": ">=8.19.2"
+  },
+  "scripts": {
+    "lint": "eslint --ext .ts src",
+    "lint:fix": "eslint --ext .ts src --fix",
+    "clean": "rm -rf ./run/",
+    "build": "npm run clean && tsc --p ./tsconfig.build.json && cp -r ./node_modules ./run/node_modules",
+    "start": "node ./run/dist/index.js",
+    "start:watch:debug": "tsc --p ./tsconfig.build.json && node --inspect=0.0.0.0:9229 ./run/dist/index.js",
+    "nodemon": "nodemon"
+  },
+  "devDependencies": {
+    "@super-protocol/eslint-config-typescript": "^1.0.3",
+    "@types/jest": "^29.5.7",
+    "@types/node": "^16.10.3",
+    "nodemon": "^3.0.3",
+    "ts-jest": "^29.1.1"
+  },
+  "dependencies": {
+    "@super-protocol/sdk-js": "1.0.1-beta.17",
+    "@super-protocol/tee-lib": "^0.2.6",
+    "@types/asn1js": "3.0.7",
+    "axios": "1.4.0",
+    "fs": "^0.0.1-security",
+    "web3": "4.0.3"
+  }
 }

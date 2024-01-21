@@ -1,22 +1,18 @@
 import { promises } from 'fs';
 
-import { TeeDeviceService, ZeroTeeDeviceService, ITeeDeviceService } from '@super-protocol/tee-lib';
-import { IQuoteProvider } from '../common/intrefaces';
+import { TeeDeviceService, ITeeDeviceService } from '@super-protocol/tee-lib';
+import { IQuoteProvider } from '../../common/intrefaces';
 
 class QuoteProvider implements IQuoteProvider {
   private initialiazed: boolean;
-  private debugMode: boolean;
   private teeDeviceService: ITeeDeviceService;
 
-  constructor(debugMode: boolean) {
-    this.debugMode = debugMode;
+  constructor() {
     this.initialiazed = false;
-    this.teeDeviceService = debugMode ? new ZeroTeeDeviceService({}) : new TeeDeviceService({});
+    this.teeDeviceService = new TeeDeviceService({});
   }
 
   private async validateMode(): Promise<void> {
-    if (this.debugMode) return;
-
     try {
       await promises.access('/dev/attestation/report');
     } catch (error) {
