@@ -4,6 +4,7 @@ import { prepareRootCertificates } from './prepareCertificates';
 import { deployContract } from './deployContract';
 import { prepareInputConfig } from './prepareInputConfig';
 import { saveTestAppCommands } from './saveTestAppCommands';
+import quoteMock from '../../shared/quoteMock.json';
 
 let healthcheckServer: http.Server;
 const healthcheckServerPort = 9000;
@@ -26,9 +27,7 @@ async function prepareBlockchain(): Promise<void> {
   const verifierAddress = await deployContract(deployVerifierCommand);
   console.log(`Verifier successfully deployed, Address: ${verifierAddress}`);
 
-  const mrEnclave = '0c94dde31a1d80a945a09ff67507fed8b497e04bd1326e547ab7fa977aa651c2';
-  const mrSigner = 'c12d2970dfed19aa0cedd7a472c463f89c12a0580b49b54882cc4da7b2dc90c3';
-  const deployOracleCommand = `npx hardhat deploy-oracle --publishers ${account.address} --verifier ${verifierAddress} --enclave ${mrEnclave} --signer ${mrSigner} --network localhost`;
+  const deployOracleCommand = `npx hardhat deploy-oracle --publishers ${account.address} --verifier ${verifierAddress} --enclave ${quoteMock.mrEnclave} --signer ${quoteMock.mrSigner} --network localhost`;
   const oracleAddress = await deployContract(deployOracleCommand);
   console.log(`Oracle successfully deployed, Address: ${oracleAddress}`);
 

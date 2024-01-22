@@ -1,15 +1,14 @@
 import { promises } from 'fs';
 
-import { TeeDeviceService, ITeeDeviceService } from '@super-protocol/tee-lib';
+import { ITeeDeviceService } from '@super-protocol/tee-lib';
 import { IQuoteProvider } from '../../common/intrefaces';
 
 class QuoteProvider implements IQuoteProvider {
   private initialiazed: boolean;
-  private teeDeviceService: ITeeDeviceService;
+  private teeDeviceService!: ITeeDeviceService;
 
   constructor() {
     this.initialiazed = false;
-    this.teeDeviceService = new TeeDeviceService({});
   }
 
   private async validateMode(): Promise<void> {
@@ -22,6 +21,9 @@ class QuoteProvider implements IQuoteProvider {
 
   public async initialize(): Promise<void> {
     await this.validateMode();
+    const { TeeDeviceService } = await import('@super-protocol/tee-lib');
+
+    this.teeDeviceService = new TeeDeviceService({});
     this.initialiazed = true;
   }
 
