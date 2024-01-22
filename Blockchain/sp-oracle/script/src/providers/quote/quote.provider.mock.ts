@@ -1,7 +1,7 @@
 import { IQuoteProvider } from '../../common/intrefaces';
 
 class QuoteProviderMock implements IQuoteProvider {
-  public initialiaze(): Promise<void> {
+  public initialize(): Promise<void> {
     return Promise.resolve();
   }
 

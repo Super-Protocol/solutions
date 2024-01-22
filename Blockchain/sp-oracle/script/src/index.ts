@@ -41,7 +41,7 @@ async function start(): Promise<void> {
   console.log('Exchange rate service created');
 
   const quoteProvider = getQuoteProvider();
-  await quoteProvider.initialiaze();
+  await quoteProvider.initialize();
   console.log('Quote provider created');
 
   const pubService = new PublisherService(HTTPS_NODE_URL, config, btcUsdRateApi, quoteProvider);

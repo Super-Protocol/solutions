@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "inlineSourceMap": true,
     "incremental": true,
-    "tsBuildInfoFile": "run/dis/tsconfig.build.tsbuildinfo"
+    "tsBuildInfoFile": "run/dist/tsconfig.build.tsbuildinfo"
   },
   "include": ["src/**/*", "test/**/*"]
 }

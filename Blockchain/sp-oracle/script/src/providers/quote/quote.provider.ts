@@ -20,7 +20,7 @@ class QuoteProvider implements IQuoteProvider {
     }
   }
 
-  public async initialiaze(): Promise<void> {
+  public async initialize(): Promise<void> {
     await this.validateMode();
     this.initialiazed = true;
   }
