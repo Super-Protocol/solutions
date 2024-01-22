@@ -31,6 +31,7 @@ services:
       - INPUT_DIR=/app/inputs
     volumes:
       - ../smart-contract:/app
+      - ../../sp-x509:/app/verifier
       - ./inputs:/app/inputs
     entrypoint: ['node', 'dist/blockchainServer/index.js']
     healthcheck:

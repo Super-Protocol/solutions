@@ -22,12 +22,12 @@ async function prepareBlockchain(): Promise<void> {
   const account = await startBlockChain();
   console.log('Blockchain successfully started!');
 
-  const deployVerifierCommand = `npx hardhat deploy-x509-mock --network localhost`;
+  const deployVerifierCommand = `cd verifier && npx hardhat deploy --cert ./intel-root-cert.pem --network localhost`;
   const verifierAddress = await deployContract(deployVerifierCommand);
   console.log(`Verifier successfully deployed, Address: ${verifierAddress}`);
 
-  const mrEnclave = '4d42d7b15b5acbcab74d10fa9192829af91c1a2b3d341bfe0fa7a02b547b34f0';
-  const mrSigner = '4a5cb479b8a30fa3821b88aa29bad04788ea006a9e09925bf3ec36398fc9d64b';
+  const mrEnclave = '0c94dde31a1d80a945a09ff67507fed8b497e04bd1326e547ab7fa977aa651c2';
+  const mrSigner = 'c12d2970dfed19aa0cedd7a472c463f89c12a0580b49b54882cc4da7b2dc90c3';
   const deployOracleCommand = `npx hardhat deploy-oracle --publishers ${account.address} --verifier ${verifierAddress} --enclave ${mrEnclave} --signer ${mrSigner} --network localhost`;
   const oracleAddress = await deployContract(deployOracleCommand);
   console.log(`Oracle successfully deployed, Address: ${oracleAddress}`);
