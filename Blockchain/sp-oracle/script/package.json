@@ -16,7 +16,7 @@
     "lint": "eslint --ext .ts src",
     "lint:fix": "eslint --ext .ts src --fix",
     "clean": "rm -rf ./run/",
-    "build": "npm run clean && tsc --p ./tsconfig.build.json && cp -r package.json package-lock.json ./run && cd run && npm ci",
+    "build": "npm run clean && tsc --p ./tsconfig.build.json && cp -r ./node_modules ./run/node_modules",
     "start": "node ./run/dist/index.js",
     "start:watch:debug": "tsc --p ./tsconfig.build.json && node --inspect=0.0.0.0:9229 ./run/dist/index.js",
     "nodemon": "nodemon"
