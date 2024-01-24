@@ -20,3 +20,42 @@ services:
         npm i
         npm run build
         cp -ru /app/* /sp/run
+
+  blockchain:
+    image: node:16-bullseye
+    container_name: sp-oracle-blockchain
+    ports:
+      - 8545:8545
+    working_dir: /app
+    environment:
+      - INPUT_DIR=/app/inputs
+    volumes:
+      - ../smart-contract:/app
+      - ../../sp-x509:/app/verifier
+      - ./inputs:/app/inputs
+    entrypoint: ['node', 'dist/smart-contract/blockchainServer/index.js']
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  oracle:
+    depends_on:
+      blockchain:
+        condition: service_healthy
+    image: node:16-buster-slim
+    container_name: sp-oracle
+    platform: linux/amd64
+    ports:
+      - 9229:9229
+    working_dir: /sp/run
+    environment:
+      - INPUT_DATA_FOLDER=/sp/inputs
+      - NODE_ENV=test
+    volumes:
+      - ../shared:/sp/run/shared
+      - ./inputs/input.local.json:/sp/inputs/input-0001/input.json
+      - ./inputs/ca_certificates.crt:/sp/inputs/input-0001/ca_certificates.crt
+      - ./:/sp/run
+    entrypoint: ['npm', 'run', 'nodemon']

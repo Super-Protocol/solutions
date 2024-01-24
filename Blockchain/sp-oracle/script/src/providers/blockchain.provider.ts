@@ -74,9 +74,19 @@ class BlockchainProvider implements IBlockchainProvider {
     return encodedData;
   }
 
-  public initSessionKey() {
+  public initSessionKey(): void {
     this.nonce = 0;
-    this.session = this.web3.eth.accounts.create();
+
+    if (process.env.NODE_ENV === 'test') {
+      console.warn('TEST MODE. Using publisher key as session key');
+      this.session = {
+        address: this.pubAddress,
+        privateKey: this.pubPrivateKey,
+      };
+    } else {
+      this.session = this.web3.eth.accounts.create();
+    }
+
     console.log('Session key generated');
   }
 
@@ -113,7 +123,7 @@ class BlockchainProvider implements IBlockchainProvider {
 
   public async publish(key: string, data: PublicData): Promise<void> {
     if (!this.session) {
-        throw Error(`One must initialize the session before starting to publish`);
+      throw Error(`One must initialize the session before starting to publish`);
     }
 
     const bytes32Key = this.web3.utils.keccak256(key);

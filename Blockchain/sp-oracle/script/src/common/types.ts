@@ -22,7 +22,6 @@ export type OracleConfig = {
     address: string;
   };
   apiConfig: ApiConfig;
-  debugMode: boolean;
 };
 
 export type PemCert = {

@@ -27,6 +27,7 @@ export interface IPubService {
 }
 
 export interface IQuoteProvider {
+  initialize(): Promise<void>;
   genQuote(data: Buffer): Promise<Buffer>;
 }
 
