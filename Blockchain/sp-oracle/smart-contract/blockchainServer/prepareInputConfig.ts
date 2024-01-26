@@ -5,18 +5,19 @@ const inputConfigFileNames = [`input.json`, 'input.example.json'];
 const resultFileName = `input.local.json`;
 
 export const prepareInputConfig = async (
-  folderPath: string,
+  inputPath: string,
   account: Account,
   oracleAddress: string,
+  outputPath: string,
 ): Promise<void> => {
-  const dir = await fsPromise.readdir(folderPath);
+  const dir = await fsPromise.readdir(inputPath);
 
   const inputFileName = dir.find((item) => inputConfigFileNames.includes(item));
   if (!inputFileName) {
     throw new Error(`Input file is missing!`);
   }
 
-  const inputFile = await fsPromise.readFile(`${folderPath}/${inputFileName}`);
+  const inputFile = await fsPromise.readFile(`${inputPath}/${inputFileName}`);
   const inputConfig = JSON.parse(inputFile.toString());
 
   inputConfig.smartContractAddress = oracleAddress;
@@ -24,7 +25,7 @@ export const prepareInputConfig = async (
   inputConfig.publisher.address = account.address;
 
   await fsPromise.writeFile(
-    `${folderPath}/${resultFileName}`,
+    `${outputPath}/${resultFileName}`,
     JSON.stringify(inputConfig, null, 2),
   );
 };

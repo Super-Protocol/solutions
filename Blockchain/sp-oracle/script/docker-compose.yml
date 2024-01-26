@@ -22,18 +22,15 @@ services:
         cp -ru /app/* /sp/run
 
   blockchain:
-    image: node:16-bullseye
+    image: blockchain-docker
+    build:
+      context: ../../
+      dockerfile: ./sp-oracle/script/Dockerfile
     container_name: sp-oracle-blockchain
     ports:
       - 8545:8545
-    working_dir: /app
-    environment:
-      - INPUT_DIR=/app/inputs
     volumes:
-      - ../smart-contract:/app
-      - ../../sp-x509:/app/verifier
-      - ./inputs:/app/inputs
-    entrypoint: ['node', 'dist/smart-contract/blockchainServer/index.js']
+      - ./inputs:/output
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:9000']
       interval: 10s
@@ -48,7 +45,7 @@ services:
     container_name: sp-oracle
     platform: linux/amd64
     ports:
-      - 9229:9229
+      - 9230:9230
     working_dir: /sp/run
     environment:
       - INPUT_DATA_FOLDER=/sp/inputs
@@ -58,4 +55,4 @@ services:
       - ./inputs/input.local.json:/sp/inputs/input-0001/input.json
       - ./inputs/ca_certificates.crt:/sp/inputs/input-0001/ca_certificates.crt
       - ./:/sp/run
-    entrypoint: ['npm', 'run', 'nodemon']
+    entrypoint: ['yarn', 'nodemon']
