@@ -1,4 +1,4 @@
-import { HttpResponse } from './types';
+import { HttpResponse, PublishData } from './types';
 import { ChunkedSGXQuote } from '../dto/quote.dto';
 import { ChunkedX509Cert } from '../dto/cert.dto';
 
@@ -7,7 +7,7 @@ export interface IHttpsApiProvider {
 }
 
 export interface IApiService {
-  fetch(): Promise<object>;
+  fetch(): Promise<PublishData>;
 }
 
 export interface IBlockchainProvider {

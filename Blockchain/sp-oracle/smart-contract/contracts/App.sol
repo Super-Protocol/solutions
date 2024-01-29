@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./interfaces/IOracle.sol";
 import "./interfaces/IX509Verifier.sol";
 import "./types/OracleData.sol";
-import "./types/RateData.sol";
+import "./types/PublishData.sol";
 
 /// @notice Example of user application which realises oracle capabilities
 contract App {
@@ -37,13 +37,13 @@ contract App {
     /// @notice helper for fetching exchange rates
     /// @return numerator - ... 
     /// @return denominator - ... 
-    function _fetchRate(bytes32 key, int32 maxTimeDiff) private view returns(uint256 numerator, uint256 denominator) {
+    function _fetchData(bytes32 key, int32 maxTimeDiff) private view returns(uint256 numerator, uint256 denominator, bool sigh) {
         // optional
         _checkOracleScriptRestrictions();
 
         try oracle.getCurrentData(key) returns (OracleData memory response) {
             // decode DTO
-            RateData memory data = abi.decode(response.value, (RateData));
+            PublishData memory data = abi.decode(response.value, (PublishData));
 
             // check timestamp shift (between block and api server)
             if (maxTimeDiff >= 0) {
@@ -56,36 +56,51 @@ contract App {
             // target data from api
             numerator = data.numerator;
             denominator = data.denominator;
+            sigh = data.sign;
         } catch {
             revert RequestFailed(address(oracle), abi.encodePacked(key));
         }
     }
 
     /// @notice request example with limited data shift
-    function processA() public view returns(uint256) {
-        bytes32 requestKey = keccak256("BTC/USD");
+    function processA() public view returns(int256) {
+        bytes32 requestKey = keccak256("NewYork_temperature");
 
-        // this is rate of BTC/USD transformed into two integers,
+        // this is rate of NewYork_temperature transformed into two integers,
         // bcs Solidity isn't support a fractionals numbers.
-        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, 1 hours); 
+        (uint256 numerator, uint256 denominator, bool sign) = _fetchData(requestKey, 1 hours); 
 
-        // ... here will be business logic with fetched 'exchangeRate', e.g.:
-        return numerator / denominator + 1;
+        int256 value;
+
+        if (!sign) {
+            value = -1 * int256(numerator) / int256(denominator);
+        } else {
+            value = int256(numerator) / int256(denominator);
+        }
+
+        return value;
     }
 
     /// @notice request example with ignoring data shift
-    function processB() public view returns(uint256) {
-        bytes32 requestKey = keccak256("BTC/USD");
+    function processB() public view returns(int256) {
+        bytes32 requestKey = keccak256("NewYork_temperature");
 
-        // this is rate of BTC/USD transformed into two integers,
+        // this is rate of NewYork_temperature transformed into two integers,
         // bcs Solidity isn't support a fractionals numbers.
-        (uint256 numerator, uint256 denominator) = _fetchRate(requestKey, -1);
+        (uint256 numerator, uint256 denominator, bool sign) = _fetchData(requestKey, -1);
 
-        // ... here will be business logic with fetched 'exchangeRate', e.g.:
-        return numerator / denominator  + 2;
+        int256 value;
+
+        if (!sign) {
+            value = -1 * int256(numerator) / int256(denominator);
+        } else {
+            value = int256(numerator) / int256(denominator);
+        }
+
+        return value;
     }
 
-    uint256 public savedData; // data saved by oracle callback
+    int256 public savedData; // data saved by oracle callback
 
     /// @notice you can delegate to oracle callbacks
     function callback() public onlyOracle {

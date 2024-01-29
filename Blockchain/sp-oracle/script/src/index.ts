@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-import ExchangeApiService from './services/exchangeApi.service';
 import PublisherService from './services/publisher.service';
+import WeatherApiService from './services/weatherApi.service';
 
 import { OracleConfig } from './common/types';
 import { HTTPS_NODE_URL } from './common/constants';
@@ -37,7 +37,7 @@ async function start(): Promise<void> {
   const config: OracleConfig = JSON.parse(configData);
   console.log('Input extracted');
 
-  const btcUsdRateApi = new ExchangeApiService(config.apiConfig, rootCertificates);
+  const btcUsdRateApi = new WeatherApiService(config.apiConfig, rootCertificates);
   console.log('Exchange rate service created');
 
   const quoteProvider = getQuoteProvider();

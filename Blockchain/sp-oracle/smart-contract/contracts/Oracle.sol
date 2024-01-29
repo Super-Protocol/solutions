@@ -34,7 +34,7 @@ contract Oracle is Publisher, IOracle {
     }
 
     /// @notice
-    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    /// @param key - Identificator of data. e.g. keccak256('NewYork_temperatureT') 
     function getCurrentData(bytes32 key) public view returns (OracleData memory) {
         uint256 dataLength = data[key].length;
         if (dataLength == 0) {
@@ -46,13 +46,13 @@ contract Oracle is Publisher, IOracle {
     }
 
     /// @notice
-    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    /// @param key - Identificator of data. e.g. keccak256('NewYork_temperatureT') 
     function getDataCounts(bytes32 key) public view returns (uint256) {
         return data[key].length;
     }
 
     /// @notice
-    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    /// @param key - Identificator of data. e.g. keccak256('NewYork_temperatureT') 
     /// @param from - 
     /// @param to - 
     function getDataHistory(

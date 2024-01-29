@@ -106,7 +106,7 @@ contract Publisher {
     }
 
     /// @notice Adding data from target API by trusted oracle-script.
-    /// @param key - Identificator of data. e.g. keccak256('BTC/USDT') 
+    /// @param key - Identificator of data. e.g. keccak256('NewYork_temperatureT') 
     /// @param value - Target oracle data struct packed to bytes. Must contains 'nonce' for unique data hash.
     /// @param signature - Data(value) signated by session key.
     /// @param callback - Optional field. Can be used for callback to other contract.
