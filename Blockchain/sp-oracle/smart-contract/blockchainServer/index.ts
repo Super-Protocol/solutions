@@ -3,7 +3,7 @@ import { startBlockChain } from './startBlockchain';
 import { prepareRootCertificates } from './prepareCertificates';
 import { deployContract } from './deployContract';
 import { prepareInputConfig } from './prepareInputConfig';
-import { saveTestAppCommands } from './saveTestAppCommands';
+import { getTestAppCommands } from './saveTestAppCommands';
 import quoteMock from '../../shared/quoteMock.json';
 
 let healthcheckServer: http.Server;
@@ -36,14 +36,22 @@ async function prepareBlockchain(): Promise<void> {
   console.log(`App successfully deployed, Address: ${appAddress}`);
 
   const inputPath = process.env.INPUT_DIR!;
-  await prepareRootCertificates(inputPath);
+  const outputPath = process.env.OUTPUT_PATH!;
+  await prepareRootCertificates(inputPath, outputPath);
   console.log('Root certificates are saved!');
 
-  await prepareInputConfig(inputPath, account, oracleAddress);
+  await prepareInputConfig(inputPath, account, oracleAddress, outputPath);
   console.log('Input config prepared');
 
-  const testAppFile = await saveTestAppCommands(appAddress);
-  console.log(`Test app commands are saved to ${testAppFile}`);
+  const testAppCommands = getTestAppCommands(appAddress);
+
+  console.log(
+    `\n\nTo test app please use these commands inside "smart-contract" folder${[
+      '',
+      ...testAppCommands,
+      '',
+    ].join('\n\t')}\n\n`,
+  );
 
   healthcheckServer = http.createServer((_req, res) => {
     res.writeHead(200);

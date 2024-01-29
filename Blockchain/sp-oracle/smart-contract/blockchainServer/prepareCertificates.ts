@@ -4,10 +4,13 @@ import { exec as execCallback } from 'child_process';
 
 const execPromise = promisify(execCallback);
 
-export const prepareRootCertificates = async (folderPath: string): Promise<void> => {
-  await fsPromise.access(folderPath);
+export const prepareRootCertificates = async (
+  inputPath: string,
+  outputPath: string,
+): Promise<void> => {
+  await fsPromise.access(inputPath);
 
-  const command = `cd ${folderPath} && cat /etc/ssl/certs/*.pem >> ./ca_certificates.crt`;
+  const command = `cd ${inputPath} && cat /etc/ssl/certs/*.pem >> ${outputPath}/ca_certificates.crt`;
   const result = await execPromise(command);
 
   if (result.stderr) {
