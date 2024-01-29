@@ -16,7 +16,7 @@ class WeatherApiService implements IApiService {
 
     console.log(`Data fetched from API: ${JSON.stringify(response.data)}`);
 
-    return this.transformToPublishData(response.data as WeatherResponse);
+    return this.transformToPublishData(response.data);
   }
 
   private transformToPublishData(weatherResponse: WeatherResponse): PublishData {
