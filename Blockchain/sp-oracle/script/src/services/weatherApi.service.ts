@@ -5,7 +5,7 @@ import { WeatherResponse } from '../dto/weather.dto';
 import HttpsProvider from '../providers/https.provider';
 
 class WeatherApiService implements IApiService {
-  private httpsProvider: IHttpsApiProvider;
+  private httpsProvider: IHttpsApiProvider<WeatherResponse>;
 
   constructor(apiConfig: ApiConfig, rootCertificates: Buffer[]) {
     this.httpsProvider = new HttpsProvider(apiConfig, rootCertificates);
@@ -15,8 +15,6 @@ class WeatherApiService implements IApiService {
     const response = await this.httpsProvider.get();
 
     console.log(`Data fetched from API: ${JSON.stringify(response.data)}`);
-
-    // const weatherResponse: WeatherResponse = JSON.parse(response.data as string);
 
     return this.transformToPublishData(response.data as WeatherResponse);
   }

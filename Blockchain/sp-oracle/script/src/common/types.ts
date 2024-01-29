@@ -8,7 +8,7 @@ export type ApiConfig = {
   auth?: ApiAuth;
 };
 
-export type HttpResponse<Response = unknown> = {
+export type HttpResponse<Response> = {
   data: Response;
   status: number;
 };
