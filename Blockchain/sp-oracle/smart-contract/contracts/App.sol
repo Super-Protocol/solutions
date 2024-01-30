@@ -34,7 +34,7 @@ contract App {
         }
     }
 
-    /// @notice helper for fetching exchange rates
+    /// @notice helper for fetching temperature
     /// @return numerator - ... 
     /// @return denominator - ... 
     function _fetchData(bytes32 key, int32 maxTimeDiff) private view returns(uint256 numerator, uint256 denominator, bool sigh) {
@@ -63,41 +63,30 @@ contract App {
     }
 
     /// @notice request example with limited data shift
+    /// @return New York temperature in Celsius
     function processA() public view returns(int256) {
         bytes32 requestKey = keccak256("NewYork_temperature");
 
-        // this is rate of NewYork_temperature transformed into two integers,
+        // this is NewYork temperature transformed into two integers,
         // bcs Solidity isn't support a fractionals numbers.
         (uint256 numerator, uint256 denominator, bool sign) = _fetchData(requestKey, 1 hours); 
 
-        int256 value;
+        uint256 value = numerator / denominator;
 
         if (!sign) {
-            value = -1 * int256(numerator) / int256(denominator);
+            return -1 * int256(value);
         } else {
-            value = int256(numerator) / int256(denominator);
+            return int256(value);
         }
-
-        return value;
     }
 
     /// @notice request example with ignoring data shift
+    /// @return New York temperature in Fahrenheit
     function processB() public view returns(int256) {
-        bytes32 requestKey = keccak256("NewYork_temperature");
+        (int256 value) = processA();
 
-        // this is rate of NewYork_temperature transformed into two integers,
-        // bcs Solidity isn't support a fractionals numbers.
-        (uint256 numerator, uint256 denominator, bool sign) = _fetchData(requestKey, -1);
-
-        int256 value;
-
-        if (!sign) {
-            value = -1 * int256(numerator) / int256(denominator);
-        } else {
-            value = int256(numerator) / int256(denominator);
-        }
-
-        return value;
+        // transform Celsius to Fahrenheit
+        return 32 + value * 9 / 5;
     }
 
     int256 public savedData; // data saved by oracle callback

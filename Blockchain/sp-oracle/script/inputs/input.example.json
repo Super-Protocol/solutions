@@ -7,7 +7,7 @@
     "address": "ADDRESS_OF_PUBLISHER_WALLET"
   },
   "apiConfig": {
-    "endpoint": "https://api.open-meteo.com/v1/forecast?latitude=40.7128&longitude=74.0060&current=temperature_2m"
+    "endpoint": "https://api.open-meteo.com/v1/forecast?latitude=40.710335&longitude=-73.99307&current=temperature_2m"
   },
   "debugMode": false
 }
