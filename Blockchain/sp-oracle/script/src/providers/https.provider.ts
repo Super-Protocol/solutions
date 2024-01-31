@@ -4,7 +4,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { IHttpsApiProvider } from '../common/intrefaces';
 import { ApiConfig, HttpResponse } from '../common/types';
 
-class HttpsProvider implements IHttpsApiProvider {
+class HttpsProvider<ResponseData = unknown> implements IHttpsApiProvider<ResponseData> {
   private endpoint: string;
   private requestConfig: AxiosRequestConfig;
 
@@ -28,7 +28,7 @@ class HttpsProvider implements IHttpsApiProvider {
     }
   }
 
-  async get(): Promise<HttpResponse> {
+  async get(): Promise<HttpResponse<ResponseData>> {
     try {
       return await axios.get(this.endpoint, this.requestConfig);
     } catch (e) {

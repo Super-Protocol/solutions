@@ -1,13 +1,13 @@
 {
-    "interval": 300,
-    "dataKey": "BTC/USD",
-    "smartContractAddress": "DEPLOYED_ORACLE_ADDRESS",
-    "publisher": {
-        "pk": "PRIVATE_KEY_OF_PUBLISHER_WALLET",
-        "address": "ADDRESS_OF_PUBLISHER_WALLET"
-    },
-    "apiConfig": {
-        "endpoint": "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=USD&apikey=YOUR_API_KEY"
-    },
-    "debugMode": false
+  "interval": 300,
+  "dataKey": "NewYork_temperature",
+  "smartContractAddress": "DEPLOYED_ORACLE_ADDRESS",
+  "publisher": {
+    "pk": "PRIVATE_KEY_OF_PUBLISHER_WALLET",
+    "address": "ADDRESS_OF_PUBLISHER_WALLET"
+  },
+  "apiConfig": {
+    "endpoint": "https://api.open-meteo.com/v1/forecast?latitude=40.710335&longitude=-73.99307&current=temperature_2m"
+  },
+  "debugMode": false
 }

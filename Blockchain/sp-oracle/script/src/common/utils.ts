@@ -131,3 +131,10 @@ export const getErrorMessage = (error: unknown): string => {
 
   return `Json Error: ${JSON.stringify(error)}`;
 };
+
+export const getDenominator = (number: string): string => {
+  const [, fraction] = number.split('.');
+  const fractionLength = fraction ? fraction.length : 0;
+
+  return Math.pow(10, fractionLength).toString();
+};
