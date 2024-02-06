@@ -6,7 +6,7 @@ Machine learning algorithm that calculates the probability that two photos conta
 
 The solution requires the following data as an input:
 1. Photos of people you want to compare in JPG or PNG format.
-2. A file pairs.csv that contains pares of photos to compare (filename with format). For example, if you have a database of N photos, and you want to check if a new photo matches any of the photos in your database then your pairs.csv file should look like this:
+2. A file pairs.csv that contains pairs of photos to compare (filename with format). For example, if you have a database of N photos, and you want to check if a new photo matches any of the photos in your database then your pairs.csv file should look like this:
 
    |Column 1|Column 2|
    | :- | :- |
