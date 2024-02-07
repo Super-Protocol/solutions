@@ -13,6 +13,13 @@ export type HttpResponse<Response> = {
   status: number;
 };
 
+export interface IAnalyticsConfig {
+  enabled?: boolean;
+  logEnabled?: boolean;
+  spaAuthKey: string;
+  spaUrl: string;
+}
+
 export type OracleConfig = {
   interval: number;
   dataKey: string;
@@ -21,6 +28,7 @@ export type OracleConfig = {
     pk: string;
     address: string;
   };
+  analytics?: IAnalyticsConfig;
   apiConfig: ApiConfig;
 };
 
