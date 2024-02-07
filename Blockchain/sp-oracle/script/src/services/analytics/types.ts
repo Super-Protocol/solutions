@@ -12,3 +12,9 @@ export interface IEventProperties {
   result: string;
   error?: string;
 }
+
+export enum Platform {
+  web = 'web',
+  cli = 'cli',
+  oracle = 'oracle',
+}

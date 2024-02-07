@@ -1,7 +1,6 @@
 import { Analytics, NodeEventProvider } from '@super-protocol/sdk-js';
 import { AnalyticsEvent, Config } from '@super-protocol/sdk-js/build/analytics/types';
-import { getPlatform } from './utils';
-import { IAnalyticsOption } from './types';
+import { IAnalyticsOption, Platform } from './types';
 
 let instance: Analytics<AnalyticsEvent> | null = null;
 
@@ -12,7 +11,7 @@ export const createAnalyticsService = (options: IAnalyticsOption): Analytics<Ana
       apiKey: options.spaAuthKey,
       eventProvider: new NodeEventProvider({
         userId: options.userId,
-        platform: getPlatform(),
+        platform: Platform.oracle,
       }),
       showLogs: Boolean(options.logEnabled),
     };
