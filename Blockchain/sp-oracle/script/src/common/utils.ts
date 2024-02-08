@@ -120,16 +120,24 @@ export class Signature {
   }
 }
 
+const replacePrivateKey = (input: string): string => {
+  const walletPrivateKeyRegex = /\b(?:0x)?[0-9a-fA-F]{64}\b/g;
+  const replacement = '*********************';
+
+  return input.replace(walletPrivateKeyRegex, replacement);
+};
+
 export const getErrorMessage = (error: unknown): string => {
+  let message: string;
   if (typeof error === 'string') {
-    return error;
+    message = error;
+  } else if (error instanceof Error) {
+    message = `ErrorMessage: ${error.message}; ErrorStack: ${error.stack}`;
+  } else {
+    message = `Json Error: ${JSON.stringify(error)}`;
   }
 
-  if (error instanceof Error) {
-    return `ErrorMessage: ${error.message}; ErrorStack: ${error.stack}`;
-  }
-
-  return `Json Error: ${JSON.stringify(error)}`;
+  return replacePrivateKey(message);
 };
 
 export const getDenominator = (number: string): string => {

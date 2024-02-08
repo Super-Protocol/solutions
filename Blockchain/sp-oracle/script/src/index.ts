@@ -65,12 +65,13 @@ async function start(): Promise<void> {
 }
 
 start().catch(async (err: Error) => {
+  const errorMessage = getErrorMessage(err);
   await analytics?.trackEventCatched({
     eventName: AnalyticEvent.ORACLE_REPORT,
     eventProperties: {
       result: 'error',
-      error: err.message,
+      error: errorMessage,
     },
   });
-  console.log(getErrorMessage(err));
+  console.log(errorMessage);
 });
