@@ -4,7 +4,9 @@ import { IAnalyticsOption, Platform } from './types';
 
 let instance: Analytics<AnalyticsEvent> | null = null;
 
-export const createAnalyticsService = (options: IAnalyticsOption): Analytics<AnalyticsEvent> => {
+export const createAnalyticsService = (
+  options: Required<IAnalyticsOption>,
+): Analytics<AnalyticsEvent> => {
   if (!instance) {
     const config: Config<AnalyticsEvent> = {
       apiUrl: options.spaUrl,

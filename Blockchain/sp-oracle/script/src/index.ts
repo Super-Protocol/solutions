@@ -4,12 +4,12 @@ import path from 'path';
 import PublisherService from './services/publisher.service';
 import WeatherApiService from './services/weatherApi.service';
 
-import { OracleConfig } from './common/types';
+import { AnalyticsConfig, OracleConfig, validate } from './common/config';
 import { HTTPS_NODE_URL } from './common/constants';
 
 import { getErrorMessage } from './common/utils';
 import { getQuoteProvider } from './providers/quote/getQuoteProvider';
-import {AnalyticEvent, createAnalyticsService, IEventProperties} from './services/analytics';
+import { AnalyticEvent, createAnalyticsService } from './services/analytics';
 
 let analytics: ReturnType<typeof createAnalyticsService> | undefined;
 
@@ -37,8 +37,9 @@ async function start(): Promise<void> {
   }
 
   if (!configData) throw new Error("Input file doesn't exist");
-  const config: OracleConfig = JSON.parse(configData);
+  const config: OracleConfig = validate(JSON.parse(configData));
   console.log('Input extracted');
+
   if (config.analytics?.enabled) {
     analytics = createAnalyticsService({
       ...config.analytics,

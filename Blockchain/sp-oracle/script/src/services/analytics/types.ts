@@ -1,16 +1,11 @@
-import { IAnalyticsConfig } from '../../common/types';
+import { AnalyticsConfig } from '../../common/config';
 
-export interface IAnalyticsOption extends Omit<IAnalyticsConfig, 'enabled'> {
+export interface IAnalyticsOption extends Omit<AnalyticsConfig, 'enabled'> {
   userId: string;
 }
 
 export enum AnalyticEvent {
   ORACLE_REPORT = 'oracle_report',
-}
-
-export interface IEventProperties {
-  result: string;
-  error?: string;
 }
 
 export enum Platform {

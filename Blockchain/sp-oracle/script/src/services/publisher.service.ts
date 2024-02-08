@@ -7,7 +7,7 @@ import {
   IBlockchainProvider,
   IPubService,
 } from '../common/intrefaces';
-import { OracleConfig } from '../common/types';
+import { OracleConfig } from '../common/config';
 import { getErrorMessage } from '../common/utils';
 import { Analytics } from '@super-protocol/sdk-js';
 import { AnalyticsEvent } from '@super-protocol/sdk-js/build/analytics/types';
@@ -66,14 +66,15 @@ class PublisherService implements IPubService {
             eventProperties: { result: 'success' },
           });
         } catch (err) {
+          const errorMessage = getErrorMessage(err);
           await this.analytics?.trackEventCatched({
             eventName: AnalyticEvent.ORACLE_REPORT,
             eventProperties: {
               result: 'error',
-              error: (err as Error).message,
+              error: errorMessage,
             },
           });
-          console.log(getErrorMessage(err));
+          console.log(errorMessage);
         } finally {
           setTimeout(loop, this.interval * 1000);
         }

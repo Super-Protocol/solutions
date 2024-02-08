@@ -2,11 +2,12 @@ import { Agent } from 'https';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { IHttpsApiProvider } from '../common/intrefaces';
-import { ApiConfig, HttpResponse } from '../common/types';
+import { HttpResponse } from '../common/types';
+import { ApiConfig } from '../common/config';
 
 class HttpsProvider<ResponseData = unknown> implements IHttpsApiProvider<ResponseData> {
-  private endpoint: string;
-  private requestConfig: AxiosRequestConfig;
+  private readonly endpoint: string;
+  private readonly requestConfig: AxiosRequestConfig;
 
   constructor(apiConfig: ApiConfig, rootCertificates: Buffer[]) {
     this.endpoint = apiConfig.endpoint;
