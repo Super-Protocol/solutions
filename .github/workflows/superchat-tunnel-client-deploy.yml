@@ -69,7 +69,9 @@ jobs:
 
       - name: Download SPCTL
         run: |
-          curl -L https://github.com/Super-Protocol/ctl/releases/download/v0.8.2/spctl-linux-x64 -o ./spctl 
+          latest_tag=$(curl -sL -o /dev/null -w %{url_effective} https://github.com/Super-Protocol/ctl/releases/latest | rev | cut -d'/' -f1 | rev)
+          echo "Latest SPCTL tag" $latest_tag
+          curl -L https://github.com/Super-Protocol/ctl/releases/download/$latest_tag/spctl-linux-x64 -o ./spctl 
           chmod +x ./spctl
 
           SPCTL_CONFIG=$(echo "${{ secrets.SPCTL_CONFIG_BASE64 }}" | base64 --decode)
