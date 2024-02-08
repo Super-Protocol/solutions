@@ -31,8 +31,12 @@ async function start(): Promise<void> {
         .map((certName) => fs.readFileSync(path.join(configDir, certName)));
 
       break;
-    } catch (e) {
-      continue;
+    } catch (err: unknown) {
+      console.warn(
+        `Something went wrong during reading data from "${dirName}" directory. Errir: ${
+          (err as Error).message
+        }`,
+      );
     }
   }
 
