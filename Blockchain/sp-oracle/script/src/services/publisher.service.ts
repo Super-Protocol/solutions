@@ -57,14 +57,18 @@ class PublisherService implements IPubService {
   }
 
   public async start(): Promise<void> {
+    let hasBeenCompletedSuccessfully = false;
     const loop = async (): Promise<void> => {
       if (!this.shutdown) {
         try {
           await this.oracleLoop();
-          await this.analytics?.trackEventCatched({
-            eventName: AnalyticEvent.ORACLE_REPORT,
-            eventProperties: { result: 'success' },
-          });
+          if (!hasBeenCompletedSuccessfully) {
+            await this.analytics?.trackEventCatched({
+              eventName: AnalyticEvent.ORACLE_REPORT,
+              eventProperties: { result: 'success' },
+            });
+            hasBeenCompletedSuccessfully = true;
+          }
         } catch (err) {
           const errorMessage = getErrorMessage(err);
           await this.analytics?.trackEventCatched({
