@@ -234,4 +234,4 @@ export const ORACLE_ABI = [
 ] as const;
 
 export const DEFAULT_SPA_AUTH_KEY = '322ed6bd9a802109e1e9692be0a825c6';
-export const DEFAULT_SPA_URL = 'https://spa.dev.superprotocol.com';
+export const DEFAULT_SPA_URL = 'https://spa.superprotocol.com';
