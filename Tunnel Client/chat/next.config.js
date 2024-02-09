@@ -1,6 +1,7 @@
 const withImages = require('next-images');
 
 const nextConfig = {
+  swcMinify: false,
   reactStrictMode: process.env.NODE_ENV !== 'development',
   compiler: {
     removeConsole: process.env.NODE_ENV !== 'development',
