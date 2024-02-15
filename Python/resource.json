@@ -2,11 +2,11 @@
   "resource": {
     "type": "STORAGE_PROVIDER",
     "storageType": "STORJ",
-    "filepath": "python3.10-base-solution-image-0.0.2.image.tar.gz",
+    "filepath": "python3.10-base-solution-image-0.0.5.image.tar.gz",
     "credentials": {
       "token": "1sWnhBRaFcsEDjwbDeCqbs6RXbkGW22ZebMc9TMvf6CPJvgPg6MjvVyQByMTBdZ7tnESFK2YCc3iEo4kds2M174fn3kXHaXH7mqEBLepPnUX7Q3QysQe7hSoea7L5dW11eYtxw19WhQCTFLSuCP5uuwup2wktpLe7KNP2E4umBcpbQsWN2cL15Nm1wP5MqLHvdwfLZ4cmRQPC1D3EgjWiedYesYSuPTtbPX9FstVaiKDFhL44rN9AMeQ9TXM2JvvrPG9YzCyN83vyMM1uSfCp7kZqefgCScJG6nQMau5py9s9hdgJ4iUCfrpeKZq76NQg1ZrseAE",
       "bucket": "offers-testnet",
-      "prefix":""
+      "prefix": ""
     }
   }
 }

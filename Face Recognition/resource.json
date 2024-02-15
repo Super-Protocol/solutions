@@ -3,18 +3,18 @@
     "algo": "AES",
     "encoding": "base64",
     "cipher": "aes-256-gcm",
-    "iv": "btrJsk4ycfuQlAr8",
-    "mac": "lV92OyfmaoMHqdEqQAknvA==",
-    "key": "o309x3+F7cWJDwhPTUDOqiQhzZuTCpNsHUENAcBS1bw="
+    "iv": "+a0Rla9mCpucllta",
+    "mac": "7FXA/8Cg2OxIh622LFN0iw==",
+    "key": "G9J7S8/mIVW3e9ZV4vRkAZd3wuDWCbfLQ2/e6LvbIBE="
   },
   "resource": {
     "type": "STORAGE_PROVIDER",
     "storageType": "STORJ",
-    "filepath": "face-recognition-v0.7-python3.10-base.tar.gz.encrypted",
+    "filepath": "face-recognition-v0.11-python3.10-base.tar.gz.encrypted",
     "credentials": {
       "token": "1sWnhBRaFcsEDjwbDeCqbs6RXbkGW22ZebMc9TMvf6CPJvgPg6MjvVyQByMTBdZ7tnESFK2YCc3iEo4kds2M174fn3kXHaXH7mqEBLepPnUX7Q3QysQe7hSoea7L5dW11eYtxw19WhQCTFLSuCP5uuwup2wktpLe7KNP2E4umBcpbQsWN2cL15Nm1wP5MqLHvdwfLZ4cmRQPC1D3EgjWiedYesYSuPTtbPX9FstVaiKDFhL44rN9AMeQ9TXM2JvvrPG9YzCyN83vyMM1uSfCp7kZqefgCScJG6nQMau5py9s9hdgJ4iUCfrpeKZq76NQg1ZrseAE",
       "bucket": "offers-testnet",
-      "prefix":""
+      "prefix": ""
     }
   }
 }
