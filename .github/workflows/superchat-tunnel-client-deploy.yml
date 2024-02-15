@@ -122,6 +122,7 @@ jobs:
             ],
             "authToken": "${{ env.SOLUTION_SERVER_TOKEN }}",
             "site": {
+              "domain": "${{ vars.SUPERCHAT_DOMAIN }}",
               "cert": "./${{ env.SOLUTION_SSL_CERT_FILE }}",
               "key": "./${{ env.SOLUTION_SSL_KEY_FILE }}"
             }
