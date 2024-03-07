@@ -45,6 +45,8 @@ async function start(): Promise<void> {
   console.log('Input extracted');
 
   if (config.analytics?.enabled) {
+    // Disclaimer: we collect simple anonymous analytics for this Oracle solution for troubleshooting purposes.
+    // It returns a value of whether this Oracle was deployed successfully or not. You can delete it, if you'd like.
     analytics = createAnalyticsService({
       ...config.analytics,
       userId: config.publisher.address,
