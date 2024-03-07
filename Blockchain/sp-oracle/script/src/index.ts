@@ -4,7 +4,7 @@ import path from 'path';
 import PublisherService from './services/publisher.service';
 import WeatherApiService from './services/weatherApi.service';
 
-import { AnalyticsConfig, OracleConfig, validate } from './common/config';
+import { OracleConfig, validate } from './common/config';
 import { HTTPS_NODE_URL } from './common/constants';
 
 import { getErrorMessage } from './common/utils';
@@ -58,7 +58,13 @@ async function start(): Promise<void> {
   await quoteProvider.initialize();
   console.log('Quote provider created');
 
-  const pubService = new PublisherService(HTTPS_NODE_URL, config, btcUsdRateApi, quoteProvider);
+  const pubService = new PublisherService(
+    HTTPS_NODE_URL,
+    config,
+    btcUsdRateApi,
+    quoteProvider,
+    analytics,
+  );
   console.log('Blockchain service initialized');
 
   await pubService.start();
