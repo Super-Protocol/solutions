@@ -7,22 +7,24 @@ import {
   IBlockchainProvider,
   IPubService,
 } from '../common/intrefaces';
-import { OracleConfig } from '../common/types';
+import { OracleConfig } from '../common/config';
 import { getErrorMessage } from '../common/utils';
+import { Analytics } from '@super-protocol/sdk-js';
+import { AnalyticsEvent } from '@super-protocol/sdk-js/build/analytics/types';
+import { AnalyticEvent } from './analytics';
 
 class PublisherService implements IPubService {
   shutdown: boolean;
   blockchainProvider: IBlockchainProvider;
-  quoteProvider: IQuoteProvider;
-  apiService: IApiService;
   interval: number;
   dataKey: string;
 
   constructor(
     nodeUrl: string,
     config: OracleConfig,
-    apiService: IApiService,
-    quoteProvider: IQuoteProvider,
+    readonly apiService: IApiService,
+    readonly quoteProvider: IQuoteProvider,
+    private readonly analytics?: Analytics<AnalyticsEvent>,
   ) {
     this.quoteProvider = quoteProvider;
     this.blockchainProvider = new BlockchainProvider(
@@ -55,10 +57,31 @@ class PublisherService implements IPubService {
   }
 
   public async start(): Promise<void> {
+    let hasBeenCompletedSuccessfully = false;
     const loop = async (): Promise<void> => {
       if (!this.shutdown) {
-        await this.oracleLoop().catch((error) => console.log(getErrorMessage(error)));
-        setTimeout(loop, this.interval * 1000);
+        try {
+          await this.oracleLoop();
+          if (!hasBeenCompletedSuccessfully) {
+            await this.analytics?.trackEventCatched({
+              eventName: AnalyticEvent.ORACLE_REPORT,
+              eventProperties: { result: 'success' },
+            });
+            hasBeenCompletedSuccessfully = true;
+          }
+        } catch (err) {
+          const errorMessage = getErrorMessage(err);
+          await this.analytics?.trackEventCatched({
+            eventName: AnalyticEvent.ORACLE_REPORT,
+            eventProperties: {
+              result: 'error',
+              error: errorMessage,
+            },
+          });
+          console.log(errorMessage);
+        } finally {
+          setTimeout(loop, this.interval * 1000);
+        }
       }
     };
 

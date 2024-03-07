@@ -1,5 +1,6 @@
 import { IApiService, IHttpsApiProvider } from '../common/intrefaces';
-import { ApiConfig, PublishData } from '../common/types';
+import { PublishData } from '../common/types';
+import { ApiConfig } from '../common/config';
 import { getDenominator } from '../common/utils';
 import { WeatherResponse } from '../dto/weather.dto';
 import HttpsProvider from '../providers/https.provider';

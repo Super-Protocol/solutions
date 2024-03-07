@@ -26,14 +26,16 @@
     "@types/jest": "^29.5.7",
     "@types/node": "^16.10.3",
     "nodemon": "^3.0.3",
-    "ts-jest": "^29.1.1"
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
-    "@super-protocol/sdk-js": "1.0.1-beta.17",
+    "@super-protocol/sdk-js": "2.1.1-beta.3",
     "@super-protocol/tee-lib": "^0.2.6",
     "@types/asn1js": "3.0.7",
-    "axios": "1.4.0",
+    "axios": "1.5.1",
     "fs": "^0.0.1-security",
-    "web3": "4.0.3"
+    "web3": "4.0.3",
+    "zod": "^3.22.4"
   }
 }
