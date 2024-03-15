@@ -1,3 +1,5 @@
+import { TrackEventProp } from '@super-protocol/sdk-js/build/analytics/types';
+
 class Position {
   place: number;
 
@@ -127,17 +129,41 @@ const replacePrivateKey = (input: string): string => {
   return input.replace(walletPrivateKeyRegex, replacement);
 };
 
+const ERROR_STACK = 'ErrorStack:';
 export const getErrorMessage = (error: unknown): string => {
   let message: string;
   if (typeof error === 'string') {
     message = error;
   } else if (error instanceof Error) {
-    message = `ErrorMessage: ${error.message}; ErrorStack: ${error.stack}`;
+    message = `ErrorMessage: ${error.message}; ${ERROR_STACK}: ${error.stack}`;
   } else {
     message = `Json Error: ${JSON.stringify(error)}`;
   }
 
   return replacePrivateKey(message);
+};
+
+export const errorMessageToObject = (
+  errorMessage: string,
+): { errorMessage: string; errorStack?: string } => {
+  const data = errorMessage.split(`${ERROR_STACK}:`);
+
+  return {
+    errorMessage: data[0],
+    ...(data.length > 1 && { errorStack: data[1] }),
+  };
+};
+
+export const getAnalyticsErrorEventProperties = (
+  errorMessage: string,
+): TrackEventProp['eventProperties'] => {
+  const data = errorMessageToObject(errorMessage);
+
+  return {
+    result: 'error',
+    error: data.errorMessage.trim(),
+    ...(data.errorStack && { errorStack: data.errorStack.trim() }),
+  };
 };
 
 export const getDenominator = (number: string): string => {
