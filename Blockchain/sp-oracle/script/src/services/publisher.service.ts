@@ -8,7 +8,7 @@ import {
   IPubService,
 } from '../common/intrefaces';
 import { OracleConfig } from '../common/config';
-import { getErrorMessage } from '../common/utils';
+import { getAnalyticsErrorEventProperties, getErrorMessage } from '../common/utils';
 import { Analytics } from '@super-protocol/sdk-js';
 import { AnalyticsEvent } from '@super-protocol/sdk-js/build/analytics/types';
 import { AnalyticEvent } from './analytics';
@@ -73,10 +73,7 @@ class PublisherService implements IPubService {
           const errorMessage = getErrorMessage(err);
           await this.analytics?.trackEventCatched({
             eventName: AnalyticEvent.ORACLE_REPORT,
-            eventProperties: {
-              result: 'error',
-              error: errorMessage,
-            },
+            eventProperties: getAnalyticsErrorEventProperties(errorMessage),
           });
           console.log(errorMessage);
         } finally {

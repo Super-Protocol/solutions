@@ -7,7 +7,7 @@ import WeatherApiService from './services/weatherApi.service';
 import { OracleConfig, validate } from './common/config';
 import { HTTPS_NODE_URL } from './common/constants';
 
-import { getErrorMessage } from './common/utils';
+import { getAnalyticsErrorEventProperties, getErrorMessage } from './common/utils';
 import { getQuoteProvider } from './providers/quote/getQuoteProvider';
 import { AnalyticEvent, createAnalyticsService } from './services/analytics';
 
@@ -76,10 +76,7 @@ start().catch(async (err: Error) => {
   const errorMessage = getErrorMessage(err);
   await analytics?.trackEventCatched({
     eventName: AnalyticEvent.ORACLE_REPORT,
-    eventProperties: {
-      result: 'error',
-      error: errorMessage,
-    },
+    eventProperties: getAnalyticsErrorEventProperties(errorMessage),
   });
-  console.log(errorMessage);
+  console.log(getErrorMessage(err));
 });
