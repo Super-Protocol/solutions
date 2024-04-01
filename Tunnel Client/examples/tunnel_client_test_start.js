@@ -47,6 +47,11 @@ const opensslCommand = `openssl req -newkey rsa:2048 -nodes -keyout ${privateKey
 
 const port = 9090;
 
+async function removeLocalCerts() {
+  await fs.unlink(privateKeyFile).catch(() => {} /* suppress */);
+  await fs.unlink(certificateFile).catch(() => {} /* suppress */);
+}
+
 async function run() {
   const checkInterval = 10000; //10 sec
   try {
@@ -111,12 +116,10 @@ async function run() {
 
     const maxChecks = 1 + Math.floor(30000 / checkInterval);
 
-    await checkWithInterval(checkFn, checkInterval, maxChecks);
-
     const terminationHandler = (signal) => {
       console.log(`${signal} received`);
       worker.terminate();
-      process.exit(0);
+      removeLocalCerts().then(() => process.exit(0));
     };
 
     process
@@ -124,14 +127,15 @@ async function run() {
       .on('SIGTERM', () => terminationHandler('SIGTERM'))
       .on('SIGABRT', () => terminationHandler('SIGABRT'));
 
+    await checkWithInterval(checkFn, checkInterval, maxChecks);
+
     console.log('Server started');
   } catch (error) {
     console.error(error.message, 'Fail to start a server');
 
     throw error;
   } finally {
-    await fs.unlink(privateKeyFile).catch(() => {} /* suppress */);
-    await fs.unlink(certificateFile).catch(() => {} /* suppress */);
+    await removeLocalCerts();
   }
 }
 
