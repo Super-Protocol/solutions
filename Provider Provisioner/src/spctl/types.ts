@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ILogger } from '../logger';
 
 export interface SpctlServiceParams {
