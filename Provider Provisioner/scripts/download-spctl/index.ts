@@ -2,10 +2,12 @@
 import fs from 'fs';
 import path from 'path';
 import colors from 'colors';
+import axios from 'axios';
+import semver from 'semver';
 import { downloadSpctl } from './helpers/download-spctl';
+import { getLatestReleaseUrl } from './helpers/get-download-url';
 
 async function main(): Promise<void> {
-  const version = '0.8.8';
   const destination = path.join('tools', 'spctl');
 
   try {
@@ -14,7 +16,11 @@ async function main(): Promise<void> {
       return;
     }
 
-    await downloadSpctl({ version, destination });
+    const latestReleaseUrl = getLatestReleaseUrl();
+    const response = await axios.get(latestReleaseUrl);
+    const latestVersion = semver.clean(response.data.tag_name);
+
+    await downloadSpctl({ version: latestVersion, destination });
     console.log(colors.green('Done'));
   } catch (err) {
     console.error(colors.red('Failed to download:'), (err as Error).message);
