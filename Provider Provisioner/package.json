@@ -1,0 +1,32 @@
+{
+  "name": "provider-provisioner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:clean": "rm -rf ./dist && tsc -p tsconfig.build.json",
+    "start": "node --enable-source-maps dist/index.js",
+    "lint:fix": "eslint --ext .ts . --fix",
+    "start:dev": "tsx src/index.ts",
+    "download-spctl": "tsx scripts/download-spctl/index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@super-protocol/eslint-config-typescript": "2.0.1",
+    "@types/cli-progress": "3.11.5",
+    "@types/node": "16.18.94",
+    "axios": "1.6.8",
+    "cli-progress": "3.12.0",
+    "colors": "1.4.0",
+    "tsx": "4.7.2"
+  },
+  "dependencies": {
+    "cron": "3.1.6",
+    "dotenv": "16.4.5",
+    "pino": "8.19.0",
+    "semver": "^7.6.0"
+  }
+}

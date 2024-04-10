@@ -1,0 +1,6 @@
+{
+  "extends": "@super-protocol/eslint-config-typescript/tsconfig/node-cjs",
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}
