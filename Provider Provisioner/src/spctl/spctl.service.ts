@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { ILogger } from '../logger';
 import { spawnCommand } from './spawn-command';
-import { CompleteOrderParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
+import { CompleteOrdersParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
 
 export class SpctlService {
   protected readonly logger: ILogger;
@@ -48,7 +48,7 @@ export class SpctlService {
     return savedResult.list;
   }
 
-  async completeOrder(params: CompleteOrderParams): Promise<string> {
+  async completeOrders(params: CompleteOrdersParams): Promise<string> {
     const args = [
       'orders',
       'complete',
@@ -58,7 +58,7 @@ export class SpctlService {
       params.status,
       '--result',
       params.resultPath,
-      params.orderId,
+      ...params.orderIds,
     ];
 
     return await this.exec(args);

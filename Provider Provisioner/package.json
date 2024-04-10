@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:clean": "rm -rf ./dist && tsc -p tsconfig.build.json",
     "start": "node --enable-source-maps dist/index.js",
+    "lint:fix": "eslint --ext .ts . --fix",
     "start:dev": "tsx src/index.ts",
     "download-spctl": "tsx scripts/download-spctl/index"
   },

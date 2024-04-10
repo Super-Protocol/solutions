@@ -25,23 +25,27 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
       limit: 1000,
       status: orderStatus,
     });
+
+    if (!orders.length) {
+      log.debug('No active orders found');
+      return;
+    }
+
     log.debug({ numOfOrders: orders.length }, 'Got orders');
 
-    for (const order of orders) {
-      const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
-      await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
+    const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
+    await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
 
-      try {
-        await spctlService.completeOrder({
-          orderId: order.id,
-          status: OrderStatus.Done,
-          resultPath: resourceJsonPath,
-        });
-      } catch (err) {
-        log.error({ err, orderId: order.id }, 'Failed to complete order');
-      } finally {
-        await fs.rm(resourceJsonPath, { force: true });
-      }
+    try {
+      await spctlService.completeOrders({
+        orderIds: orders.map((order) => order.id),
+        status: OrderStatus.Done,
+        resultPath: resourceJsonPath,
+      });
+    } catch (err) {
+      log.error({ err }, 'Failed to complete orders');
+    } finally {
+      await fs.rm(resourceJsonPath, { force: true });
     }
   }
 }
