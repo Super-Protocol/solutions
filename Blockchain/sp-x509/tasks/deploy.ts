@@ -17,10 +17,10 @@ task('deploy', 'Deploy verfivicator contract')
 
         const app = await deployContract(
             hre,
-            'Verificator',
+            'Verifier',
             deployer,
             rootParsed,
         );
 
-        console.log('Verificator contract address:', app.address);
+        console.log('Verifier contract address:', app.address);
     });

@@ -6,7 +6,7 @@ import "./types/ChunkedSGXQuote.sol";
 import "./types/ChunkedX509Cert.sol";
 import "./types/Errors.sol";
 
-contract Verificator is EllipticCurve {
+contract Verifier is EllipticCurve {
   ChunkedX509Cert public rootCert;
 
   constructor(ChunkedX509Cert memory root) {
@@ -39,7 +39,7 @@ contract Verificator is EllipticCurve {
       mrEnclave := mload(add(rawReport, QUOTE_MRENCLAVE_OFFSET))
       dataHash := mload(add(rawReport, QUOTE_DATAHASH_OFFSET))
     }
-    
+
     report = SGXQuoteData(mrSigner, mrEnclave, dataHash);
   }
 

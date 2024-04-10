@@ -28,7 +28,7 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
 
     if (!orders.length) {
       log.debug('No active orders found');
-      break;
+      continue;
     }
 
     log.debug({ numOfOrders: orders.length }, 'Got orders');

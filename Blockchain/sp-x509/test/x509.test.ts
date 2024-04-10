@@ -1,5 +1,5 @@
 import { extractPublicKey, extractRS, parsePem, getPemCertsFromQuote } from './helper';
-import { Verificator } from '../typechain-types';
+import { Verifier } from '../typechain-types';
 import { TeeSgxParser } from '@super-protocol/sdk-js';
 import { ethers, network } from 'hardhat';
 import { ec as EC } from "elliptic";
@@ -56,7 +56,7 @@ describe('x509', function () {
             }
         }
     });
-    
+
     it('Should verified cert on P-256 curve ON CHAIN', async function() {
         const certPem = fs.readFileSync(__dirname + '/certs/certC.pem', 'utf-8');
         const parsedCert = parsePem(certPem);
@@ -64,21 +64,21 @@ describe('x509', function () {
         const cert = new crypto.X509Certificate(certPem);
         const asn1Certificate = asn1js.fromBER(cert.raw);
         const certificate = new pkijs.Certificate({ schema: asn1Certificate.result });
-        
+
         const { derSignature } = extractRS(certificate);
         const { publicKey } = extractPublicKey(certificate)
 
         const curve = new EC('p256');
         const extractedPb = curve.keyFromPublic(publicKey, 'hex');
         const messageHashBytes = crypto.createHash('sha256').update(certificate.tbsView).digest();
-        
+
         // off-chain check
         expect(extractedPb.verify(messageHashBytes, derSignature)).true;
 
         // deploy contract via root cert
-        const VerificatorFactory = await ethers.getContractFactory('Verificator');
-        const verificator = ((await VerificatorFactory.deploy(parsedCert)) as any) as Verificator;
-        await verificator.deployed();
+        const VerifierFactory = await ethers.getContractFactory('Verifier');
+        const verifier = ((await VerifierFactory.deploy(parsedCert)) as any) as Verifier;
+        await verifier.deployed();
     });
 
     it('Should verified chain of certs ON CHAIN', async () => {
@@ -91,12 +91,12 @@ describe('x509', function () {
         const intermediateParsed = parsePem(intermediateCert);
 
         // deploy contract via root cert
-        const VerificatorFactory = await ethers.getContractFactory('Verificator');
-        const verificator = ((await VerificatorFactory.deploy(rootParsed)) as any) as Verificator;
-        await verificator.deployed();
+        const VerifierFactory = await ethers.getContractFactory('Verifier');
+        const verifier = ((await VerifierFactory.deploy(rootParsed)) as any) as Verifier;
+        await verifier.deployed();
 
-        expect(await verificator.verifyCert(intermediateParsed, rootParsed.publicKey)).true;
-        expect(await verificator.verifyCert(leafParsed, intermediateParsed.publicKey)).true;
+        expect(await verifier.verifyCert(intermediateParsed, rootParsed.publicKey)).true;
+        expect(await verifier.verifyCert(leafParsed, intermediateParsed.publicKey)).true;
     });
 
     it('Should verified full quote', async () => {
@@ -113,11 +113,11 @@ describe('x509', function () {
         const intermediateParsed = parsePem(intermediateCert);
 
         // deploy contract via root cert
-        const VerificatorFactory = await ethers.getContractFactory('Verificator');
-        const verificator = ((await VerificatorFactory.deploy(rootParsed)) as any) as Verificator;
-        await verificator.deployed();
-        
-        expect(await verificator.checkTEEQuote(
+        const VerifierFactory = await ethers.getContractFactory('Verifier');
+        const verifier = ((await VerifierFactory.deploy(rootParsed)) as any) as Verifier;
+        await verifier.deployed();
+
+        expect(await verifier.checkTEEQuote(
             leafParsed,
             intermediateParsed,
             {
@@ -125,7 +125,7 @@ describe('x509', function () {
                 isvReport: parsedQuote.report,
                 isvReportSignature: parsedQuote.isvEnclaveReportSignature,
                 attestationKey: parsedQuote.ecdsaAttestationKey,
-            
+
                 qeReport: parsedQuote.qeReport,
                 qeReportSignature: parsedQuote.qeReportSignature,
                 qeAuthenticationData: parsedQuote.qeAuthenticationData,
