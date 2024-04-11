@@ -15,20 +15,18 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
   const { inputOffer, spctlService, logger } = params;
   const orderStatuses = [OrderStatus.New, OrderStatus.Processing];
 
-  for (const orderStatus of orderStatuses) {
-    const offerId = inputOffer.id;
-    const log = logger.child({ offerId, orderStatus });
+  const offerId = inputOffer.id;
+    const log = logger.child({ offerId });
 
     log.debug('Getting order ids...');
     const orders = await spctlService.getOrders({
       offerId,
       limit: 1000,
-      status: orderStatus,
+      statuses: orderStatuses,
     });
 
     if (!orders.length) {
-      log.debug('No active orders found');
-      continue;
+      return;
     }
 
     log.debug({ numOfOrders: orders.length }, 'Got orders');
@@ -47,5 +45,4 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
     } finally {
       await fs.rm(resourceJsonPath, { force: true });
     }
-  }
 }

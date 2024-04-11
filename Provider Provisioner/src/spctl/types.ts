@@ -7,20 +7,20 @@ export interface SpctlServiceParams {
 }
 
 export enum OrderStatus {
-  New = 'new',
-  Processing = 'processing',
-  Canceling = 'canceling',
-  Canceled = 'canceled',
-  Done = 'done',
-  Error = 'error',
-  Blocked = 'blocked',
-  Suspended = 'suspended',
+  New = "0",
+  Processing = "1",
+  Canceling = "2",
+  Canceled = "3",
+  Done = "4",
+  Error = "5",
+  Blocked = "6",
+  Suspended = "7"
 }
 
 export interface GetOrdersParams {
   limit: number;
   offerId: string;
-  status: OrderStatus;
+  statuses: OrderStatus[];
 }
 
 export interface CompleteOrdersParams {

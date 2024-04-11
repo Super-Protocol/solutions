@@ -5,10 +5,13 @@
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "build:spctl": "cd node_modules/spctl && rm -rf ./build && tsc -p tsconfig.build.json",
+    "build:all": "npm run build:spctl && npm run build",
     "build:clean": "rm -rf ./dist && tsc -p tsconfig.build.json",
     "start": "node --enable-source-maps dist/index.js",
-    "lint:fix": "eslint --ext .ts . --fix",
+    "lint:fix": "eslint --ext .ts .",
     "start:dev": "tsx src/index.ts",
+    "start:prod": "node src/index.ts",
     "download-spctl": "tsx scripts/download-spctl/index"
   },
   "keywords": [],
@@ -27,6 +30,7 @@
     "cron": "3.1.6",
     "dotenv": "16.4.5",
     "pino": "8.19.0",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "spctl": "github:Super-Protocol/spctl#feature/sp-4021/orders-list"
   }
 }
