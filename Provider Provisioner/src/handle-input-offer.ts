@@ -16,33 +16,33 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
   const orderStatuses = [OrderStatus.New, OrderStatus.Processing];
 
   const offerId = inputOffer.id;
-    const log = logger.child({ offerId });
+  const log = logger.child({ offerId });
 
-    log.debug('Getting order ids...');
-    const orders = await spctlService.getOrders({
-      offerId,
-      limit: 1000,
-      statuses: orderStatuses,
+  log.debug('Getting order ids...');
+  const orders = await spctlService.getOrders({
+    offerId,
+    limit: 1000,
+    statuses: orderStatuses,
+  });
+
+  if (!orders.length) {
+    return;
+  }
+
+  log.debug({ numOfOrders: orders.length }, 'Got orders');
+
+  const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
+  await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
+
+  try {
+    await spctlService.completeOrders({
+      orderIds: orders.map((order) => order.id),
+      status: OrderStatus.Done,
+      resultPath: resourceJsonPath,
     });
-
-    if (!orders.length) {
-      return;
-    }
-
-    log.debug({ numOfOrders: orders.length }, 'Got orders');
-
-    const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
-    await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
-
-    try {
-      await spctlService.completeOrders({
-        orderIds: orders.map((order) => order.id),
-        status: OrderStatus.Done,
-        resultPath: resourceJsonPath,
-      });
-    } catch (err) {
-      log.error({ err }, 'Failed to complete orders');
-    } finally {
-      await fs.rm(resourceJsonPath, { force: true });
-    }
+  } catch (err) {
+    log.error({ err }, 'Failed to complete orders');
+  } finally {
+    await fs.rm(resourceJsonPath, { force: true });
+  }
 }

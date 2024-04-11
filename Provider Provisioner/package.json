@@ -9,7 +9,7 @@
     "build:all": "npm run build:spctl && npm run build",
     "build:clean": "rm -rf ./dist && tsc -p tsconfig.build.json",
     "start": "node --enable-source-maps dist/index.js",
-    "lint:fix": "eslint --ext .ts .",
+    "lint:fix": "eslint --ext .ts . --fix",
     "start:dev": "tsx src/index.ts",
     "start:prod": "node src/index.ts",
     "download-spctl": "tsx scripts/download-spctl/index"

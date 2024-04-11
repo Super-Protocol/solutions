@@ -25,7 +25,7 @@ export class SpctlService {
     const saveFileName = `get-orders-${new Date().getTime()}.json`;
     const saveFilePath = path.join(this.locationPath, saveFileName);
 
-    const {config, error} = ConfigLoader.getRawConfig(this.configPath);
+    const { config, error } = ConfigLoader.getRawConfig(this.configPath);
 
     if (!config || error) {
       this.logger.error({ err: error }, 'Cannot parse config');
@@ -42,7 +42,6 @@ export class SpctlService {
       saveTo: saveFilePath,
     });
 
-
     const savedResult = JSON.parse(await fs.readFile(saveFilePath, 'utf-8'));
 
     await fs.rm(saveFilePath, { force: true });
@@ -51,7 +50,7 @@ export class SpctlService {
   }
 
   async completeOrders(params: CompleteOrdersParams): Promise<void> {
-    const {config, error} = ConfigLoader.getRawConfig(this.configPath);
+    const { config, error } = ConfigLoader.getRawConfig(this.configPath);
 
     if (!config || error) {
       this.logger.error({ err: error }, 'Cannot parse config');
