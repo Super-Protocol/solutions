@@ -24,12 +24,11 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
     limit: 1000,
     statuses: orderStatuses,
   });
+  log.debug({ numOfOrders: orders.length }, 'Got orders');
 
   if (!orders.length) {
     return;
   }
-
-  log.debug({ numOfOrders: orders.length }, 'Got orders');
 
   const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
   await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
