@@ -9,11 +9,7 @@ If you are a provider you can delegate the handling of orders based on your data
 ```bash
 npm ci
 ```
-2. **Download spctl** using the command, or download it manually and place it in the `./tools` directory:
-```bash
-npm run download-spctl
-```
-3. **Create .env file**:
+2. **Create .env file**:
 ```bash
 cp .env.example .env
 ```
@@ -22,7 +18,7 @@ In the `.env` file, set the following variables:
 LOG_LEVEL=trace
 INPUT_DATA_FOLDER=./sp-inputs
 ```
-4. **Add input folders**: in the `./sp-inputs` directory, add folders named `input-00x`. In each folder, add `config.json` and `.env` files. The structure should look like this:
+3. **Add input folders**: in the `./sp-inputs` directory, add folders named `input-00x`. In each folder, add `config.json` and `.env` files. The structure should look like this:
 ```
 sp-inputs
 ├── input-0001

@@ -11,10 +11,10 @@ echo "Install dependencies"
 npm ci
 
 echo "Compiling typescript"
-npm run build:all
+npm run build
 
-# echo "Remove dev dependendencies"
-# npm ci --omit dev
+echo "Remove dev dependendencies"
+npm ci --omit dev
 
 echo "Copy files"
-cp -R tools dist node_modules package.json package-lock.json .env $solution_path
+cp -R dist node_modules package.json package-lock.json .env $solution_path
