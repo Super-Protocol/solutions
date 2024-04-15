@@ -4,15 +4,12 @@
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "build:spctl": "cd node_modules/spctl && rm -rf ./build && tsc -p tsconfig.build.json",
-    "build:all": "npm run build:spctl && npm run build",
     "build:clean": "rm -rf ./dist && tsc -p tsconfig.build.json",
-    "start": "node --enable-source-maps dist/index.js",
+    "build": "tsc -p tsconfig.build.json",
+    "download-spctl": "tsx scripts/download-spctl/index",
     "lint:fix": "eslint --ext .ts . --fix",
     "start:dev": "tsx src/index.ts",
-    "start:prod": "node src/index.ts",
-    "download-spctl": "tsx scripts/download-spctl/index"
+    "start": "node --enable-source-maps dist/index.js"
   },
   "keywords": [],
   "author": "",
