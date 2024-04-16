@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import path from 'path';
 import { ILogger } from './logger';
 import { SpctlService } from './spctl/spctl.service';
 import { OrderStatus } from './spctl/types';
@@ -30,7 +29,7 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
     return;
   }
 
-  const resourceJsonPath = path.join(spctlService.getLocationPath(), 'resource.json');
+  const resourceJsonPath = 'resource.json';
   await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
 
   try {

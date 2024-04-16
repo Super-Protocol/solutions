@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import path from 'path';
 import { ILogger } from '../logger';
 import ordersComplete from 'spctl/build/commands/ordersComplete';
 import ordersList from 'spctl/build/commands/ordersList';
@@ -22,8 +21,7 @@ export class SpctlService {
   }
 
   async getOrders(params: GetOrdersParams): Promise<Order[]> {
-    const saveFileName = `get-orders-${new Date().getTime()}.json`;
-    const saveFilePath = path.join(this.locationPath, saveFileName);
+    const saveFilePath = `get-orders-${new Date().getTime()}.json`;
 
     const { config, error } = ConfigLoader.getRawConfig(this.configPath);
 
