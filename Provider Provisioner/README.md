@@ -28,7 +28,7 @@ sp-inputs
     ├── .env
     └── config.json
 ```
-The `.env`file should contain only one environment variable `PROVIDER_OFFERS_JSON`. Its value should be a JSON array where each item corresponds to the following interface:
+The `.env` file should contain only one environment variable `PROVIDER_OFFERS_JSON`. Its value should be a JSON array where each item corresponds to the following interface:
 ```typescript
 interface ProviderOffersJsonItem {
   id: string;
