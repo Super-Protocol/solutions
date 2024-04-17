@@ -9,10 +9,10 @@ export const startBlockChain = (): Promise<Account> => {
     const blockchainProcess = spawn('npx', ['hardhat', 'node'], {
       env: {
         PATH: process.env.PATH,
-        MUMBAI_URL: 'MUMBAI_URL',
+        AMOY_URL: 'AMOY_URL',
         LOCALHOST_DEPLOYER_PRIVATE_KEY:
           '0x0000000000000000000000000000000000000000000000000000000000000001',
-        MUMBAI_DEPLOYER_PRIVATE_KEY:
+        AMOY_DEPLOYER_PRIVATE_KEY:
           '0x0000000000000000000000000000000000000000000000000000000000000001',
       },
     });
