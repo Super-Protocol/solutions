@@ -29,8 +29,8 @@ cp .env.example .env
 ```
 
 `PRIVATE_KEY` - the default private key for deployment and task execution.
-`MUMBAI_URL` (optional) - the RPC node address for the Polygon Mumbai network.
-`POLYGON_API_KEY` (optional) - the API key from your account in the PolygonScan block explorer.
+`AMOY_URL` (optional) - the RPC node address for the Polygon Amoy network.
+`OKLINK_AMOY_API` (optional) - the API key from your account in the oklink block explorer.
 
 ## Installation
 

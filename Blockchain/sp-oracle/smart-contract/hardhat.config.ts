@@ -41,10 +41,10 @@ export default {
             gasMultipiler: 0,
             gas: 30 * 1000000,
         },
-        mumbai: {
-            chainId: 80001,
-            url: config.mumbaiUrl,
-            accounts: [config.mumbaiDeployerPrivateKey],
+        amoy: {
+            chainId: 80002,
+            url: config.amoyUrl,
+            accounts: [config.amoyDeployerPrivateKey],
             gas: 10_000_000,
         },
     },
@@ -52,7 +52,18 @@ export default {
         apiKey: {
             mainnet: config.ethereumApiKey,
             polygon: config.polygonApiKey,
-            polygonMumbai: config.polygonApiKey,
-        }
+            polygonAmoy: config.polygonApiKey,
+        },
+        customChains: [
+            {
+                network: 'polygonAmoy',
+                chainId: 80002,
+                urls: {
+                    apiURL:
+                    'https://www.oklink.com/api/explorer/v1/contract/verify/async/api/polygonAmoy',
+                    browserURL: 'https://www.oklink.com/polygonAmoy',
+                },
+            },
+        ],
     }
 };

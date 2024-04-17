@@ -53,17 +53,28 @@ export default {
             url: 'http://localhost:8545',
             account: config.localhostDeployerPrivateKey,
         },
-        mumbai: {
-            chainId: 80001,
-            url: config.mumbaiUrl,
-            accounts: [config.mumbaiDeployerPrivateKey],
+        amoy: {
+            chainId: 80002,
+            url: config.amoyUrl,
+            accounts: [config.amoyDeployerPrivateKey],
         },
     },
     etherscan: {
         apiKey: {
             mainnet: config.ethereumApiKey,
             polygon: config.polygonApiKey,
-            polygonMumbai: config.polygonApiKey,
-        }
+            polygonAmoy: config.polygonApiKey,
+        },
+        customChains: [
+            {
+                network: 'polygonAmoy',
+                chainId: 80002,
+                urls: {
+                    apiURL:
+                    'https://www.oklink.com/api/explorer/v1/contract/verify/async/api/polygonAmoy',
+                    browserURL: 'https://www.oklink.com/polygonAmoy',
+                },
+            },
+        ],
     }
 };
