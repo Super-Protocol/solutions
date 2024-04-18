@@ -4,7 +4,9 @@
         "outDir": "./dist",
         "rootDir": "src",
         "composite": true,
-        "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo"
+        "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
+        "skipLibCheck": true,
+        "noImplicitAny": false
     },
     "include": ["src"]
 }

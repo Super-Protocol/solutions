@@ -34,7 +34,6 @@ const job = new CronJob(CRON_JOB_TIME, async () => {
 
       const spctlService = new SpctlService({
         logger: log,
-        locationPath: path.resolve(__dirname, '..', 'tools'),
         configPath: spctlConfigPath,
       });
 
