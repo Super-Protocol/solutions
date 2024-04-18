@@ -7,17 +7,11 @@ import { CompleteOrdersParams, GetOrdersParams, Order, SpctlServiceParams } from
 
 export class SpctlService {
   protected readonly logger: ILogger;
-  protected readonly locationPath: string;
   protected readonly configPath: string;
 
   constructor(params: SpctlServiceParams) {
     this.logger = params.logger;
-    this.locationPath = params.locationPath;
     this.configPath = params.configPath;
-  }
-
-  getLocationPath(): string {
-    return this.locationPath;
   }
 
   async getOrders(params: GetOrdersParams): Promise<Order[]> {

@@ -1,7 +1,6 @@
 import { ILogger } from '../logger';
 
 export interface SpctlServiceParams {
-  locationPath: string;
   configPath: string;
   logger: ILogger;
 }
