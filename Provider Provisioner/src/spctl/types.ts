@@ -23,7 +23,7 @@ export interface GetOrdersParams {
 }
 
 export interface CompleteOrdersParams {
-  orderIds: string[];
+  orderId: string;
   status: OrderStatus.Done | OrderStatus.Error;
   resultPath: string;
 }
