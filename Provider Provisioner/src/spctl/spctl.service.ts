@@ -10,7 +10,7 @@ export class SpctlService {
   protected readonly logger: ILogger;
   protected readonly configPath: string;
   protected actionAccountAddress: string = '';
-  protected initialized = false;
+  protected blockchainConnectorInitialized = false;
 
   constructor(params: SpctlServiceParams) {
     this.logger = params.logger;
@@ -34,7 +34,7 @@ export class SpctlService {
       blockchainConfig,
       actionAccountKey: config.blockchain.accountPrivateKey,
     });
-    this.initialized = true;
+    this.blockchainConnectorInitialized = true;
   }
 
   async getOrders(params: GetOrdersParams): Promise<Order[]> {
@@ -65,8 +65,8 @@ export class SpctlService {
   }
 
   async completeOrder(params: CompleteOrderParams): Promise<void> {
-    if (!this.initialized) {
-      throw new Error('Spctl service is not initialized');
+    if (!this.blockchainConnectorInitialized) {
+      throw new Error('Blockchain connector is not initialized');
     }
 
     const { config, error } = ConfigLoader.getRawConfig(this.configPath);
