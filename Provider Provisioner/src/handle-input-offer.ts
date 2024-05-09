@@ -58,7 +58,7 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
           }).catch((err) => log.error({ err }, 'Completing order with Error failed. Ignoring...'));
         }
 
-        log.error({ err }, `Failed to complete order ${order.id}. Ignoring..`);
+        log.error({ err }, `Failed to complete order ${order.id} with status Done`);
       }
     }),
   );
