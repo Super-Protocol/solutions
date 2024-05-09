@@ -4,7 +4,7 @@ import completeOrderService from 'spctl/build/services/completeOrder';
 import initBlockchainConnector from 'spctl/build/services/initBlockchainConnector';
 import ordersList from 'spctl/build/commands/ordersList';
 import ConfigLoader from 'spctl/build/config';
-import { CompleteOrdersParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
+import { CompleteOrderParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
 
 export class SpctlService {
   protected readonly logger: ILogger;
@@ -17,7 +17,7 @@ export class SpctlService {
     this.configPath = params.configPath;
   }
 
-  async initialize() {
+  async initializeBlockchainConnector(): Promise<void> {
     const { config, error } = ConfigLoader.getRawConfig(this.configPath);
 
     if (!config || error) {
@@ -64,7 +64,7 @@ export class SpctlService {
     return savedResult.list;
   }
 
-  async completeOrder(params: CompleteOrdersParams): Promise<void> {
+  async completeOrder(params: CompleteOrderParams): Promise<void> {
     if (!this.initialized) {
       throw new Error('Spctl service is not initialized');
     }

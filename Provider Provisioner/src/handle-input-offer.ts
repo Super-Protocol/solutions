@@ -35,12 +35,12 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
   if (!orders.length) {
     return;
   }
-  await spctlService.initialize();
+  await spctlService.initializeBlockchainConnector();
 
   const resourceJsonPath = 'resource.json';
   await fs.writeFile(resourceJsonPath, JSON.stringify(inputOffer.resourceFileContent), 'utf-8');
 
-  await Promise.allSettled(
+  await Promise.all(
     orders.map(async (order) => {
       try {
         await spctlService.completeOrder({
@@ -51,7 +51,7 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
       } catch (err) {
         if (err instanceof StorageResourceValidationError) {
           log.error({ err }, `Completing order ${order.id} with status Error`);
-          return await completeWithError({
+          return await completeOrderWithError({
             orderId: order.id,
             errorMessage: err.message,
             spctlService,
@@ -66,9 +66,9 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
   await fs.rm(resourceJsonPath, { force: true });
 }
 
-async function completeWithError(params: CompleteOrderWithErrorParams) {
+async function completeOrderWithError(params: CompleteOrderWithErrorParams): Promise<void> {
   const { orderId, errorMessage, spctlService } = params;
-  const errorPath = `tmp-order-${orderId}-result.txt`;
+  const errorPath = `tmp-order-${orderId}-result.json`;
   try {
     await fs.writeFile(errorPath, JSON.stringify(errorMessage), 'utf-8');
 
