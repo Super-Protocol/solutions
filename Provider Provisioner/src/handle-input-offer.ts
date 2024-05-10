@@ -43,7 +43,7 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
   await Promise.all(
     orders.map(async (order) => {
       try {
-        log.debug('Completing order with status Done');
+        log.debug({ orderId: order.id }, 'Completing order with status Done');
 
         await spctlService.completeOrder({
           orderId: order.id,
@@ -51,17 +51,25 @@ export async function handleInputOffer(params: HandleInputOfferParams): Promise<
           resultPath: resourceJsonPath,
         });
 
-        log.debug('Order completed with status Done');
+        log.debug({ orderId: order.id }, 'Order completed with status Done');
       } catch (err) {
-        log.error({ err }, `Failed to complete order ${order.id} with status Done`);
+        log.error(
+          { orderId: order.id, err },
+          `Failed to complete order ${order.id} with status Done`,
+        );
 
         if (err instanceof StorageResourceValidationError) {
-          log.debug({ err }, `Completing order ${order.id} with status Error`);
+          log.debug({ orderId: order.id, err }, `Completing order ${order.id} with status Error`);
           return await completeOrderWithError({
             orderId: order.id,
             errorMessage: err.message,
             spctlService,
-          }).catch((err) => log.error({ err }, 'Completing order with Error failed. Ignoring...'));
+          }).catch((err) =>
+            log.error(
+              { orderId: order.id, err },
+              'Completing order with Error failed. Ignoring...',
+            ),
+          );
         }
       }
     }),
