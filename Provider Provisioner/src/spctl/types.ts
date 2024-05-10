@@ -22,8 +22,8 @@ export interface GetOrdersParams {
   statuses: OrderStatus[];
 }
 
-export interface CompleteOrdersParams {
-  orderIds: string[];
+export interface CompleteOrderParams {
+  orderId: string;
   status: OrderStatus.Done | OrderStatus.Error;
   resultPath: string;
 }

@@ -1,17 +1,40 @@
 import fs from 'fs/promises';
 import { ILogger } from '../logger';
-import ordersComplete from 'spctl/build/commands/ordersComplete';
+import completeOrderService from 'spctl/build/services/completeOrder';
+import initBlockchainConnector from 'spctl/build/services/initBlockchainConnector';
 import ordersList from 'spctl/build/commands/ordersList';
 import ConfigLoader from 'spctl/build/config';
-import { CompleteOrdersParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
+import { CompleteOrderParams, GetOrdersParams, Order, SpctlServiceParams } from './types';
 
 export class SpctlService {
   protected readonly logger: ILogger;
   protected readonly configPath: string;
+  protected actionAccountAddress: string = '';
+  protected blockchainConnectorInitialized = false;
 
   constructor(params: SpctlServiceParams) {
     this.logger = params.logger;
     this.configPath = params.configPath;
+  }
+
+  async initializeBlockchainConnector(): Promise<void> {
+    const { config, error } = ConfigLoader.getRawConfig(this.configPath);
+
+    if (!config || error) {
+      this.logger.error({ err: error }, 'Cannot parse config');
+      return;
+    }
+
+    const blockchainConfig = {
+      contractAddress: config.blockchain.smartContractAddress,
+      blockchainUrl: config.blockchain.rpcUrl,
+    };
+
+    this.actionAccountAddress = await initBlockchainConnector({
+      blockchainConfig,
+      actionAccountKey: config.blockchain.accountPrivateKey,
+    });
+    this.blockchainConnectorInitialized = true;
   }
 
   async getOrders(params: GetOrdersParams): Promise<Order[]> {
@@ -41,7 +64,11 @@ export class SpctlService {
     return savedResult.list;
   }
 
-  async completeOrders(params: CompleteOrdersParams): Promise<void> {
+  async completeOrder(params: CompleteOrderParams): Promise<void> {
+    if (!this.blockchainConnectorInitialized) {
+      throw new Error('Blockchain connector is not initialized');
+    }
+
     const { config, error } = ConfigLoader.getRawConfig(this.configPath);
 
     if (!config || error) {
@@ -49,20 +76,14 @@ export class SpctlService {
       return;
     }
 
-    const blockchainConfig = {
-      contractAddress: config.blockchain.smartContractAddress,
-      blockchainUrl: config.blockchain.rpcUrl,
-    };
-
-    await ordersComplete({
-      blockchainConfig,
-      actionAccountKey: config.blockchain.accountPrivateKey,
-      ids: params.orderIds,
+    await completeOrderService({
       status: params.status,
       resourcePath: params.resultPath,
       pccsApiUrl: config.tii.pccsServiceApiUrl,
       accessToken: config.backend.accessToken,
       backendUrl: config.backend.url,
+      id: params.orderId,
+      actionAccountAddress: this.actionAccountAddress,
     });
   }
 }
