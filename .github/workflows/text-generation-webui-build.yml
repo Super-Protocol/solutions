@@ -1,0 +1,27 @@
+name: Build Text Generation WebUI Solution
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target'
+        required: true
+        default: ''
+        type: choice
+        options:
+          - develop
+          - stage
+          - testnet
+
+jobs:
+  build-text-genration-webui:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      repository-projects: read
+
+    steps:
+      - name: Echo
+        run: |
+          echo 1
