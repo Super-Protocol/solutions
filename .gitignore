@@ -104,3 +104,5 @@ data
 sp-run
 tools
 .idea
+
+text-generation-webui/
