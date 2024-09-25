@@ -1,9 +1,11 @@
 import fs from 'fs';
+
 import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
 import { rootLogger } from './logger';
-import { config, serverConfig } from './config';
+import { config } from './config';
 import { findModelDir } from './utils';
+import { serverConfig } from './server-config';
 
 const logger = rootLogger.child({ module: 'server.js' });
 

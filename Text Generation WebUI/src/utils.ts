@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { serverConfig } from './config';
+import { serverConfig } from './server-config';
 
 export interface FileOrDirectory {
   dir: string;
@@ -65,4 +65,13 @@ export const findModelDir = async (folder: string, depth = 0): Promise<string | 
       directories.map((directory) => findModelDir(`${folder}/${directory.name}`, depth + 1)),
     )
   ).find(Boolean);
+};
+
+export const getEnvValeOrFail = (envName: string): keyof typeof process.env => {
+  const value = process.env[envName];
+  if (!value) {
+    throw new Error(`Env value ${envName} is missing`);
+  }
+
+  return value;
 };
