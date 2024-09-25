@@ -12,5 +12,5 @@ export const config = {
   configFileName: 'tunnel-client-config.json',
   configSearchFolderDepth: 1 as number,
   clientServerPort: 9000,
-  serverFilePath: path.join(__dirname, './sever.js'),
+  serverFilePath: path.join(__dirname, './server.js'),
 };
