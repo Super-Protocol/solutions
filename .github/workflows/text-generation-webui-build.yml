@@ -19,7 +19,7 @@ env:
   SOLUTION: text-generation-webui
   PR_REPO_ARGO: super-protocol/argocd-clusters
   DOCKERFILE: "Text\ Generation\ WebUI/Dockerfile"
-  DOCKER_CONTEXT: "./Text\ Generation\ WebUI/"
+  DOCKER_CONTEXT: "./Text\ Generation\ WebUI"
   TARGET: ${{ inputs.target }}
 
 jobs:
