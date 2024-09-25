@@ -75,7 +75,7 @@ jobs:
           if [ "$TARGET" == "develop" ]; then
             SPCTL_CONFIG="${{ secrets.DEVELOP_SPCTL_CONFIG_BASE64 }}"
 
-          if [ "$TARGET" == "stage" ]; then
+          elif [ "$TARGET" == "stage" ]; then
             SPCTL_CONFIG="${{ secrets.STAGING_SPCTL_CONFIG_BASE64 }}"
 
           elif [ "$TARGET" == "testnet" ]; then
