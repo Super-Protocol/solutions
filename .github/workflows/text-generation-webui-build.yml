@@ -64,7 +64,7 @@ jobs:
           echo "SPCTL_REPOSITORY_TYPE=$SPCTL_REPOSITORY_TYPE" >> $GITHUB_ENV
 
       - name: Download and install SPCTL
-        uses: Super-Protocol/sp-build-tools/actions/download-spctl
+        uses: Super-Protocol/sp-build-tools/actions/download-spctl@main
         with:
           version: latest
           repository: ${{ env.SPCTL_REPOSITORY_TYPE }}
