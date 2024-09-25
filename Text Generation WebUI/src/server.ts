@@ -40,7 +40,7 @@ const run = async (): Promise<void> => {
   if (modelDir) {
     spawnOptions.push(`--model-dir ${modelDir.folder}`);
     spawnOptions.push(`--model ${modelDir.model}`);
-    logger.info(`Found models in ${modelDir}`);
+    logger.info(`Found model ${modelDir.model} in ${modelDir.folder}`);
   } else {
     logger.info(`Model not found. Engine will be started without models`);
   }
