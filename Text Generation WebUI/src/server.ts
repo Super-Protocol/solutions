@@ -4,8 +4,8 @@ import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
 import { rootLogger } from './logger';
 import { config } from './config';
-import { findModelDir } from './utils';
 import { serverConfig } from './server-config';
+import { findModelDir } from './utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
