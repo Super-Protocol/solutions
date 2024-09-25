@@ -73,13 +73,13 @@ jobs:
       - name: Prepare SPCTL config
         run: |
           if [ "$TARGET" == "develop" ]; then
-            SPCTL_CONFIG="${{ secrets.DEVELOP_OFFERS_SPCTL_CONFIG_BASE64 }}"
+            SPCTL_CONFIG="${{ secrets.DEVELOP_SPCTL_CONFIG_BASE64 }}"
 
           if [ "$TARGET" == "stage" ]; then
-            SPCTL_CONFIG="${{ secrets.STAGING_OFFERS_SPCTL_CONFIG_BASE64 }}"
+            SPCTL_CONFIG="${{ secrets.STAGING_SPCTL_CONFIG_BASE64 }}"
 
           elif [ "$TARGET" == "testnet" ]; then
-            SPCTL_CONFIG="${{ secrets.TESTNET_OFFERS_SPCTL_CONFIG_BASE64 }}"
+            SPCTL_CONFIG="${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}"
           fi
 
           echo "$SPCTL_CONFIG" | base64 --decode > ./config.json
