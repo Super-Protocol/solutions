@@ -19,7 +19,7 @@ env:
   SOLUTION: text-generation-webui
   PR_REPO_ARGO: super-protocol/argocd-clusters
   DOCKERFILE: "Text\ Generation\ WebUI/Dockerfile"
-  DOCKER_CONTEXT: "./Text\ Generation\ WebUI"
+  DOCKERFILE_CONTEXT: "./Text\ Generation\ WebUI"
   TARGET: ${{ inputs.target }}
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-$TARGET-b${{ github.run_id }}"
-          docker build -t $SOLUTION:latest -f $DOCKERFILE $DOCKER_CONTEXT
+          docker build -t $SOLUTION:latest -f $DOCKERFILE $DOCKERFILE_CONTEXT
           docker save $SOLUTION:latest | gzip > $IMAGE_FILE.tar.gz  
 
           echo "IMAGE_FILE=$IMAGE_FILE" >> $GITHUB_ENV
