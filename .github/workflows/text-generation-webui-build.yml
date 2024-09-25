@@ -93,7 +93,7 @@ jobs:
           echo "IMAGE_RESOURCE=$IMAGE_FILE.json" >> $GITHUB_ENV
 
       - name: Update argocd
-        uses: Super-Protocol/sp-build-tools/actions/update-argocdl@update-argocd
+        uses: Super-Protocol/sp-build-tools/actions/update-argocd@update-argocd
         with:
           gh_token: ${{ secrets.GHFG_TOKEN_SPCTL_RELEASES_DOWNLOAD }}
           target: ${{ inputs.target }}
