@@ -30,7 +30,15 @@ export const findFileOrDirectory = async (
   return { dir: folder, fullPath: `${folder}/${fileName}` };
 };
 
-export const findModelDir = async (folder: string, depth = 0): Promise<string | undefined> => {
+export interface FindModelResult {
+  folder: string;
+  model: string;
+}
+
+export const findModel = async (
+  folder: string,
+  depth = 0,
+): Promise<FindModelResult | undefined> => {
   if (depth > 2) {
     return;
   }
@@ -48,21 +56,36 @@ export const findModelDir = async (folder: string, depth = 0): Promise<string | 
     [[], []] as [fs.Dirent[], fs.Dirent[]],
   );
 
-  const stats = await Promise.all(files.map((file) => fs.promises.stat(`${folder}/${file.name}`)));
+  const fileStats = await Promise.all(
+    files.map(async (file) => ({
+      fileName: file.name,
+      stat: await fs.promises.stat(`${folder}/${file.name}`),
+    })),
+  );
 
-  if (stats.some((stat) => stat.size > serverConfig.modelSizeThreshold)) {
+  const potentialModelFile = fileStats.find(
+    (fileStat) => fileStat.stat.size > serverConfig.modelSizeThreshold,
+  );
+
+  if (potentialModelFile) {
     const pathSplitted = folder.split('/');
     if (pathSplitted.at(-1)?.startsWith('input-')) {
-      return folder;
+      return {
+        folder,
+        model: potentialModelFile.fileName,
+      };
     } else {
-      pathSplitted.pop();
-      return pathSplitted.join('/');
+      const model = pathSplitted.pop() as string;
+      return {
+        folder: pathSplitted.join('/'),
+        model,
+      };
     }
   }
 
   return (
     await Promise.all(
-      directories.map((directory) => findModelDir(`${folder}/${directory.name}`, depth + 1)),
+      directories.map((directory) => findModel(`${folder}/${directory.name}`, depth + 1)),
     )
   ).find(Boolean);
 };

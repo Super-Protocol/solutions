@@ -5,7 +5,7 @@ import { parentPort } from 'worker_threads';
 import { rootLogger } from './logger';
 import { config } from './config';
 import { serverConfig } from './server-config';
-import { findModelDir } from './utils';
+import { findModel } from './utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
@@ -36,9 +36,10 @@ const run = async (): Promise<void> => {
     '16384',
   ];
 
-  const modelDir = await findModelDir(config.inputDataFolder);
+  const modelDir = await findModel(config.inputDataFolder);
   if (modelDir) {
-    spawnOptions.push(`--model-dir ${modelDir}`);
+    spawnOptions.push(`--model-dir ${modelDir.folder}`);
+    spawnOptions.push(`--model ${modelDir.model}`);
     logger.info(`Found models in ${modelDir}`);
   } else {
     logger.info(`Model not found. Engine will be started without models`);
