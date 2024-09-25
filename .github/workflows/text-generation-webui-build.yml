@@ -24,21 +24,13 @@ env:
 
 jobs:
   build-text-genration-webui:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
       repository-projects: read
 
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          remove-docker-images: 'true'
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
