@@ -6,7 +6,6 @@ on:
       target:
         description: 'Target'
         required: true
-        default: ''
         type: choice
         options:
           - develop
@@ -95,7 +94,7 @@ jobs:
       - name: Update argocd
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@update-argocd
         with:
-          gh_token: ${{ secrets.GHFG_TOKEN_SPCTL_RELEASES_DOWNLOAD }}
+          gh_token: ${{ secrets.TOKEN_FOR_ARGOCD_REPO }}
           target: ${{ inputs.target }}
           resource_type: solution
           resource_file: ${{ env.IMAGE_RESOURCE }}
