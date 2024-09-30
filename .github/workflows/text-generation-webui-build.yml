@@ -63,7 +63,7 @@ jobs:
           echo "SPCTL_REPOSITORY_TYPE=$SPCTL_REPOSITORY_TYPE" >> $GITHUB_ENV
 
       - name: Download and install SPCTL
-        uses: Super-Protocol/sp-build-tools/actions/download-spctl@main
+        uses: Super-Protocol/sp-build-tools/actions/download-spctl@v1
         with:
           version: latest
           repository: ${{ env.SPCTL_REPOSITORY_TYPE }}
@@ -92,7 +92,7 @@ jobs:
           echo "IMAGE_RESOURCE=$IMAGE_FILE.json" >> $GITHUB_ENV
 
       - name: Update argocd
-        uses: Super-Protocol/sp-build-tools/actions/update-argocd@update-argocd
+        uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
         with:
           gh_token: ${{ secrets.TOKEN_FOR_ARGOCD_REPO }}
           target: ${{ inputs.target }}
