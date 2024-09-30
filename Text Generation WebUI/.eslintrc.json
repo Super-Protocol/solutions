@@ -1,0 +1,6 @@
+{
+  "extends": ["@super-protocol/eslint-config-typescript/eslint/node-cjs"],
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "off"
+  }
+}

@@ -1,0 +1,4 @@
+[submodule "Text Generation WebUI/text-generation-webui"]
+	path = Text Generation WebUI/text-generation-webui
+	url = https://github.com/oobabooga/text-generation-webui
+	tag = v1.14
