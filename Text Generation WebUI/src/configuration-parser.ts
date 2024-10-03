@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
 import { serverConfig } from './server-config';
 import { EngineConfiguration, RawParameters } from './types';
 import { findModel, isFileExisted, setupCharacter } from './utils';
@@ -22,12 +23,15 @@ export class ConfigurationParser {
     const configurationBuffer = await fs.promises.readFile(serverConfig.configurationPath);
     let configuration;
     try {
-      configuration = JSON.parse(configurationBuffer.toString());
+      configuration = JSON.parse(
+        configurationBuffer.toString(),
+      ) as TeeOrderEncryptedArgsConfiguration;
     } catch {
       throw new Error(`Configuration is not valid JSON`);
     }
 
-    const { basic_settings, model, model_loader } = configuration as EngineConfiguration;
+    const { basic_settings, model, model_loader } = configuration.solution
+      .engine as EngineConfiguration;
 
     await this.setupBaseConfiguration(basic_settings);
     await this.setupModelConfiguration(model);
