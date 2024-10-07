@@ -64,12 +64,6 @@ const splitByComma = (str) => {
   return result.map(item => item.trim().replace(/^"(.*)"$/, '$1'));
 };
 
-  // Add the last part
-  result.push(current.trim());
-
-  return result;
-};
-
 const parseCsv = (data) => {
   const lines = data
     .replace(/"[^"]*"/gs, (match) => match.replace(/\n/g, ''))
