@@ -59,24 +59,10 @@ const valueType = {
 };
 
 const splitByComma = (str) => {
-  const result = [];
-  let current = '';
-  let insideQuotes = false;
-
-  for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-
-    if (char === '"') {
-      insideQuotes = !insideQuotes; // Toggle the insideQuotes flag
-    }
-
-    if (char === ',' && !insideQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else if (char !== '"') {
-      current += char;
-    }
-  }
+  const regex = /(?:[^,"\\]+|"(?:\\.|[^"\\])*")+/g;
+  const result = str.match(regex) || [];
+  return result.map(item => item.trim().replace(/^"(.*)"$/, '$1'));
+};
 
   // Add the last part
   result.push(current.trim());
