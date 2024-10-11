@@ -46,9 +46,9 @@ jobs:
 
       - name: Build Docker image and save to file
         run: |
-          IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}"
+          IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
           docker build -t $SOLUTION:latest -f "$DOCKERFILE" "$DOCKERFILE_CONTEXT"
-          docker save $SOLUTION:latest | gzip > $IMAGE_FILE.tar.gz  
+          docker save $SOLUTION:latest | gzip > $IMAGE_FILE
 
           echo "IMAGE_FILE=$IMAGE_FILE" >> $GITHUB_ENV
 
@@ -86,10 +86,9 @@ jobs:
 
       - name: Encrypt and upload image
         id: upload_image
-        run: |
-          ./spctl files upload $IMAGE_FILE.tar.gz --output $IMAGE_FILE.json --filename $IMAGE_FILE.tar.gz
-          cat $IMAGE_FILE.json
-          echo "IMAGE_RESOURCE=$IMAGE_FILE.json" >> $GITHUB_ENV
+        uses: Super-Protocol/sp-build-tools/actions/upload-file@v1
+        with:
+          file_to_upload: ${{ env.IMAGE_FILE }}
 
       - name: Update argocd
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
@@ -97,6 +96,6 @@ jobs:
           gh_token: ${{ secrets.TOKEN_FOR_ARGOCD_REPO }}
           target: ${{ inputs.target }}
           resource_type: solution
-          resource_file: ${{ env.IMAGE_RESOURCE }}
+          resource_file: ${{ steps.upload_image.outputs.resource }}
           solution_name: ${{ env.SOLUTION }}
           commit_type: pull-request
