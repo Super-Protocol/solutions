@@ -140,7 +140,7 @@ context: |-
   ${contextPlaceholder}
   `;
   const characterName = normalizeData(character.name);
-  const characterFileName = characterName.replace(/\s/s, '');
+  const characterFileName = characterName.replace(/\s/g, '');
 
   const characterFile = template
     .replace(namePlaceholder, characterName)
