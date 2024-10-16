@@ -1,7 +1,6 @@
 'use strict';
 const assert = require('assert/strict');
 const fs = require('fs');
-const { type } = require('os');
 
 const csvFilePath = process.argv[2];
 if (!csvFilePath) {
@@ -237,10 +236,20 @@ const run = async () => {
         throw 'To add item, create a category';
       }
 
+      const type = types[sourceObj[headersObj.type].toLowerCase()];
+      if (!type) {
+        throw `Type column is mandatory! Item: ${sourceObj[headersObj.name]}`;
+      }
+
+      const variable = sourceObj[headersObj.variable];
+      if (!variable) {
+        throw `Variable column is mandatory! Item: ${sourceObj[headersObj.name]}`;
+      }
+
       const newItem = {
-        type: types[sourceObj[headersObj.type].toLowerCase()],
+        type,
         name: sourceObj[headersObj.name],
-        variable: sourceObj[headersObj.variable],
+        variable,
         description: sourceObj[headersObj.description],
       };
 
