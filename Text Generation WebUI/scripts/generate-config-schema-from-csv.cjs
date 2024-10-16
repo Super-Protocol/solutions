@@ -251,6 +251,11 @@ const run = async () => {
         throw `Type column is mandatory! Item: ${sourceObj[headersObj.name]}`;
       }
 
+      const variable = sourceObj[headersObj.variable];
+      if (!variable) {
+        throw `Variable column is mandatory! Item: ${sourceObj[headersObj.name]}`;
+      }
+
       const newItem = {
         type,
         name: sourceObj[headersObj.name],
