@@ -36,6 +36,7 @@ const types = {
   select: 8,
   multiselect: 9,
   slider: 10,
+  order: 11,
 };
 
 const valueType = {
@@ -146,6 +147,10 @@ const convertByValueType = (item, valueType) => {
 
   if (valueType.startsWith('string')) {
     return String(item);
+  }
+
+  if (isNaN(item)) {
+    throw `Error: ${item} should be ${valueType}`;
   }
 
   return Number(item);
