@@ -172,11 +172,16 @@ const run = async () => {
   const sourceObjs = parseCsv(csvFile.toString());
 
   sourceObjs.forEach((sourceObj) => {
+    const variable = sourceObj[headersObj.variable];
+    if (!variable) {
+      throw `Variable column is mandatory! Item: ${JSON.stringify(sourceObj)}`;
+    }
+
     if (sourceObj[headersObj.category]) {
       const newCategory = {
         type: types['category'],
-        name: sourceObj[headersObj.category],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.category] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -196,8 +201,8 @@ const run = async () => {
 
       const newGroup = {
         type: types['group'],
-        name: sourceObj[headersObj.group],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.group] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -217,8 +222,8 @@ const run = async () => {
 
       const newSubgroup = {
         type: types['subgroup'],
-        name: sourceObj[headersObj.subgroup],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.subgroup] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -239,11 +244,6 @@ const run = async () => {
       const type = types[sourceObj[headersObj.type].toLowerCase()];
       if (!type) {
         throw `Type column is mandatory! Item: ${sourceObj[headersObj.name]}`;
-      }
-
-      const variable = sourceObj[headersObj.variable];
-      if (!variable) {
-        throw `Variable column is mandatory! Item: ${sourceObj[headersObj.name]}`;
       }
 
       const newItem = {
