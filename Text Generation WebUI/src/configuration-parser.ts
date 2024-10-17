@@ -5,22 +5,31 @@ import { EngineConfiguration, RawParameters } from './types';
 import { findModel, isFileExisted, setupCharacter } from './utils';
 import { rootLogger } from './logger';
 import { config } from './config';
+import { DomainConfig } from '@super-protocol/tunnels-lib';
+import { getCredentialsFromOrderResult } from './orderHelper';
+
+export type TunnelClientConfig = {
+  authToken: string;
+  tlsCertifiacate: string;
+  certificatePrivateKey: string;
+}
 
 export class ConfigurationParser {
   private logger = rootLogger.child({
     module: ConfigurationParser.name,
   });
   private cliParams: string[] = [];
+  private configuration: any;
 
-  async getCliParams(): Promise<string[]> {
-    this.cliParams = [];
-
+  private async readConfiguration(configurationPath: string): Promise<TeeOrderEncryptedArgsConfiguration | null> {
+    if (this.configuration) {
+      return this.configuration;
+    }
     if (!(await isFileExisted(serverConfig.configurationPath))) {
-      this.logger.info('Configuration not found. Run with default params');
-      return ['--listen-port', String(serverConfig.port)];
+      return null;
     }
 
-    const configurationBuffer = await fs.promises.readFile(serverConfig.configurationPath);
+    const configurationBuffer = await fs.promises.readFile(configurationPath);
     let configuration;
     try {
       configuration = JSON.parse(
@@ -28,6 +37,65 @@ export class ConfigurationParser {
       ) as TeeOrderEncryptedArgsConfiguration;
     } catch {
       throw new Error(`Configuration is not valid JSON`);
+    }
+
+    return this.configuration = configuration;
+  }
+
+  async getTunnelClientConfig(): Promise<DomainConfig> {
+    const configuration = await this.readConfiguration(serverConfig.configurationPath);
+    if (!configuration) {
+      throw new Error('Configuration not found');
+    }
+
+    const tunnelClientConfig = (configuration.solution.engine as EngineConfiguration).tunnel_client;
+
+    let result: DomainConfig;
+    if (tunnelClientConfig.provision_type.toLowerCase().includes('manual')) {
+      const manualSettings = tunnelClientConfig.manual_domain_settings;
+
+      result = {
+        tunnels: [{
+          sgxMrSigner: config.mrSigner,
+          sgxMrEnclave: config.mrEnclave,
+      }],
+      authToken: manualSettings.auth_token,
+      /**
+       * Private key and SSL certificate of the domain in PEM format as Buffers
+       */
+      site: {
+          /**
+           * Domain (required for wildcard certificates). If not provided, it will be extracted from certificate
+           */
+          // domain: manualSettings;
+          /**
+           * SSL certificate buffer
+           */
+          cert: manualSettings.tls_certifiacate,
+          /**
+           * Private key for SSL certificate
+           */
+          key: manualSettings.tls_key,
+      }
+      // quotes: [];
+      }
+    } else {
+      // orderId + orderKey provisioner
+      const tmpDomainSettings = tunnelClientConfig.tunnel_provisioner_order;
+      const orderEncryptedResult = '';
+      const decryptionKey: EncryptionKey = tmpDomainSettings.order_key;
+      await getCredentialsFromOrderResult(orderEncryptedResult, decryptionKey);
+    }
+    return result;
+  }
+
+  async getCliParams(): Promise<string[]> {
+    this.cliParams = [];
+
+    const configuration = await this.readConfiguration(serverConfig.configurationPath);
+    if (!configuration) {
+      this.logger.info('Configuration not found. Run with default params');
+      return ['--listen-port', String(serverConfig.port)];
     }
 
     const { basic_settings, model, model_loader } = configuration.solution

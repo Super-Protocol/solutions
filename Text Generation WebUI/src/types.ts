@@ -29,4 +29,16 @@ export type EngineConfiguration = {
     autogptq_options: RawParameters;
     hqq_options: RawParameters;
   };
+  tunnel_client: {
+    provision_type: string;
+    tunnel_provisioner_order: {
+      order_id: string;
+      order_key: string;
+    };
+    manual_domain_settings: {
+      auth_token: string;
+      tls_certifiacate: string;
+      tls_key: string;
+    }
+  }
 };
