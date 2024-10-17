@@ -1,7 +1,6 @@
 'use strict';
 const assert = require('assert/strict');
 const fs = require('fs');
-const { type } = require('os');
 
 const csvFilePath = process.argv[2];
 if (!csvFilePath) {
@@ -37,6 +36,7 @@ const types = {
   select: 8,
   multiselect: 9,
   slider: 10,
+  order: 11,
 };
 
 const valueType = {
@@ -149,6 +149,10 @@ const convertByValueType = (item, valueType) => {
     return String(item);
   }
 
+  if (isNaN(item)) {
+    throw `Error: ${item} should be ${valueType}`;
+  }
+
   return Number(item);
 };
 
@@ -173,11 +177,16 @@ const run = async () => {
   const sourceObjs = parseCsv(csvFile.toString());
 
   sourceObjs.forEach((sourceObj) => {
+    const variable = sourceObj[headersObj.variable];
+    if (!variable) {
+      throw `Variable column is mandatory! Item: ${JSON.stringify(sourceObj)}`;
+    }
+
     if (sourceObj[headersObj.category]) {
       const newCategory = {
         type: types['category'],
-        name: sourceObj[headersObj.category],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.category] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -197,8 +206,8 @@ const run = async () => {
 
       const newGroup = {
         type: types['group'],
-        name: sourceObj[headersObj.group],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.group] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -218,8 +227,8 @@ const run = async () => {
 
       const newSubgroup = {
         type: types['subgroup'],
-        name: sourceObj[headersObj.subgroup],
-        variable: sourceObj[headersObj.variable],
+        name: sourceObj[headersObj.subgroup] || variable,
+        variable,
         description: sourceObj[headersObj.description],
         children: [],
       };
@@ -237,10 +246,15 @@ const run = async () => {
         throw 'To add item, create a category';
       }
 
+      const type = types[sourceObj[headersObj.type].toLowerCase()];
+      if (!type) {
+        throw `Type column is mandatory! Item: ${sourceObj[headersObj.name]}`;
+      }
+
       const newItem = {
-        type: types[sourceObj[headersObj.type].toLowerCase()],
+        type,
         name: sourceObj[headersObj.name],
-        variable: sourceObj[headersObj.variable],
+        variable,
         description: sourceObj[headersObj.description],
       };
 
