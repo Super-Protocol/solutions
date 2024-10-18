@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "BSL",
   "devDependencies": {
     "@super-protocol/eslint-config-typescript": "2.0.1",
     "@types/node": "16.18.94",

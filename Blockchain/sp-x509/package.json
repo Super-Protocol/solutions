@@ -1,7 +1,7 @@
 {
   "name": "@super-protocol/poc-x509",
   "version": "0.0.1",
-  "license": "MIT",
+  "license": "BSL",
   "repository": "https://github.com/Super-Protocol/hardhat-diamond-preprocessor",
   "main": "build/index.js",
   "types": "index.d.ts",

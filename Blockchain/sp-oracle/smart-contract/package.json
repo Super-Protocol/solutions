@@ -1,6 +1,6 @@
 {
     "name": "@superprotocol/oracle-samples@contract",
-    "license": "ISC",
+    "license": "BSL",
     "dependencies": {
         "@nomiclabs/hardhat-ethers": "^2.2.3",
         "@nomiclabs/hardhat-etherscan": "^3.1.7",

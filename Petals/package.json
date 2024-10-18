@@ -1,7 +1,7 @@
 {
-  "name": "sp-text-generation-webui",
+  "name": "sp-petals",
   "version": "0.1.0",
-  "description": "Super Protocol integration for Text Geenration Webui (https://github.com/oobabooga/text-generation-webui)",
+  "description": "Super Protocol integration for Petals (https://github.com/bigscience-workshop/petals)",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json"

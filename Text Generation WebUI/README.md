@@ -1,1 +1,1 @@
-# TEXT GENERATION WEBUI launch script
+# Super Protocol Text Generation WebUI

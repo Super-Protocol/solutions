@@ -7,7 +7,7 @@
   ],
   "repository": "https://github.com/Super-Protocol/sp-oracle-sample",
   "author": "Super Protocol",
-  "license": "ISC",
+  "license": "BSL",
   "engines": {
     "node": ">=16.18",
     "npm": ">=8.19.2"
