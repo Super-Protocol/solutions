@@ -1,32 +1,31 @@
-
-**Business Source License 1.1**
+Business Source License 1.1
 
 License text copyright (c) 2024 Super Protocol, All Rights Reserved.  
 "Business Source License" is a trademark of MariaDB Corporation Ab.
 
 -----------------------------------------------------------------------------
 
-### Parameters
+Parameters
 
-- **Licensor**:  
-  **Super Protocol**
+- Licensor:  
+  Super Protocol
 
-- **Licensed Work**:  
-  **Super Protocol Software**  
+- Licensed Work:  
+  Super Protocol Software  
   The Licensed Work is (c) 2024 Super Protocol
 
-- **Additional Use Grant**:  
+- Additional Use Grant:  
   None
 
-- **Change Date**:  
+- Change Date:  
   2028-01-01
 
-- **Change License**:  
+- Change License:  
   GNU General Public License v2.0 or later
 
 -----------------------------------------------------------------------------
 
-### Terms
+Terms
 
 The Licensor hereby grants you the right to copy, modify, create derivative works, redistribute, and make non-production use of the Licensed Work. The Licensor may make an Additional Use Grant permitting limited production use.
 
@@ -48,7 +47,7 @@ MariaDB hereby grants you permission to use this License’s text to license you
 
 -----------------------------------------------------------------------------
 
-### Covenants of Licensor
+Covenants of Licensor
 
 In consideration of the right to use this License’s text and the "Business Source License" name and trademark, Licensor covenants to MariaDB, and to all other recipients of the licensed work to be provided by Licensor:
 
@@ -62,6 +61,6 @@ In consideration of the right to use this License’s text and the "Business Sou
 
 -----------------------------------------------------------------------------
 
-**Notice**
+Notice
 
 The Business Source License (this document, or the "License") is not an Open Source license. However, the Licensed Work will eventually be made available under an Open Source License, as stated in this License.
