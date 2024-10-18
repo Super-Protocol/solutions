@@ -6,13 +6,13 @@ import { findModel, isFileExisted, setupCharacter } from './utils';
 import { rootLogger } from './logger';
 import { config } from './config';
 import { DomainConfig } from '@super-protocol/tunnels-lib';
-import { getCredentialsFromOrderResult } from './orderHelper';
+import { getOrderResult, parseTunnelProvisionerOrderResult } from './order-helpers';
 
 export type TunnelClientConfig = {
   authToken: string;
   tlsCertifiacate: string;
   certificatePrivateKey: string;
-}
+};
 
 export class ConfigurationParser {
   private logger = rootLogger.child({
@@ -21,7 +21,9 @@ export class ConfigurationParser {
   private cliParams: string[] = [];
   private configuration: any;
 
-  private async readConfiguration(configurationPath: string): Promise<TeeOrderEncryptedArgsConfiguration | null> {
+  private async readConfiguration(
+    configurationPath: string,
+  ): Promise<TeeOrderEncryptedArgsConfiguration | null> {
     if (this.configuration) {
       return this.configuration;
     }
@@ -39,7 +41,7 @@ export class ConfigurationParser {
       throw new Error(`Configuration is not valid JSON`);
     }
 
-    return this.configuration = configuration;
+    return (this.configuration = configuration);
   }
 
   async getTunnelClientConfig(): Promise<DomainConfig> {
@@ -49,44 +51,54 @@ export class ConfigurationParser {
     }
 
     const tunnelClientConfig = (configuration.solution.engine as EngineConfiguration).tunnel_client;
+    const tunnels = [
+      {
+        sgxMrSigner: config.mrSigner,
+        sgxMrEnclave: config.mrEnclave,
+      },
+    ];
 
-    let result: DomainConfig;
     if (tunnelClientConfig.provision_type.toLowerCase().includes('manual')) {
       const manualSettings = tunnelClientConfig.manual_domain_settings;
 
-      result = {
-        tunnels: [{
-          sgxMrSigner: config.mrSigner,
-          sgxMrEnclave: config.mrEnclave,
-      }],
-      authToken: manualSettings.auth_token,
-      /**
-       * Private key and SSL certificate of the domain in PEM format as Buffers
-       */
-      site: {
+      return {
+        tunnels,
+        authToken: manualSettings.auth_token,
+        /**
+         * Private key and SSL certificate of the domain in PEM format as Buffers
+         */
+        site: {
           /**
            * Domain (required for wildcard certificates). If not provided, it will be extracted from certificate
            */
-          // domain: manualSettings;
+          domain: '',
           /**
            * SSL certificate buffer
            */
-          cert: manualSettings.tls_certifiacate,
+          cert: Buffer.from(manualSettings.tls_certifiacate, 'utf-8'),
           /**
            * Private key for SSL certificate
            */
-          key: manualSettings.tls_key,
-      }
-      // quotes: [];
-      }
-    } else {
-      // orderId + orderKey provisioner
-      const tmpDomainSettings = tunnelClientConfig.tunnel_provisioner_order;
-      const orderEncryptedResult = '';
-      const decryptionKey: EncryptionKey = tmpDomainSettings.order_key;
-      await getCredentialsFromOrderResult(orderEncryptedResult, decryptionKey);
+          key: Buffer.from(manualSettings.tls_key, 'utf-8'),
+        },
+        quotes: [],
+      };
     }
-    return result;
+
+    const { order_id: orderId, order_key: orderKey } = tunnelClientConfig.tunnel_provisioner_order;
+    const orderResult = await getOrderResult({ orderId, orderKey });
+    const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
+
+    return {
+      tunnels,
+      authToken: tunnelConfig.authToken,
+      site: {
+        domain: tunnelConfig.domain,
+        cert: Buffer.from(tunnelConfig.cert, 'base64'),
+        key: Buffer.from(tunnelConfig.certPrimaryKey, 'base64'),
+      },
+      quotes: [tunnelConfig.certQuote],
+    };
   }
 
   async getCliParams(): Promise<string[]> {
