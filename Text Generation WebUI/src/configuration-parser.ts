@@ -94,8 +94,8 @@ export class ConfigurationParser {
       authToken: tunnelConfig.authToken,
       site: {
         domain: tunnelConfig.domain,
-        cert: Buffer.from(tunnelConfig.cert, 'base64'),
-        key: Buffer.from(tunnelConfig.certPrimaryKey, 'base64'),
+        cert: Buffer.from(tunnelConfig.cert, 'utf-8'),
+        key: Buffer.from(tunnelConfig.certPrimaryKey, 'utf-8'),
       },
       quotes: [tunnelConfig.certQuote],
     };
