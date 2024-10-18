@@ -23,7 +23,6 @@ parentPort?.on('message', (message) => {
 const run = async (): Promise<void> => {
   await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
-  const tunnelClientConfig = await new ConfigurationParser().getTunnelClientConfig();
   const cliParams = await new ConfigurationParser().getCliParams();
 
   const spawnOptions = [
