@@ -5,14 +5,18 @@ import {
 } from '@super-protocol/tunnels-lib';
 import { rootLogger } from './logger';
 import { config } from './config';
+import { ConfigurationParser } from './configuration-parser';
 
 const run = async (): Promise<void> => {
-  const tunnelClientConfigs = await findConfigsRecursive(
-    config.inputDataFolder,
-    config.configFileName,
-    config.configSearchFolderDepth,
-    rootLogger,
-  );
+  const tunnelClientConfigs = [
+    await new ConfigurationParser().getTunnelClientConfig(),
+    ...(await findConfigsRecursive(
+      config.inputDataFolder,
+      config.configFileName,
+      config.configSearchFolderDepth,
+      rootLogger,
+    )),
+  ];
 
   const options: TunnelClientOptions = {
     logger: rootLogger,
