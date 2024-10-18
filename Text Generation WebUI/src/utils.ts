@@ -114,7 +114,7 @@ export const findModel = async (
   ).find(Boolean);
 };
 
-export const getEnvValeOrFail = (envName: string): keyof typeof process.env => {
+export const getEnvValueOrFail = (envName: string): keyof typeof process.env => {
   const value = process.env[envName];
   if (!value) {
     throw new Error(`Env value ${envName} is missing`);

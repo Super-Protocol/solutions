@@ -1,18 +1,9 @@
-import path from 'path';
 import dotenv from 'dotenv';
+import path from 'path';
 import packageJson from '../package.json';
+import { getEnvValueOrFail } from './utils';
 
 dotenv.config();
-
-const getEnvValueOrFail = (envKey: string): string => {
-  const value = process.env[envKey];
-
-  if (!value) {
-    throw new Error(`ENV value for ${envKey} is missing`);
-  }
-
-  return value;
-};
 
 export const config = {
   appName: packageJson.name,
