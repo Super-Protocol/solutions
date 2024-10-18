@@ -8,12 +8,6 @@ import { config } from './config';
 import { DomainConfig } from '@super-protocol/tunnels-lib';
 import { getOrderResult, parseTunnelProvisionerOrderResult } from './order-helpers';
 
-export type TunnelClientConfig = {
-  authToken: string;
-  tlsCertifiacate: string;
-  certificatePrivateKey: string;
-};
-
 export class ConfigurationParser {
   private logger = rootLogger.child({
     module: ConfigurationParser.name,
