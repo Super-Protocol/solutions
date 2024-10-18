@@ -17,6 +17,8 @@ const getEnvValueOrFail = (envKey: string): string => {
 export const config = {
   appName: packageJson.name,
   appVersion: packageJson.version,
+  blockchainUrl: getEnvValueOrFail('BLOCKCHAIN_URL'),
+  blockchainContractAddress: getEnvValueOrFail('BLOCKCHAIN_CONTRACT_ADDRESS'),
   logLevel: (process.env.LOG_LEVEL as string) || 'trace',
   inputDataFolder: (process.env.INPUT_DATA_FOLDER as string) || '/sp/inputs',
   configFileName: 'tunnel-client-config.json',

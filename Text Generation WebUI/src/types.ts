@@ -39,6 +39,18 @@ export type EngineConfiguration = {
       auth_token: string;
       tls_certifiacate: string;
       tls_key: string;
-    }
-  }
+    };
+  };
+};
+
+export type TunnelProvisionerOrderResult = {
+  domain: string;
+  orderKey: string;
+  orderKeyMnemonic: string;
+  orders: string[];
+  errors: string[];
+  cert: string;
+  certPrimaryKey: string;
+  certQuote: string;
+  authToken: string;
 };
