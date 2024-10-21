@@ -1,21 +1,21 @@
 import { CryptoAlgorithm, Encoding, EncryptionKey } from '@super-protocol/dto-js';
 import { DomainConfig } from '@super-protocol/tunnels-lib';
 import { Logger } from 'pino';
-import { getOrderResult, parseTunnelProvisionerOrderResult } from './order-helpers';
-import { EngineConfiguration } from './types';
+import { getOrderResult, parseTunnelProvisionerOrderResult } from '../order-helpers';
+import { EngineConfiguration } from '../types';
 
 type TunnelInfo = {
   mrSigner: string;
   mrEnclave: string;
 };
 
-type GetDomainConfigByConfigurationParams = {
+type GetDomainConfigParams = {
   configuration: EngineConfiguration['tunnel_client'];
   logger: Logger;
 } & TunnelInfo;
 
-export const getDomainConfigByConfiguration = async (
-  params: GetDomainConfigByConfigurationParams,
+export const getDomainConfig = async (
+  params: GetDomainConfigParams,
 ): Promise<DomainConfig | undefined> => {
   const { configuration, mrSigner, mrEnclave, logger } = params;
 

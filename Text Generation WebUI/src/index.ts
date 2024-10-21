@@ -4,9 +4,8 @@ import {
   TunnelClientOptions,
 } from '@super-protocol/tunnels-lib';
 import { config } from './config';
-import { getDomainConfigByConfiguration } from './get-domain-config-by-configuration';
 import { rootLogger } from './logger';
-import { readConfiguration } from './read-configuration';
+import { getDomainConfig, readConfiguration } from './solution-configuration';
 import { EngineConfiguration } from './types';
 
 const run = async (): Promise<void> => {
@@ -15,7 +14,7 @@ const run = async (): Promise<void> => {
     throw new Error('Configuration not found');
   }
 
-  const configInConfiguration = await getDomainConfigByConfiguration({
+  const configInConfiguration = await getDomainConfig({
     configuration: (configuration.solution.engine as EngineConfiguration).tunnel_client,
     mrSigner: config.mrSigner,
     mrEnclave: config.mrEnclave,
