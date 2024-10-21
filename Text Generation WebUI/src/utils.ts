@@ -1,5 +1,5 @@
 import fs, { constants } from 'fs';
-import { serverConfig } from './server-config';
+import { getServerConfig } from './server-config';
 import { EngineConfiguration } from './types';
 
 export interface FileOrDirectory {
@@ -85,6 +85,7 @@ export const findModel = async (
     })),
   );
 
+  const serverConfig = getServerConfig();
   const potentialModelFile = fileStats.find(
     (fileStat) => fileStat.stat.size > serverConfig.modelSizeThreshold,
   );
@@ -137,6 +138,8 @@ context: |-
     .replace(namePlaceholder, characterName)
     .replace(greetingPlaceholder, normalizeData(character.greeting) || defaultGreeting)
     .replace(contextPlaceholder, normalizeData(character.context) || defaultContext);
+
+  const serverConfig = getServerConfig();
 
   await fs.promises.writeFile(
     `${serverConfig.engineFolder}/characters/${characterFileName}.yaml`,

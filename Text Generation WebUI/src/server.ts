@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
 import { config } from './config';
 import { rootLogger } from './logger';
-import { serverConfig } from './server-config';
+import { getServerConfig } from './server-config';
 import { getCliParams, readConfiguration } from './solution-configuration';
 import { EngineConfiguration } from './types';
 
@@ -23,6 +23,8 @@ parentPort?.on('message', (message) => {
 });
 
 const run = async (): Promise<void> => {
+  const serverConfig = getServerConfig();
+
   await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
   const configuration = await readConfiguration(serverConfig.configurationPath);
