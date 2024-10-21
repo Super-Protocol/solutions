@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import packageJson from '../package.json';
-import { getEnvValueOrFail } from './utils';
+import { getEnvValueOrFail } from './env-utils';
 
 dotenv.config();
 

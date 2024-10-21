@@ -1,5 +1,5 @@
 import path from 'path';
-import { getEnvValueOrFail } from './utils';
+import { getEnvValueOrFail } from './env-utils';
 
 export const serverConfig = {
   engineFolder: path.join(__dirname, '../text-generation-webui'),
