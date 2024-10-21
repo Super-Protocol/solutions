@@ -101,6 +101,8 @@ export class ConfigurationParser {
     modelLoaderSettings: EngineConfiguration['model_loader'],
   ): void {
     const modelLoader = modelLoaderSettings.loader_name;
+    this.cliParams.push(`--loader`, modelLoader);
+
     const loaderConfiguration = modelLoaderSettings[
       `${modelLoader.toLowerCase()}_options` as keyof typeof modelLoaderSettings
     ] as RawParameters | undefined;
@@ -111,7 +113,7 @@ export class ConfigurationParser {
     }
 
     const params = Object.keys(loaderConfiguration);
-    this.logger.info(`Adding nex params: ${params.join(',')}`);
+    this.logger.info(`Adding next params: ${params.join(',')}`);
 
     params.forEach((key) => {
       this.cliParams.push(`--${key}`);
