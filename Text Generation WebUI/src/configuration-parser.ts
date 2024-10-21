@@ -13,7 +13,7 @@ export class ConfigurationParser {
     module: ConfigurationParser.name,
   });
   private cliParams: string[] = [];
-  private configuration: any;
+  private configuration?: TeeOrderEncryptedArgsConfiguration;
 
   private async readConfiguration(
     configurationPath: string,
@@ -53,6 +53,8 @@ export class ConfigurationParser {
     ];
 
     if (tunnelClientConfig.provision_type.toLowerCase().includes('manual')) {
+      this.logger.info('Loading manual configuration...');
+
       const manualSettings = tunnelClientConfig.manual_domain_settings;
 
       return {
@@ -65,7 +67,7 @@ export class ConfigurationParser {
           /**
            * Domain (required for wildcard certificates). If not provided, it will be extracted from certificate
            */
-          domain: '',
+          domain: manualSettings.domain || '',
           /**
            * SSL certificate buffer
            */
@@ -78,9 +80,13 @@ export class ConfigurationParser {
         quotes: [],
       };
     }
+    this.logger.info('Loading configuration from Tunnels Launcher order...');
 
     const { order_id: orderId, order_key: orderKey } = tunnelClientConfig.tunnel_provisioner_order;
+    this.logger.info('Download and decrypt order result');
     const orderResult = await getOrderResult({ orderId, orderKey });
+
+    this.logger.info('Parse order result');
     const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
 
     return {
