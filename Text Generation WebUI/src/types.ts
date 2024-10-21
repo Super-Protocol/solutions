@@ -37,6 +37,7 @@ export type EngineConfiguration = {
     };
     manual_domain_settings: {
       auth_token: string;
+      domain?: string;
       tls_certifiacate: string;
       tls_key: string;
     };

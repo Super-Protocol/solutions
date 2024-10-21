@@ -18,6 +18,8 @@ const run = async (): Promise<void> => {
     )),
   ];
 
+  rootLogger.child({module: 'run'}).debug({tunnelClientConfigs}, 'Found tunnel client configs');
+
   const options: TunnelClientOptions = {
     logger: rootLogger,
     applicationPort: config.clientServerPort,
