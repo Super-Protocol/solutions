@@ -25,6 +25,8 @@ const run = async (): Promise<void> => {
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
   const cliParams = await new ConfigurationParser().getCliParams();
 
+  logger.trace({ cliParams }, `CLI params`);
+
   const spawnOptions = [
     '--ssl-keyfile',
     serverConfig.privateKeyFilePath,
