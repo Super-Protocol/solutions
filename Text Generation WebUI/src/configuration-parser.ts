@@ -1,45 +1,21 @@
 import fs from 'fs';
-import { TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
 import { serverConfig } from './server-config';
 import { EngineConfiguration, RawParameters } from './types';
-import { findModel, isFileExisted, setupCharacter } from './utils';
+import { findModel, setupCharacter } from './utils';
 import { rootLogger } from './logger';
 import { config } from './config';
+import { readConfiguration } from './read-configuration';
 
 export class ConfigurationParser {
   private logger = rootLogger.child({
     module: ConfigurationParser.name,
   });
   private cliParams: string[] = [];
-  private configuration?: TeeOrderEncryptedArgsConfiguration;
-
-  private async readConfiguration(
-    configurationPath: string,
-  ): Promise<TeeOrderEncryptedArgsConfiguration | null> {
-    if (this.configuration) {
-      return this.configuration;
-    }
-    if (!(await isFileExisted(configurationPath))) {
-      return null;
-    }
-
-    const configurationBuffer = await fs.promises.readFile(configurationPath);
-    let configuration;
-    try {
-      configuration = JSON.parse(
-        configurationBuffer.toString(),
-      ) as TeeOrderEncryptedArgsConfiguration;
-    } catch {
-      throw new Error(`Configuration is not valid JSON`);
-    }
-
-    return (this.configuration = configuration);
-  }
 
   async getCliParams(): Promise<string[]> {
     this.cliParams = [];
 
-    const configuration = await this.readConfiguration(serverConfig.configurationPath);
+    const configuration = await readConfiguration(serverConfig.configurationPath);
     if (!configuration) {
       this.logger.info('Configuration not found. Run with default params');
       return ['--listen-port', String(serverConfig.port)];
