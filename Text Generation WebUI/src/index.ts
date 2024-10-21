@@ -3,20 +3,25 @@ import {
   TunnelClient,
   TunnelClientOptions,
 } from '@super-protocol/tunnels-lib';
-import { rootLogger } from './logger';
 import { config } from './config';
-import { ConfigurationParser } from './configuration-parser';
+import { findConfigInConfiguration } from './find-config-in-configuration';
+import { rootLogger } from './logger';
 
 const run = async (): Promise<void> => {
-  const tunnelClientConfigs = [
-    await new ConfigurationParser().getTunnelClientConfig(),
-    ...(await findConfigsRecursive(
-      config.inputDataFolder,
-      config.configFileName,
-      config.configSearchFolderDepth,
-      rootLogger,
-    )),
-  ];
+  const configInConfiguration = await findConfigInConfiguration({
+    configurationPath: config.configurationPath,
+    mrSigner: config.mrSigner,
+    mrEnclave: config.mrEnclave,
+    logger: rootLogger,
+  });
+  const tunnelClientConfigs = configInConfiguration
+    ? [configInConfiguration]
+    : await findConfigsRecursive(
+        config.inputDataFolder,
+        config.configFileName,
+        config.configSearchFolderDepth,
+        rootLogger,
+      );
 
   rootLogger.child({ module: 'run' }).debug({ tunnelClientConfigs }, 'Found tunnel client configs');
 

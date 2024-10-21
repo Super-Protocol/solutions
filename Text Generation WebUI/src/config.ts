@@ -18,4 +18,5 @@ export const config = {
   serverFilePath: path.join(__dirname, './server.js'),
   mrEnclave: getEnvValueOrFail('MRENCLAVE'),
   mrSigner: getEnvValueOrFail('MRSIGNER'),
+  configurationPath: process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
 };

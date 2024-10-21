@@ -1,4 +1,5 @@
 import path from 'path';
+import { config } from './config';
 import { getEnvValueOrFail } from './env-utils';
 
 export const serverConfig = {
@@ -9,5 +10,5 @@ export const serverConfig = {
   tlsKey: getEnvValueOrFail('TLS_KEY'),
   tlsCert: getEnvValueOrFail('TLS_CERT'),
   modelSizeThreshold: 100 * 1024 * 1024, // 100Mb,
-  configurationPath: process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
+  configurationPath: config.configurationPath,
 };

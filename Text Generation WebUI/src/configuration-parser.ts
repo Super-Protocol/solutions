@@ -1,12 +1,10 @@
 import fs from 'fs';
-import { CryptoAlgorithm, Encoding, EncryptionKey, TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
+import { TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
 import { serverConfig } from './server-config';
 import { EngineConfiguration, RawParameters } from './types';
 import { findModel, isFileExisted, setupCharacter } from './utils';
 import { rootLogger } from './logger';
 import { config } from './config';
-import { DomainConfig } from '@super-protocol/tunnels-lib';
-import { getOrderResult, parseTunnelProvisionerOrderResult } from './order-helpers';
 
 export class ConfigurationParser {
   private logger = rootLogger.child({
@@ -21,7 +19,7 @@ export class ConfigurationParser {
     if (this.configuration) {
       return this.configuration;
     }
-    if (!(await isFileExisted(serverConfig.configurationPath))) {
+    if (!(await isFileExisted(configurationPath))) {
       return null;
     }
 
@@ -36,75 +34,6 @@ export class ConfigurationParser {
     }
 
     return (this.configuration = configuration);
-  }
-
-  async getTunnelClientConfig(): Promise<DomainConfig> {
-    const configuration = await this.readConfiguration(serverConfig.configurationPath);
-    if (!configuration) {
-      throw new Error('Configuration not found');
-    }
-
-    const tunnelClientConfig = (configuration.solution.engine as EngineConfiguration).tunnel_client;
-    const tunnels = [
-      {
-        sgxMrSigner: config.mrSigner,
-        sgxMrEnclave: config.mrEnclave,
-      },
-    ];
-
-    if (tunnelClientConfig.provision_type.toLowerCase().includes('manual')) {
-      this.logger.info('Loading manual configuration...');
-
-      const manualSettings = tunnelClientConfig.manual_domain_settings;
-
-      return {
-        tunnels,
-        authToken: manualSettings.auth_token,
-        /**
-         * Private key and SSL certificate of the domain in PEM format as Buffers
-         */
-        site: {
-          /**
-           * Domain (required for wildcard certificates). If not provided, it will be extracted from certificate
-           */
-          domain: manualSettings.domain || '',
-          /**
-           * SSL certificate buffer
-           */
-          cert: Buffer.from(manualSettings.tls_certifiacate, 'utf-8'),
-          /**
-           * Private key for SSL certificate
-           */
-          key: Buffer.from(manualSettings.tls_key, 'utf-8'),
-        },
-        quotes: [],
-      };
-    }
-    this.logger.info('Loading configuration from Tunnels Launcher order...');
-
-    const { order_id: orderId, order_key } = tunnelClientConfig.tunnel_provisioner_order;
-    const orderKey: EncryptionKey = {
-      algo: CryptoAlgorithm.ECIES,
-      encoding: Encoding.base64,
-      key: order_key,
-    };
-
-    this.logger.info('Download and decrypt order result');
-    const orderResult = await getOrderResult({ orderId, orderKey });
-
-    this.logger.info('Parse order result');
-    const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
-
-    return {
-      tunnels,
-      authToken: tunnelConfig.authToken,
-      site: {
-        domain: tunnelConfig.domain,
-        cert: Buffer.from(tunnelConfig.cert, 'utf-8'),
-        key: Buffer.from(tunnelConfig.certPrimaryKey, 'utf-8'),
-      },
-      quotes: [tunnelConfig.certQuote],
-    };
   }
 
   async getCliParams(): Promise<string[]> {
