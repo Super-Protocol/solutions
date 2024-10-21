@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
+import { CryptoAlgorithm, Encoding, EncryptionKey, TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
 import { serverConfig } from './server-config';
 import { EngineConfiguration, RawParameters } from './types';
 import { findModel, isFileExisted, setupCharacter } from './utils';
@@ -82,7 +82,13 @@ export class ConfigurationParser {
     }
     this.logger.info('Loading configuration from Tunnels Launcher order...');
 
-    const { order_id: orderId, order_key: orderKey } = tunnelClientConfig.tunnel_provisioner_order;
+    const { order_id: orderId, order_key } = tunnelClientConfig.tunnel_provisioner_order;
+    const orderKey: EncryptionKey = {
+      algo: CryptoAlgorithm.ECIES,
+      encoding: Encoding.base64,
+      key: order_key,
+    };
+
     this.logger.info('Download and decrypt order result');
     const orderResult = await getOrderResult({ orderId, orderKey });
 

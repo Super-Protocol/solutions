@@ -20,18 +20,10 @@ import { TunnelProvisionerOrderResult } from './types';
 
 export type DownloadOrderResultParams = {
   orderId: string;
-  orderKey: string;
+  orderKey: EncryptionKey;
 };
 
 type EncryptedOrderResult = { resource: Encryption; encryption: Encryption };
-
-const getEncryptionKey = (orderKey: string): EncryptionKey => {
-  try {
-    return JSON.parse(orderKey) as EncryptionKey;
-  } catch (err) {
-    throw new Error('Could not parse order key: ' + (err as Error).message);
-  }
-};
 
 const getOrderEncryptedResult = async (orderId: string): Promise<EncryptedOrderResult> => {
   const connector = BlockchainConnector.getInstance();
@@ -51,10 +43,9 @@ const getOrderEncryptedResult = async (orderId: string): Promise<EncryptedOrderR
 
 const decryptOrderResult = async (params: {
   encryptedResult: EncryptedOrderResult;
-  orderKey: string;
+  orderKey: EncryptionKey;
 }): Promise<{ resource: StorageProviderResource; encryption: Encryption }> => {
-  const { encryptedResult, orderKey } = params;
-  const encryptionKey = getEncryptionKey(orderKey);
+  const { encryptedResult, orderKey: encryptionKey } = params;
 
   const publicKeyEncryption = Crypto.getPublicKey(encryptionKey);
   const derivedPrivateKey = await RIGenerator.getDerivedPrivateKey(publicKeyEncryption);
