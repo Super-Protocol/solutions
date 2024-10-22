@@ -68,7 +68,7 @@ export const getDomainConfig = async (
   };
 
   logger.info('Download and decrypt order result');
-  const orderResult = await getOrderResult({ orderId, orderKey });
+  const orderResult = await getOrderResult({ orderId, orderKey, logger });
 
   logger.info('Parse order result');
   const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);

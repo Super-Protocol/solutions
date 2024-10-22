@@ -8,10 +8,13 @@ import {
   BlockchainConnector,
   Crypto,
   Order,
+  OrderStatus,
   RIGenerator,
   getStorageProvider,
+  helpers,
 } from '@super-protocol/sdk-js';
 import fs from 'fs';
+import { Logger } from 'pino';
 import { PassThrough, Readable } from 'stream';
 import tar from 'tar-stream';
 import zlib from 'zlib';
@@ -21,24 +24,67 @@ import { TunnelProvisionerOrderResult } from './types';
 export type DownloadOrderResultParams = {
   orderId: string;
   orderKey: EncryptionKey;
+  logger: Logger;
 };
 
 type EncryptedOrderResult = { resource: Encryption; encryption: Encryption };
 
-const getOrderEncryptedResult = async (orderId: string): Promise<EncryptedOrderResult> => {
+const isOrderFinished = async (orderId: string): Promise<boolean> => {
+  const order = new Order(orderId);
+
+  if (!(await order.isExist())) {
+    throw new Error(`Order does not exist (orderId=${orderId})`);
+  }
+
+  const orderInfo = await order.getOrderInfo();
+
+  const finishStatuses = [OrderStatus.Done, OrderStatus.Error, OrderStatus.Canceled];
+
+  return finishStatuses.includes(orderInfo.status);
+};
+
+const getOrderEncryptedResult = async (
+  orderId: string,
+  logger: Logger,
+): Promise<EncryptedOrderResult> => {
+  logger.debug('Getting order encrypted result');
   const connector = BlockchainConnector.getInstance();
 
-  await connector.initialize({
-    blockchainUrl: config.blockchainUrl,
-    contractAddress: config.blockchainContractAddress,
-  });
+  try {
+    await connector.initialize({
+      blockchainUrl: config.blockchainUrl,
+      contractAddress: config.blockchainContractAddress,
+    });
 
-  const order = new Order(orderId);
-  const { encryptedResult } = await order.getOrderResult();
+    const retryIntervalInSeconds = 10;
+    await helpers.tryWithInterval({
+      handler() {
+        logger.debug('Checking if order is finished');
+        return isOrderFinished(orderId);
+      },
+      checkResult: (isResultOk) => ({ isResultOk }),
+      retryInterval: retryIntervalInSeconds * 1000,
+      retryMax: (60 * 60 * 3) / retryIntervalInSeconds,
+    });
 
-  connector.shutdown();
+    const order = new Order(orderId);
+    const orderInfo = await order.getOrderInfo();
 
-  return JSON.parse(encryptedResult) as EncryptedOrderResult;
+    if (orderInfo.status === OrderStatus.Canceled) {
+      throw new Error(`Tunnel Provisioner Order is canceled (orderId=${orderId})`);
+    }
+    if (orderInfo.status === OrderStatus.Error) {
+      throw new Error(`Tunnel Provisioner Order failed (orderId=${orderId})`);
+    }
+
+    const { encryptedResult } = await order.getOrderResult();
+
+    logger.debug('Order encrypted result received');
+
+    return JSON.parse(encryptedResult) as EncryptedOrderResult;
+  } finally {
+    connector.shutdown();
+  }
 };
 
 const decryptOrderResult = async (params: {
@@ -89,10 +135,16 @@ const tryDecryptWithKeys = async (
 };
 
 export const getOrderResult = async (params: DownloadOrderResultParams): Promise<Readable> => {
-  const encryptedResult = await getOrderEncryptedResult(params.orderId);
+  const { orderId, orderKey } = params;
+  const logger = params.logger.child({ orderId });
+
+  logger.info('Getting order result');
+  const encryptedResult = await getOrderEncryptedResult(orderId, logger);
+
+  logger.info('Decrypting order result');
   const decryptedResult = await decryptOrderResult({
     encryptedResult,
-    orderKey: params.orderKey,
+    orderKey,
   });
 
   if (decryptedResult.resource.type !== ResourceType.StorageProvider) {
@@ -100,6 +152,8 @@ export const getOrderResult = async (params: DownloadOrderResultParams): Promise
   }
 
   const storageProvider = getStorageProvider(decryptedResult.resource);
+
+  logger.info('Downloading order result file');
   const downloadStream = await storageProvider.downloadFile(decryptedResult.resource.filepath, {});
   const outputStream = new PassThrough();
 
