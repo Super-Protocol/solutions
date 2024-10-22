@@ -21,6 +21,10 @@ export const getDomainConfig = async (
 
   const tunnels = [
     {
+      sgxMrSigner: '000102030405060708090a0b0c0d0f000102030405060708090a0b0c0d0f0102',
+      sgxMrEnclave: '000102030405060708090a0b0c0d0f000102030405060708090a0b0c0d0f0102',
+    },
+    {
       sgxMrSigner: mrSigner,
       sgxMrEnclave: mrEnclave,
     },
