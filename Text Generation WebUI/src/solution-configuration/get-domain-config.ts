@@ -14,9 +14,7 @@ type GetDomainConfigParams = {
   logger: Logger;
 } & TunnelInfo;
 
-export const getDomainConfig = async (
-  params: GetDomainConfigParams,
-): Promise<DomainConfig | undefined> => {
+export const getDomainConfig = async (params: GetDomainConfigParams): Promise<DomainConfig> => {
   const { configuration, mrSigner, mrEnclave, logger } = params;
 
   const tunnels = [

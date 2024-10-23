@@ -1,4 +1,5 @@
 import fs, { constants } from 'fs';
+import path from 'path';
 import { getServerConfig } from './server-config';
 import { EngineConfiguration } from './types';
 
@@ -34,7 +35,7 @@ export const findFileOrDirectory = async (
     ).find(Boolean);
   }
 
-  return { dir: folder, fullPath: `${folder}/${fileName}` };
+  return { dir: path.normalize(folder), fullPath: path.normalize(`${folder}/${fileName}`) };
 };
 
 export interface FindModelResult {
