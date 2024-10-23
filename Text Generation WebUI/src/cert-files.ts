@@ -1,12 +1,27 @@
-import fs from 'fs/promises';
+import fs, { readFile } from 'fs/promises';
 import path from 'path';
 import { Logger } from 'pino';
 import { config } from './config';
 import { findFileOrDirectory } from './utils';
 
-const findCertFiles = async (
-  searchPath: string,
-): Promise<{ certFilePath: string; certPrivateKeyPath: string } | null> => {
+type CertFiles = {
+  certFilePath: string;
+  certPrivateKeyPath: string;
+};
+
+export const readCertFiles = async (
+  certFiles: CertFiles,
+): Promise<{ fullchainPem: string; privateKeyPem: string }> => {
+  const fullchainPem = await readFile(certFiles.certFilePath, 'utf-8');
+  const privateKeyPem = await readFile(certFiles.certPrivateKeyPath, 'utf-8');
+
+  return {
+    fullchainPem,
+    privateKeyPem,
+  };
+};
+
+export const findCertFiles = async (searchPath: string): Promise<CertFiles | null> => {
   const cert = await findFileOrDirectory(config.certFileName, searchPath);
   if (!cert) {
     return null;

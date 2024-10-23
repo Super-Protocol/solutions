@@ -4,11 +4,11 @@ import {
   TunnelClient,
   TunnelClientOptions,
 } from '@super-protocol/tunnels-lib';
+import { findCertFiles, readCertFiles, updateCertFilesIfNeeded } from './cert-files';
 import { config } from './config';
 import { rootLogger } from './logger';
 import { getDomainConfig, readConfiguration } from './solution-configuration';
 import { EngineConfiguration } from './types';
-import { updateCertFilesIfNeeded } from './cert-files';
 
 const getDomainConfigs = async (
   tunnelClientConfiguration?: EngineConfiguration['tunnel_client'],
@@ -26,6 +26,14 @@ const getDomainConfigs = async (
     configuration: tunnelClientConfiguration,
     mrSigner: config.mrSigner,
     mrEnclave: config.mrEnclave,
+    async getCertFiles() {
+      const certFilesInSecrets = await findCertFiles(config.secretsDataFolder);
+      if (!certFilesInSecrets) {
+        throw new Error('No cert files found in secrets data folder');
+      }
+
+      return readCertFiles(certFilesInSecrets);
+    },
     logger: rootLogger,
   });
 

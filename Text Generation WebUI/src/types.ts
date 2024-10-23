@@ -50,8 +50,6 @@ export type TunnelProvisionerOrderResult = {
   orderKeyMnemonic: string;
   orders: string[];
   errors: string[];
-  cert: string;
-  certPrimaryKey: string;
   certQuote: string;
   authToken: string;
 };

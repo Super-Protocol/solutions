@@ -9,13 +9,19 @@ type TunnelInfo = {
   mrEnclave: string;
 };
 
+type GetCertFilesFn = () => Promise<{
+  fullchainPem: string;
+  privateKeyPem: string;
+}>;
+
 type GetDomainConfigParams = {
   configuration: EngineConfiguration['tunnel_client'];
+  getCertFiles?: GetCertFilesFn;
   logger: Logger;
 } & TunnelInfo;
 
 export const getDomainConfig = async (params: GetDomainConfigParams): Promise<DomainConfig> => {
-  const { configuration, mrSigner, mrEnclave, logger } = params;
+  const { configuration, mrSigner, mrEnclave, logger, getCertFiles } = params;
 
   const tunnels = [
     {
@@ -44,6 +50,11 @@ export const getDomainConfig = async (params: GetDomainConfigParams): Promise<Do
       quotes: [],
     };
   }
+
+  if (!getCertFiles) {
+    throw new Error('No getCertFiles function provided');
+  }
+
   logger.info('Loading configuration from Tunnels Launcher order...');
 
   const { order_id: orderId, order_key } = configuration.tunnel_provisioner_order;
@@ -59,13 +70,15 @@ export const getDomainConfig = async (params: GetDomainConfigParams): Promise<Do
   logger.info('Parse order result');
   const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
 
+  const cert = await getCertFiles();
+
   return {
     tunnels,
     authToken: tunnelConfig.authToken,
     site: {
       domain: tunnelConfig.domain,
-      cert: Buffer.from(tunnelConfig.cert, 'utf-8'),
-      key: Buffer.from(tunnelConfig.certPrimaryKey, 'utf-8'),
+      cert: Buffer.from(cert.fullchainPem, 'utf-8'),
+      key: Buffer.from(cert.privateKeyPem, 'utf-8'),
     },
     quotes: [tunnelConfig.certQuote],
   };
