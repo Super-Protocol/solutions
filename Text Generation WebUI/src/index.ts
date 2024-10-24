@@ -4,11 +4,16 @@ import {
   TunnelClient,
   TunnelClientOptions,
 } from '@super-protocol/tunnels-lib';
-import { findCertFiles, readCertFiles, updateCertFilesIfNeeded } from './cert-files';
 import { config } from './config';
 import { rootLogger } from './logger';
-import { getDomainConfig, readConfiguration } from './solution-configuration';
-import { EngineConfiguration } from './types';
+import {
+  EngineConfiguration,
+  findCertFiles,
+  getDomainConfig,
+  readCertFiles,
+  readConfiguration,
+  updateCertFilesIfNeeded,
+} from './solution-utils';
 
 const getDomainConfigs = async (
   tunnelClientConfiguration?: EngineConfiguration['tunnel_client'],
@@ -35,6 +40,8 @@ const getDomainConfigs = async (
       return readCertFiles(certFilesInSecrets);
     },
     logger: rootLogger,
+    blockchainUrl: config.blockchainUrl,
+    contractAddress: config.blockchainContractAddress,
   });
 
   return [domainConfig];

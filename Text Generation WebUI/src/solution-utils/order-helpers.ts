@@ -18,12 +18,13 @@ import { Logger } from 'pino';
 import { PassThrough, Readable } from 'stream';
 import tar from 'tar-stream';
 import zlib from 'zlib';
-import { config } from './config';
 import { TunnelProvisionerOrderResult } from './types';
 
 export type DownloadOrderResultParams = {
   orderId: string;
   orderKey: EncryptionKey;
+  blockchainUrl: string;
+  contractAddress: string;
   logger: Logger;
 };
 
@@ -43,17 +44,21 @@ const isOrderFinished = async (orderId: string): Promise<boolean> => {
   return finishStatuses.includes(orderInfo.status);
 };
 
-const getOrderEncryptedResult = async (
-  orderId: string,
-  logger: Logger,
-): Promise<EncryptedOrderResult> => {
+const getOrderEncryptedResult = async (params: {
+  orderId: string;
+  blockchainUrl: string;
+  contractAddress: string;
+  logger: Logger;
+}): Promise<EncryptedOrderResult> => {
+  const { orderId, blockchainUrl, contractAddress, logger } = params;
+
   logger.debug('Getting order encrypted result');
   const connector = BlockchainConnector.getInstance();
 
   try {
     await connector.initialize({
-      blockchainUrl: config.blockchainUrl,
-      contractAddress: config.blockchainContractAddress,
+      blockchainUrl,
+      contractAddress,
     });
 
     const retryIntervalInSeconds = 10;
@@ -139,7 +144,12 @@ export const getOrderResult = async (params: DownloadOrderResultParams): Promise
   const logger = params.logger.child({ orderId });
 
   logger.info('Getting order result');
-  const encryptedResult = await getOrderEncryptedResult(orderId, logger);
+  const encryptedResult = await getOrderEncryptedResult({
+    orderId,
+    blockchainUrl: params.blockchainUrl,
+    contractAddress: params.contractAddress,
+    logger,
+  });
 
   logger.info('Decrypting order result');
   const decryptedResult = await decryptOrderResult({

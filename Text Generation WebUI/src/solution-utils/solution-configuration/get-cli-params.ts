@@ -1,16 +1,18 @@
 import fs from 'fs';
 import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from '../types';
-import { findModel, setupCharacter } from '../utils';
+import { findModel, setupCharacter } from './utils';
 
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
   engineFolder: string;
   inputDataFolder: string;
+  modelSizeThreshold: number;
   serverPort: number;
   logger: Logger;
 }): Promise<string[]> => {
-  const { configuration, engineFolder, serverPort, inputDataFolder, logger } = params;
+  const { configuration, engineFolder, serverPort, inputDataFolder, modelSizeThreshold, logger } =
+    params;
 
   if (!configuration) {
     logger.info('Configuration not found. Run with default params');
@@ -19,8 +21,19 @@ export const getCliParams = async (params: {
   }
 
   return [
-    ...(await setupBaseConfiguration(configuration.basic_settings, serverPort, logger)),
-    ...(await setupModelConfiguration(configuration.model, engineFolder, inputDataFolder, logger)),
+    ...(await setupBaseConfiguration(
+      configuration.basic_settings,
+      serverPort,
+      engineFolder,
+      logger,
+    )),
+    ...(await setupModelConfiguration(
+      configuration.model,
+      engineFolder,
+      inputDataFolder,
+      modelSizeThreshold,
+      logger,
+    )),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
   ];
 };
@@ -28,6 +41,7 @@ export const getCliParams = async (params: {
 const setupBaseConfiguration = async (
   baseSettings: EngineConfiguration['basic_settings'],
   serverPort: number,
+  engineFolder: string,
   logger: Logger,
 ): Promise<string[]> => {
   const cliParams: string[] = [];
@@ -53,7 +67,7 @@ const setupBaseConfiguration = async (
     cliParams.push('--listen-port', String(serverPort));
   }
 
-  const character = await setupCharacter(baseSettings.character);
+  const character = await setupCharacter(baseSettings.character, engineFolder);
   logger.info(`Character ${character} configured successfully`);
   cliParams.push('--character', character);
 
@@ -64,12 +78,13 @@ const setupModelConfiguration = async (
   modelSettings: EngineConfiguration['model'],
   engineFolder: string,
   inputDataFolder: string,
+  modelSizeThreshold: number,
   logger: Logger,
 ): Promise<string[]> => {
   const modelName = modelSettings.model_name;
   const cliParams: string[] = [];
 
-  const modelInfo = await findModel(inputDataFolder, modelName);
+  const modelInfo = await findModel(inputDataFolder, modelSizeThreshold, modelName);
   if (modelInfo) {
     cliParams.push(`--model-dir ${modelInfo.folder}`);
     cliParams.push(`--model ${modelInfo.model}`);

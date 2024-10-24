@@ -53,3 +53,8 @@ export type TunnelProvisionerOrderResult = {
   certQuote: string;
   authToken: string;
 };
+
+export type BlockchainConfig = {
+  blockchainUrl: string;
+  contractAddress: string;
+};

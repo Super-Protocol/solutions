@@ -1,6 +1,6 @@
 import { TeeOrderEncryptedArgsConfiguration } from '@super-protocol/dto-js';
 import { readFile } from 'fs/promises';
-import { isFileExisted } from '../utils';
+import { isFileExisted } from './utils';
 
 export async function readConfiguration(
   configurationPath: string,

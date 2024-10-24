@@ -3,8 +3,8 @@ import { copyFile, readFile } from 'fs/promises';
 import path from 'path';
 import { Logger } from 'pino';
 import { isCertValid, parseFullchainPem, verifyCertificateChain } from './cert-utils';
-import { config } from './config';
-import { findFileOrDirectory } from './utils';
+import { config } from '../config';
+import { findFileOrDirectory } from '../utils';
 
 type CertFiles = {
   certFilePath: string;

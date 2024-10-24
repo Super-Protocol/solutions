@@ -2,7 +2,7 @@ import { CryptoAlgorithm, Encoding, EncryptionKey } from '@super-protocol/dto-js
 import { DomainConfig } from '@super-protocol/tunnels-lib';
 import { Logger } from 'pino';
 import { getOrderResult, parseTunnelProvisionerOrderResult } from '../order-helpers';
-import { EngineConfiguration } from '../types';
+import { BlockchainConfig, EngineConfiguration } from '../types';
 
 type TunnelInfo = {
   mrSigner: string;
@@ -18,10 +18,19 @@ type GetDomainConfigParams = {
   configuration: EngineConfiguration['tunnel_client'];
   getCertFiles?: GetCertFilesFn;
   logger: Logger;
-} & TunnelInfo;
+} & TunnelInfo &
+  BlockchainConfig;
 
 export const getDomainConfig = async (params: GetDomainConfigParams): Promise<DomainConfig> => {
-  const { configuration, mrSigner, mrEnclave, logger, getCertFiles } = params;
+  const {
+    configuration,
+    mrSigner,
+    mrEnclave,
+    logger,
+    getCertFiles,
+    blockchainUrl,
+    contractAddress,
+  } = params;
 
   const tunnels = [
     {
@@ -65,7 +74,13 @@ export const getDomainConfig = async (params: GetDomainConfigParams): Promise<Do
   };
 
   logger.info('Download and decrypt order result');
-  const orderResult = await getOrderResult({ orderId, orderKey, logger });
+  const orderResult = await getOrderResult({
+    orderId,
+    orderKey,
+    logger,
+    blockchainUrl,
+    contractAddress,
+  });
 
   logger.info('Parse order result');
   const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
