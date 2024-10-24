@@ -38,21 +38,9 @@ export const getDomainConfig = async (
     return {
       tunnels,
       authToken: manualSettings.auth_token,
-      /**
-       * Private key and SSL certificate of the domain in PEM format as Buffers
-       */
       site: {
-        /**
-         * Domain (required for wildcard certificates). If not provided, it will be extracted from certificate
-         */
         domain: manualSettings.domain || '',
-        /**
-         * SSL certificate buffer
-         */
         cert: Buffer.from(manualSettings.tls_certifiacate, 'utf-8'),
-        /**
-         * Private key for SSL certificate
-         */
         key: Buffer.from(manualSettings.tls_key, 'utf-8'),
       },
       quotes: [],
