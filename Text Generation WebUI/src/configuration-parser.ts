@@ -104,7 +104,7 @@ export class ConfigurationParser {
     this.cliParams.push(`--loader`, modelLoader);
 
     const loaderConfiguration = modelLoaderSettings[
-      `${modelLoader.toLowerCase()}_options` as keyof typeof modelLoaderSettings
+      `${modelLoader.toLowerCase().replaceAll('.', '')}_options` as keyof typeof modelLoaderSettings
     ] as RawParameters | undefined;
 
     if (!loaderConfiguration) {
