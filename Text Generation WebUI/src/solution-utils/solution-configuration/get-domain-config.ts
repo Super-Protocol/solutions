@@ -2,22 +2,35 @@ import { CryptoAlgorithm, Encoding, EncryptionKey } from '@super-protocol/dto-js
 import { DomainConfig } from '@super-protocol/tunnels-lib';
 import { Logger } from 'pino';
 import { getOrderResult, parseTunnelProvisionerOrderResult } from '../order-helpers';
-import { EngineConfiguration } from '../types';
+import { BlockchainConfig, EngineConfiguration } from '../types';
 
 type TunnelInfo = {
   mrSigner: string;
   mrEnclave: string;
 };
 
+type GetCertFilesFn = () => Promise<{
+  fullchainPem: string;
+  privateKeyPem: string;
+}>;
+
 type GetDomainConfigParams = {
   configuration: EngineConfiguration['tunnel_client'];
+  getCertFiles?: GetCertFilesFn;
   logger: Logger;
-} & TunnelInfo;
+} & TunnelInfo &
+  BlockchainConfig;
 
-export const getDomainConfig = async (
-  params: GetDomainConfigParams,
-): Promise<DomainConfig | undefined> => {
-  const { configuration, mrSigner, mrEnclave, logger } = params;
+export const getDomainConfig = async (params: GetDomainConfigParams): Promise<DomainConfig> => {
+  const {
+    configuration,
+    mrSigner,
+    mrEnclave,
+    logger,
+    getCertFiles,
+    blockchainUrl,
+    contractAddress,
+  } = params;
 
   const tunnels = [
     {
@@ -46,6 +59,11 @@ export const getDomainConfig = async (
       quotes: [],
     };
   }
+
+  if (!getCertFiles) {
+    throw new Error('No getCertFiles function provided');
+  }
+
   logger.info('Loading configuration from Tunnels Launcher order...');
 
   const { order_id: orderId, order_key } = configuration.tunnel_provisioner_order;
@@ -56,18 +74,26 @@ export const getDomainConfig = async (
   };
 
   logger.info('Download and decrypt order result');
-  const orderResult = await getOrderResult({ orderId, orderKey, logger });
+  const orderResult = await getOrderResult({
+    orderId,
+    orderKey,
+    logger,
+    blockchainUrl,
+    contractAddress,
+  });
 
   logger.info('Parse order result');
   const tunnelConfig = await parseTunnelProvisionerOrderResult(orderResult);
+
+  const cert = await getCertFiles();
 
   return {
     tunnels,
     authToken: tunnelConfig.authToken,
     site: {
       domain: tunnelConfig.domain,
-      cert: Buffer.from(tunnelConfig.cert, 'utf-8'),
-      key: Buffer.from(tunnelConfig.certPrimaryKey, 'utf-8'),
+      cert: Buffer.from(cert.fullchainPem, 'utf-8'),
+      key: Buffer.from(cert.privateKeyPem, 'utf-8'),
     },
     quotes: [tunnelConfig.certQuote],
   };

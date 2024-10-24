@@ -50,8 +50,11 @@ export type TunnelProvisionerOrderResult = {
   orderKeyMnemonic: string;
   orders: string[];
   errors: string[];
-  cert: string;
-  certPrimaryKey: string;
   certQuote: string;
   authToken: string;
+};
+
+export type BlockchainConfig = {
+  blockchainUrl: string;
+  contractAddress: string;
 };
