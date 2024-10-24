@@ -1,7 +1,7 @@
 import fs, { constants } from 'fs';
 import { EngineConfiguration } from '../types';
 
-export const isFileExisted = (filePath: string): Promise<boolean> =>
+export const fileExists = (filePath: string): Promise<boolean> =>
   fs.promises
     .access(filePath, constants.F_OK)
     .then(() => true)
