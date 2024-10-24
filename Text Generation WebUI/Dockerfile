@@ -12,14 +12,6 @@ FROM node:20-bookworm
 
 WORKDIR /home/node/app
 
-ENV LOG_LEVEL=trace
-ENV INPUT_DATA_FOLDER=/sp/inputs
-
-ENV MRENCLAVE=3f8646fd08bfd64f2a1edfde832fe9c9a52526e02fd6d742adc99593b6e9342d
-ENV MRSIGNER=292dbf9d7256b124de0259dca586c53135175f431f2336d4a27c49c3cd60b518
-ENV BLOCKCHAIN_URL=https://amoy.polygon.superprotocol.com/over9000
-ENV BLOCKCHAIN_CONTRACT_ADDRESS=0x6D5C1F3Ccda361c0EFCf028Bc99Ca2783Be766ce
-
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
 COPY --from=builder /home/node/app/text-generation-webui ./text-generation-webui
