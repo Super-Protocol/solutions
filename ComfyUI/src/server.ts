@@ -23,7 +23,7 @@ const run = async (): Promise<void> => {
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
 
   const spawnOptions = [
-    'main.py',
+    `${serverConfig.engineFolder}/main.py`,
     '--port',
     serverConfig.port,
     '--tls-keyfile',

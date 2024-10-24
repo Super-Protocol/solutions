@@ -4,7 +4,7 @@
   "description": "Super Protocol integration for ComfyUI (https://github.com/comfyanonymous/ComfyUI)",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.build.json"
   },
   "repository": {
     "type": "git",

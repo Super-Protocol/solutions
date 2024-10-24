@@ -62,7 +62,7 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && node --version \
     && npm --version
 
-RUN apt update && apt install -y openssl git
+RUN apt update && apt install -y openssl git wget curl
 
 FROM base as builder
 
