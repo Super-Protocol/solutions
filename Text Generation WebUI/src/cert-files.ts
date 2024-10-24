@@ -84,7 +84,10 @@ export const updateCertFilesIfNeeded = async (logger: Logger): Promise<void> => 
     const secretCert = new X509Certificate(secret.fullchainPem);
     const inputCert = new X509Certificate(input.fullchainPem);
 
-    return new Date(inputCert.validTo) > new Date(secretCert.validTo);
+    return (
+      inputCert.subject === secretCert.subject &&
+      new Date(inputCert.validTo) > new Date(secretCert.validTo)
+    );
   };
 
   if (await needToCopy()) {
