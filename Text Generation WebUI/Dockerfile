@@ -4,8 +4,6 @@ WORKDIR /home/node/app
 
 COPY . /home/node/app
 
-RUN cat .env
-
 RUN npm ci &&\
     npm run build &&\
     npm ci --omit=dev
