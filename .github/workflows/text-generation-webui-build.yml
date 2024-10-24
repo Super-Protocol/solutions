@@ -58,8 +58,6 @@ jobs:
             echo "Invalid instance: $TARGET"
             exit 1
           fi
-
-          cat .env
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
