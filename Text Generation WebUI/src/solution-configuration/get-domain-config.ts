@@ -33,7 +33,7 @@ export const getDomainConfig = async (
   if (configuration.provision_type.toLowerCase().includes('manual')) {
     logger.info('Loading manual configuration...');
 
-    const manualSettings = configuration.manual_domain_settings;
+    const manualSettings = configuration.manual_domain_config;
 
     return {
       tunnels,
