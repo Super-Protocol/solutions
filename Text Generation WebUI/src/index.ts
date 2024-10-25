@@ -32,7 +32,11 @@ const getDomainConfigs = async (
     mrSigner: config.mrSigner,
     mrEnclave: config.mrEnclave,
     async getCertFiles() {
-      const certFilesInSecrets = await findCertFiles(config.secretsDataFolder);
+      const certFilesInSecrets = await findCertFiles({
+        searchPath: config.secretsDataFolder,
+        certFileName: config.certFileName,
+        certPrivateKeyFileName: config.certPrivateKeyFileName,
+      });
       if (!certFilesInSecrets) {
         throw new Error('No cert files found in secrets data folder');
       }
@@ -55,7 +59,13 @@ const run = async (): Promise<void> => {
     | undefined;
 
   if (!tunnelClientConfiguration) {
-    await updateCertFilesIfNeeded(logger);
+    await updateCertFilesIfNeeded({
+      certFileName: config.certFileName,
+      certPrivateKeyFileName: config.certPrivateKeyFileName,
+      inputDataFolder: config.inputDataFolder,
+      secretsDataFolder: config.secretsDataFolder,
+      logger,
+    });
   }
 
   const domainConfigs = await getDomainConfigs(tunnelClientConfiguration);

@@ -3,7 +3,6 @@ import { copyFile, readFile } from 'fs/promises';
 import path from 'path';
 import { Logger } from 'pino';
 import { isCertValid, parseFullchainPem, verifyCertificateChain } from './cert-utils';
-import { config } from '../config';
 import { findFileOrDirectory } from '../utils';
 
 type CertFiles = {
@@ -23,13 +22,18 @@ export const readCertFiles = async (
   };
 };
 
-export const findCertFiles = async (searchPath: string): Promise<CertFiles | null> => {
-  const cert = await findFileOrDirectory(config.certFileName, searchPath);
+export const findCertFiles = async (params: {
+  searchPath: string;
+  certFileName: string;
+  certPrivateKeyFileName: string;
+}): Promise<CertFiles | null> => {
+  const { searchPath, certFileName, certPrivateKeyFileName } = params;
+  const cert = await findFileOrDirectory(certFileName, searchPath);
   if (!cert) {
     return null;
   }
 
-  const certPrivateKey = await findFileOrDirectory(config.certPrivateKeyFileName, searchPath);
+  const certPrivateKey = await findFileOrDirectory(certPrivateKeyFileName, searchPath);
   if (!certPrivateKey) {
     return null;
   }
@@ -40,10 +44,21 @@ export const findCertFiles = async (searchPath: string): Promise<CertFiles | nul
   };
 };
 
-export const updateCertFilesIfNeeded = async (logger: Logger): Promise<void> => {
-  logger = logger.child({ method: updateCertFilesIfNeeded.name });
+export const updateCertFilesIfNeeded = async (params: {
+  certFileName: string;
+  certPrivateKeyFileName: string;
+  inputDataFolder: string;
+  secretsDataFolder: string;
+  logger: Logger;
+}): Promise<void> => {
+  const { inputDataFolder, secretsDataFolder, certFileName, certPrivateKeyFileName } = params;
+  const logger = params.logger.child({ method: updateCertFilesIfNeeded.name });
 
-  const certFilesInInputs = await findCertFiles(config.inputDataFolder);
+  const certFilesInInputs = await findCertFiles({
+    searchPath: inputDataFolder,
+    certFileName,
+    certPrivateKeyFileName,
+  });
   if (!certFilesInInputs) {
     logger.debug('No cert files found in input data folder');
     return;
@@ -60,7 +75,11 @@ export const updateCertFilesIfNeeded = async (logger: Logger): Promise<void> => 
     return;
   }
 
-  const certFilesInSecrets = await findCertFiles(config.secretsDataFolder);
+  const certFilesInSecrets = await findCertFiles({
+    searchPath: secretsDataFolder,
+    certFileName,
+    certPrivateKeyFileName,
+  });
   if (!certFilesInSecrets) {
     logger.debug('No cert files found in secrets data folder');
   } else {
@@ -93,13 +112,10 @@ export const updateCertFilesIfNeeded = async (logger: Logger): Promise<void> => 
   if (await needToCopy()) {
     logger.debug('Input cert files are newer than secrets cert files');
 
-    await copyFile(
-      certFilesInInputs.certFilePath,
-      path.resolve(config.secretsDataFolder, config.certFileName),
-    );
+    await copyFile(certFilesInInputs.certFilePath, path.resolve(secretsDataFolder, certFileName));
     await copyFile(
       certFilesInInputs.certPrivateKeyPath,
-      path.resolve(config.secretsDataFolder, config.certPrivateKeyFileName),
+      path.resolve(secretsDataFolder, certPrivateKeyFileName),
     );
 
     logger.debug(
