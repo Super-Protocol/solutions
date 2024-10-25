@@ -44,6 +44,20 @@ jobs:
           driver-opts: |
             image=moby/buildkit:v0.12.0
 
+      - name: Create .env file
+        run: |
+          cd "$DOCKERFILE_CONTEXT"
+
+          if [ "$TARGET" == "develop" ]; then
+            echo "${{ secrets.DEV_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+          elif [ "$TARGET" == "stage" ]; then
+            echo "${{ secrets.STG_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+          elif [ "$TARGET" == "testnet" ]; then
+            echo "${{ secrets.TESTNET_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+          else
+            echo "Invalid instance: $TARGET"
+            exit 1
+          fi
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"

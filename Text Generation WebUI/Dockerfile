@@ -1,4 +1,4 @@
-FROM node:20-bookworm as builder
+FROM node:20-bookworm AS builder
 
 WORKDIR /home/node/app
 
@@ -11,9 +11,6 @@ RUN npm ci &&\
 FROM node:20-bookworm
 
 WORKDIR /home/node/app
-
-ENV LOG_LEVEL trace
-ENV INPUT_DATA_FOLDER /sp/inputs
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
