@@ -35,7 +35,7 @@ export type EngineConfiguration = {
       order_id: string;
       order_key: string;
     };
-    manual_domain_settings: {
+    manual_domain_config: {
       auth_token: string;
       domain?: string;
       tls_certifiacate: string;
