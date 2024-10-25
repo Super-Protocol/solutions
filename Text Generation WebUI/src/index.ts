@@ -13,7 +13,7 @@ import {
   readCertFiles,
   readConfiguration,
   updateCertFilesIfNeeded,
-} from './solution-utils';
+} from '@super-protocol/solution-utils';
 
 const getDomainConfigs = async (
   tunnelClientConfiguration?: EngineConfiguration['tunnel_client'],

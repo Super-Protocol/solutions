@@ -5,7 +5,11 @@ import { parentPort } from 'worker_threads';
 import { config } from './config';
 import { rootLogger } from './logger';
 import { getServerConfig } from './server-config';
-import { EngineConfiguration, getCliParams, readConfiguration } from './solution-utils';
+import {
+  EngineConfiguration,
+  getCliParams,
+  readConfiguration,
+} from '@super-protocol/solution-utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 

@@ -1,36 +1,11 @@
+import { EngineConfiguration } from '@super-protocol/solution-utils';
 import fs from 'fs';
-import path from 'path';
 import { getServerConfig } from './server-config';
-import { EngineConfiguration } from './solution-utils';
 
 export interface FileOrDirectory {
   dir: string;
   fullPath: string;
 }
-
-export const findFileOrDirectory = async (
-  fileName: string,
-  folder: string,
-  depth = 0,
-): Promise<FileOrDirectory | undefined> => {
-  if (depth > 2) {
-    return;
-  }
-
-  const items = await fs.promises.readdir(folder, { withFileTypes: true });
-
-  if (!items.find((fileOrDirectory) => fileOrDirectory.name === fileName)) {
-    return (
-      await Promise.all(
-        items
-          .filter((fileOrDirectory) => fileOrDirectory.isDirectory())
-          .map((dir) => findFileOrDirectory(fileName, `${folder}/${dir.name}`, depth + 1)),
-      )
-    ).find(Boolean);
-  }
-
-  return { dir: path.normalize(folder), fullPath: path.normalize(`${folder}/${fileName}`) };
-};
 
 export interface FindModelResult {
   folder: string;
