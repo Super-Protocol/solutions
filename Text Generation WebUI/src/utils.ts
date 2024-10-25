@@ -1,41 +1,11 @@
-import fs, { constants } from 'fs';
+import { EngineConfiguration } from '@super-protocol/solution-utils';
+import fs from 'fs';
 import { getServerConfig } from './server-config';
-import { EngineConfiguration } from './types';
 
 export interface FileOrDirectory {
   dir: string;
   fullPath: string;
 }
-
-export const isFileExisted = (filePath: string): Promise<boolean> =>
-  fs.promises
-    .access(filePath, constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-
-export const findFileOrDirectory = async (
-  fileName: string,
-  folder: string,
-  depth = 0,
-): Promise<FileOrDirectory | undefined> => {
-  if (depth > 2) {
-    return;
-  }
-
-  const items = await fs.promises.readdir(folder, { withFileTypes: true });
-
-  if (!items.find((fileOrDirectory) => fileOrDirectory.name === fileName)) {
-    return (
-      await Promise.all(
-        items
-          .filter((fileOrDirectory) => fileOrDirectory.isDirectory())
-          .map((dir) => findFileOrDirectory(fileName, `${folder}/${dir.name}`, depth + 1)),
-      )
-    ).find(Boolean);
-  }
-
-  return { dir: folder, fullPath: `${folder}/${fileName}` };
-};
 
 export interface FindModelResult {
   folder: string;

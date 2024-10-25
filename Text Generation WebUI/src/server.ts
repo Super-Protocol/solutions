@@ -5,8 +5,11 @@ import { parentPort } from 'worker_threads';
 import { config } from './config';
 import { rootLogger } from './logger';
 import { getServerConfig } from './server-config';
-import { getCliParams, readConfiguration } from './solution-configuration';
-import { EngineConfiguration } from './types';
+import {
+  EngineConfiguration,
+  getCliParams,
+  readConfiguration,
+} from '@super-protocol/solution-utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
@@ -35,6 +38,7 @@ const run = async (): Promise<void> => {
     inputDataFolder: config.inputDataFolder,
     serverPort: serverConfig.port,
     logger: rootLogger,
+    modelSizeThreshold: serverConfig.modelSizeThreshold,
   });
 
   const spawnOptions = [

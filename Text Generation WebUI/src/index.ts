@@ -1,42 +1,86 @@
 import {
+  DomainConfig,
   findConfigsRecursive,
   TunnelClient,
   TunnelClientOptions,
 } from '@super-protocol/tunnels-lib';
 import { config } from './config';
 import { rootLogger } from './logger';
-import { getDomainConfig, readConfiguration } from './solution-configuration';
-import { EngineConfiguration } from './types';
+import {
+  EngineConfiguration,
+  findCertFiles,
+  getDomainConfig,
+  readCertFiles,
+  readConfiguration,
+  updateCertFilesIfNeeded,
+} from '@super-protocol/solution-utils';
 
-const run = async (): Promise<void> => {
-  const configuration = await readConfiguration(config.configurationPath);
-  if (!configuration) {
-    throw new Error('Configuration not found');
+const getDomainConfigs = async (
+  tunnelClientConfiguration?: EngineConfiguration['tunnel_client'],
+): Promise<DomainConfig[]> => {
+  if (!tunnelClientConfiguration) {
+    return findConfigsRecursive(
+      config.inputDataFolder,
+      config.configFileName,
+      config.configSearchFolderDepth,
+      rootLogger,
+    );
   }
 
-  const configInConfiguration = await getDomainConfig({
-    configuration: (configuration.solution.engine as EngineConfiguration).tunnel_client,
+  const domainConfig = await getDomainConfig({
+    configuration: tunnelClientConfiguration,
     mrSigner: config.mrSigner,
     mrEnclave: config.mrEnclave,
-    logger: rootLogger,
-  });
-  const tunnelClientConfigs = configInConfiguration
-    ? [configInConfiguration]
-    : await findConfigsRecursive(
-        config.inputDataFolder,
-        config.configFileName,
-        config.configSearchFolderDepth,
-        rootLogger,
-      );
+    async getCertFiles() {
+      const certFilesInSecrets = await findCertFiles({
+        searchPath: config.secretsDataFolder,
+        certFileName: config.certFileName,
+        certPrivateKeyFileName: config.certPrivateKeyFileName,
+      });
+      if (!certFilesInSecrets) {
+        throw new Error('No cert files found in secrets data folder');
+      }
 
-  rootLogger.child({ module: 'run' }).debug({ tunnelClientConfigs }, 'Found tunnel client configs');
+      return readCertFiles(certFilesInSecrets);
+    },
+    logger: rootLogger,
+    blockchainUrl: config.blockchainUrl,
+    contractAddress: config.blockchainContractAddress,
+  });
+
+  return [domainConfig];
+};
+
+const run = async (): Promise<void> => {
+  const logger = rootLogger.child({ method: run.name });
+  const configuration = await readConfiguration(config.configurationPath);
+  const tunnelClientConfiguration = configuration?.solution?.engine as
+    | EngineConfiguration['tunnel_client']
+    | undefined;
+
+  if (!tunnelClientConfiguration) {
+    await updateCertFilesIfNeeded({
+      certFileName: config.certFileName,
+      certPrivateKeyFileName: config.certPrivateKeyFileName,
+      inputDataFolder: config.inputDataFolder,
+      secretsDataFolder: config.secretsDataFolder,
+      logger,
+    });
+  }
+
+  const domainConfigs = await getDomainConfigs(tunnelClientConfiguration);
+
+  logger.debug(
+    { domains: domainConfigs.map((config) => config.site.domain) },
+    'Found tunnel client domain configs',
+  );
 
   const options: TunnelClientOptions = {
     logger: rootLogger,
     applicationPort: config.clientServerPort,
     sgxMockEnabled: true,
   };
-  const tunnelClient = new TunnelClient(config.serverFilePath, tunnelClientConfigs, options);
+  const tunnelClient = new TunnelClient(config.serverFilePath, domainConfigs, options);
   await tunnelClient.start();
 };
 
