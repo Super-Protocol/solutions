@@ -54,9 +54,8 @@ const getDomainConfigs = async (
 const run = async (): Promise<void> => {
   const logger = rootLogger.child({ method: run.name });
   const configuration = await readConfiguration(config.configurationPath);
-  const tunnelClientConfiguration = configuration?.solution?.engine as
-    | EngineConfiguration['tunnel_client']
-    | undefined;
+  const engineConfiguration = configuration?.solution?.engine as EngineConfiguration | undefined;
+  const tunnelClientConfiguration = engineConfiguration?.['tunnel_client'];
 
   if (!tunnelClientConfiguration) {
     await updateCertFilesIfNeeded({
@@ -84,4 +83,7 @@ const run = async (): Promise<void> => {
   await tunnelClient.start();
 };
 
-run().catch((err) => rootLogger.fatal({ err }, `Failed to start application`));
+run().catch((err) => {
+  rootLogger.fatal({ err }, `Failed to start application`);
+  process.exit(1);
+});
