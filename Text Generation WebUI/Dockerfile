@@ -28,5 +28,6 @@ RUN apt update && apt install -y git &&\
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package.json ./package.json
+COPY --from=builder /home/node/app/.env ./.env
 
 ENTRYPOINT ["node", "./dist/index.js"]
