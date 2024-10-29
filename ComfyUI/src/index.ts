@@ -5,6 +5,11 @@ import {
 } from '@super-protocol/tunnels-lib';
 import { rootLogger } from './logger';
 import { config } from './config';
+import { exitOnSignals, exitOnUncaughtException, exitOnUnhandledRejection } from './process';
+
+exitOnUnhandledRejection(rootLogger);
+exitOnUncaughtException(rootLogger);
+exitOnSignals(rootLogger);
 
 const run = async (): Promise<void> => {
   const tunnelClientConfigs = await findConfigsRecursive(

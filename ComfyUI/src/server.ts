@@ -46,6 +46,10 @@ const run = async (): Promise<void> => {
     });
 
     pythonProcess.stderr?.on('data', (data) => logger.error(data.toString()));
+
+    pythonProcess.on('close', (code) => {
+      logger.info(`Process exited with code ${code}`);
+    });
   });
 };
 

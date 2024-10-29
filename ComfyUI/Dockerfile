@@ -80,18 +80,24 @@ WORKDIR /home/node/app
 
 ENV LOG_LEVEL trace
 ENV INPUT_DATA_FOLDER /sp/inputs
+ENV COMFYUI_PATH /home/node/app/ComfyUI
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
 COPY --from=builder /home/node/app/ComfyUI ./ComfyUI
 
 RUN pip install -r ./ComfyUI/requirements.txt &&\
+    git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./ComfyUI/custom_nodes/ComfyUI-Manager &&\
     wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
     dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
     rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
+COPY --from=builder /home/node/app/scripts ./scripts
+RUN node scripts/get-top-starts-custom-nodes.cjs /home/node/app/ComfyUI
+
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package.json ./package.json
+
 
 ENTRYPOINT ["node", "./dist/index.js"]
