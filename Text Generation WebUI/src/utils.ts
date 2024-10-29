@@ -1,41 +1,11 @@
-import fs, { constants } from 'fs';
-import { serverConfig } from './server-config';
-import { EngineConfiguration } from './types';
+import { EngineConfiguration } from '@super-protocol/solution-utils';
+import fs from 'fs';
+import { getServerConfig } from './server-config';
 
 export interface FileOrDirectory {
   dir: string;
   fullPath: string;
 }
-
-export const isFileExisted = (filePath: string): Promise<boolean> =>
-  fs.promises
-    .access(filePath, constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-
-export const findFileOrDirectory = async (
-  fileName: string,
-  folder: string,
-  depth = 0,
-): Promise<FileOrDirectory | undefined> => {
-  if (depth > 2) {
-    return;
-  }
-
-  const items = await fs.promises.readdir(folder, { withFileTypes: true });
-
-  if (!items.find((fileOrDirectory) => fileOrDirectory.name === fileName)) {
-    return (
-      await Promise.all(
-        items
-          .filter((fileOrDirectory) => fileOrDirectory.isDirectory())
-          .map((dir) => findFileOrDirectory(fileName, `${folder}/${dir.name}`, depth + 1)),
-      )
-    ).find(Boolean);
-  }
-
-  return { dir: folder, fullPath: `${folder}/${fileName}` };
-};
 
 export interface FindModelResult {
   folder: string;
@@ -85,6 +55,7 @@ export const findModel = async (
     })),
   );
 
+  const serverConfig = getServerConfig();
   const potentialModelFile = fileStats.find(
     (fileStat) => fileStat.stat.size > serverConfig.modelSizeThreshold,
   );
@@ -114,15 +85,6 @@ export const findModel = async (
   ).find(Boolean);
 };
 
-export const getEnvValeOrFail = (envName: string): keyof typeof process.env => {
-  const value = process.env[envName];
-  if (!value) {
-    throw new Error(`Env value ${envName} is missing`);
-  }
-
-  return value;
-};
-
 export const setupCharacter = async (
   character: EngineConfiguration['basic_settings']['character'],
 ): Promise<string> => {
@@ -146,6 +108,8 @@ context: |-
     .replace(namePlaceholder, characterName)
     .replace(greetingPlaceholder, normalizeData(character.greeting) || defaultGreeting)
     .replace(contextPlaceholder, normalizeData(character.context) || defaultContext);
+
+  const serverConfig = getServerConfig();
 
   await fs.promises.writeFile(
     `${serverConfig.engineFolder}/characters/${characterFileName}.yaml`,

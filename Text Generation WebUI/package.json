@@ -18,10 +18,13 @@
   "homepage": "https://github.com/Super-Protocol/solutions#readme",
   "devDependencies": {
     "@super-protocol/eslint-config-typescript": "^2.0.1",
-    "@types/node": "^20.16.6"
+    "@types/node": "^20.16.6",
+    "@types/tar-stream": "^3.1.3"
   },
   "dependencies": {
-    "@super-protocol/dto-js": "^0.1.2",
+    "@super-protocol/dto-js": "0.1.11",
+    "@super-protocol/sdk-js": "2.2.0-beta.112",
+    "@super-protocol/solution-utils": "1.0.6",
     "@super-protocol/tunnels-lib": "^0.1.17-beta.1",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"

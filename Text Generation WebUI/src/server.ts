@@ -2,9 +2,14 @@ import fs from 'fs';
 
 import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
+import { config } from './config';
 import { rootLogger } from './logger';
-import { serverConfig } from './server-config';
-import { ConfigurationParser } from './configuration-parser';
+import { getServerConfig } from './server-config';
+import {
+  EngineConfiguration,
+  getCliParams,
+  readConfiguration,
+} from '@super-protocol/solution-utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
@@ -21,9 +26,20 @@ parentPort?.on('message', (message) => {
 });
 
 const run = async (): Promise<void> => {
+  const serverConfig = getServerConfig();
+
   await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
-  const cliParams = await new ConfigurationParser().getCliParams();
+  const configuration = await readConfiguration(serverConfig.configurationPath);
+
+  const cliParams = await getCliParams({
+    configuration: configuration?.solution?.engine as EngineConfiguration,
+    engineFolder: serverConfig.engineFolder,
+    inputDataFolder: config.inputDataFolder,
+    serverPort: serverConfig.port,
+    logger: rootLogger,
+    modelSizeThreshold: serverConfig.modelSizeThreshold,
+  });
 
   const spawnOptions = [
     '--ssl-keyfile',

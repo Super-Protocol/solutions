@@ -1,4 +1,4 @@
-FROM node:20-bookworm as builder
+FROM node:20-bookworm AS builder
 
 WORKDIR /home/node/app
 
@@ -11,9 +11,6 @@ RUN npm ci &&\
 FROM node:20-bookworm
 
 WORKDIR /home/node/app
-
-ENV LOG_LEVEL trace
-ENV INPUT_DATA_FOLDER /sp/inputs
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
@@ -31,5 +28,6 @@ RUN apt update && apt install -y git &&\
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package.json ./package.json
+COPY --from=builder /home/node/app/.env ./.env
 
 ENTRYPOINT ["node", "./dist/index.js"]
