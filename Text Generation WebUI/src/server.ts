@@ -1,15 +1,11 @@
-import fs from 'fs';
-
+import { readConfiguration } from '@super-protocol/solution-utils';
 import { spawn } from 'child_process';
+import fs from 'fs';
 import { parentPort } from 'worker_threads';
 import { config } from './config';
+import { EngineConfiguration, getCliParams } from './engine-configuration';
 import { rootLogger } from './logger';
 import { getServerConfig } from './server-config';
-import {
-  EngineConfiguration,
-  getCliParams,
-  readConfiguration,
-} from '@super-protocol/solution-utils';
 
 const logger = rootLogger.child({ module: 'server.js' });
 

@@ -1,11 +1,11 @@
-import { EngineConfiguration } from '@super-protocol/solution-utils';
-import fs from 'fs';
-import { getServerConfig } from './server-config';
+import fs, { constants } from 'fs';
+import { EngineConfiguration } from './types';
 
-export interface FileOrDirectory {
-  dir: string;
-  fullPath: string;
-}
+export const fileExists = (filePath: string): Promise<boolean> =>
+  fs.promises
+    .access(filePath, constants.F_OK)
+    .then(() => true)
+    .catch(() => false);
 
 export interface FindModelResult {
   folder: string;
@@ -14,6 +14,7 @@ export interface FindModelResult {
 
 export const findModel = async (
   folder: string,
+  modelSizeThreshold: number,
   modelName?: string,
   depth = 0,
 ): Promise<FindModelResult | undefined> => {
@@ -28,7 +29,9 @@ export const findModel = async (
         await Promise.all(
           items
             .filter((fileOrDirectory) => fileOrDirectory.isDirectory())
-            .map((dir) => findModel(`${folder}/${dir.name}`, modelName, depth + 1)),
+            .map((dir) =>
+              findModel(`${folder}/${dir.name}`, modelSizeThreshold, modelName, depth + 1),
+            ),
         )
       ).find(Boolean);
     }
@@ -55,10 +58,7 @@ export const findModel = async (
     })),
   );
 
-  const serverConfig = getServerConfig();
-  const potentialModelFile = fileStats.find(
-    (fileStat) => fileStat.stat.size > serverConfig.modelSizeThreshold,
-  );
+  const potentialModelFile = fileStats.find((fileStat) => fileStat.stat.size > modelSizeThreshold);
 
   if (potentialModelFile) {
     const pathSplitted = folder.split('/');
@@ -79,7 +79,7 @@ export const findModel = async (
   return (
     await Promise.all(
       directories.map((directory) =>
-        findModel(`${folder}/${directory.name}`, modelName, depth + 1),
+        findModel(`${folder}/${directory.name}`, modelSizeThreshold, modelName, depth + 1),
       ),
     )
   ).find(Boolean);
@@ -87,6 +87,7 @@ export const findModel = async (
 
 export const setupCharacter = async (
   character: EngineConfiguration['basic_settings']['character'],
+  engineFolder: string,
 ): Promise<string> => {
   const normalizeData = (str: string): string => str?.replace(/\n/g, '');
 
@@ -109,10 +110,8 @@ context: |-
     .replace(greetingPlaceholder, normalizeData(character.greeting) || defaultGreeting)
     .replace(contextPlaceholder, normalizeData(character.context) || defaultContext);
 
-  const serverConfig = getServerConfig();
-
   await fs.promises.writeFile(
-    `${serverConfig.engineFolder}/characters/${characterFileName}.yaml`,
+    `${engineFolder}/characters/${characterFileName}.yaml`,
     characterFile,
   );
 
