@@ -1,25 +1,28 @@
-import { BaseEngineConfiguration } from '@super-protocol/solution-utils';
+import { ISolutionConfiguration } from '@super-protocol/solution-utils';
 
 export type RawParameters = Record<string, string | boolean | number>;
 
-type WebUIEngineConfiguration = {
-  basic_settings: {
-    multi_user: boolean;
+export type EngineConfiguration = {
+  main_settings: {
+    character: {
+      name: string;
+      context: string;
+      greeting: string;
+    };
     api: {
       api_mode: boolean;
       api_key?: string;
       admin_key?: string;
     };
-    character: {
-      name: string;
-      context: string;
-      greeting: string;
+    mode: {
+      multi_user: boolean;
     };
   };
   model: {
     model_name?: string;
     chat_buttons?: boolean;
     parameters: RawParameters;
+    parameters2: RawParameters;
   };
   model_loader: {
     loader_name: string;
@@ -33,4 +36,4 @@ type WebUIEngineConfiguration = {
   };
 };
 
-export type EngineConfiguration = BaseEngineConfiguration & WebUIEngineConfiguration;
+export type SolutionConfiguration = ISolutionConfiguration<EngineConfiguration>;

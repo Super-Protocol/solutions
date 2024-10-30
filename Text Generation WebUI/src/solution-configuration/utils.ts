@@ -86,7 +86,7 @@ export const findModel = async (
 };
 
 export const setupCharacter = async (
-  character: EngineConfiguration['basic_settings']['character'],
+  character: EngineConfiguration['main_settings']['character'],
   engineFolder: string,
 ): Promise<string> => {
   const normalizeData = (str: string): string => str?.replace(/\n/g, '');
