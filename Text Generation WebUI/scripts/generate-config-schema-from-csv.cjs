@@ -262,9 +262,13 @@ const run = async () => {
         throw `Type column is mandatory! Item: ${sourceObj[headersObj.name]}`;
       }
 
+      const parseName = (name) => {
+        return name === '[noname]' ? ' ' : name;
+      }
+
       const newItem = {
         type,
-        name: sourceObj[headersObj.name],
+        name: parseName(sourceObj[headersObj.name]),
         variable,
         description: sourceObj[headersObj.description],
       };
