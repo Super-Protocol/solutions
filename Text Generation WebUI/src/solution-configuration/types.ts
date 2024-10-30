@@ -27,7 +27,13 @@ export type EngineConfiguration = {
   model_loader: {
     loader_name: string;
     transformers_options: RawParameters;
-    llamacpp_options: RawParameters;
+    llama_common_options1: RawParameters;
+    llama_common_options2: RawParameters;
+    llama_common_options3: RawParameters;
+    llama_common_options4: RawParameters;
+    llama_common_options5: RawParameters;
+    llama_common_options6: RawParameters;
+    llama_common_options7: RawParameters;
     llamacpp_hf_options: RawParameters;
     exllamav2_options: RawParameters;
     exllamav2_hf_options: RawParameters;

@@ -111,7 +111,7 @@ const setupModelConfiguration = async (
   return cliParams;
 };
 
-const setupModelLoaderConfiguration = (
+export const setupModelLoaderConfiguration = (
   modelLoaderSettings: EngineConfiguration['model_loader'],
   logger: Logger,
 ): string[] => {
@@ -119,9 +119,14 @@ const setupModelLoaderConfiguration = (
   const modelLoader = modelLoaderSettings.loader_name;
   cliParams.push(`--loader`, modelLoader);
 
-  const loaderConfiguration = modelLoaderSettings[
-    `${modelLoader.toLowerCase().replaceAll('.', '')}_options` as keyof typeof modelLoaderSettings
-  ] as RawParameters | undefined;
+  const modelId = modelLoader.toLowerCase().replaceAll('.', '').slice(0, 5);
+
+  const loaderConfiguration = Object.assign(
+    {},
+    ...Object.entries(modelLoaderSettings)
+      .filter(([key]) => key.startsWith(modelId))
+      .map(([_, value]) => value),
+  ) as RawParameters | undefined;
 
   if (!loaderConfiguration) {
     logger.info(`Loader configurations for loader ${modelLoader} are not set`);
@@ -138,5 +143,5 @@ const setupModelLoaderConfiguration = (
     }
   });
 
-  return params;
+  return cliParams;
 };
