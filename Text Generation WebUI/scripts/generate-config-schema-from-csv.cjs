@@ -163,12 +163,23 @@ const addCondition = (obj, condition) => {
     throw `Can't find variable for condition ${condition}`;
   }
 
-  obj.useCondition = {
-    variable: conditionVariablePath,
-    value:
-      value === 'true' || value === 'false'
+  const parseValue = (value) => {
+    if (value.startsWith('/') && value.endsWith('/')) {
+      return {
+        matchRegexp: value.slice(1, -1),
+      }
+    }
+
+    return {
+      value: value === 'true' || value === 'false'
         ? { boolValue: Boolean(value) }
         : { stringValue: value },
+    }
+  };
+
+  obj.useCondition = {
+    variable: conditionVariablePath,
+    ...parseValue(value),
   };
 };
 
