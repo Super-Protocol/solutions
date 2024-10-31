@@ -3,9 +3,9 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import { parentPort } from 'worker_threads';
 import { config } from './config';
-import { EngineConfiguration, getCliParams } from './engine-configuration';
 import { rootLogger } from './logger';
 import { getServerConfig } from './server-config';
+import { EngineConfiguration, getCliParams } from './solution-configuration';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
@@ -29,7 +29,7 @@ const run = async (): Promise<void> => {
   const configuration = await readConfiguration(serverConfig.configurationPath);
 
   const cliParams = await getCliParams({
-    configuration: configuration?.solution?.engine as EngineConfiguration,
+    configuration: configuration?.solution?.engine as EngineConfiguration | undefined,
     engineFolder: serverConfig.engineFolder,
     inputDataFolder: config.inputDataFolder,
     serverPort: serverConfig.port,

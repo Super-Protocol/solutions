@@ -1,13 +1,17 @@
+import {
+  findCertFiles,
+  getDomainConfig,
+  readCertFiles,
+  TunnelsConfiguration,
+} from '@super-protocol/solution-utils';
 import { DomainConfig, findConfigsRecursive } from '@super-protocol/tunnels-lib';
 import { config } from '../config';
 import { rootLogger } from '../logger';
-import { findCertFiles, getDomainConfig, readCertFiles } from '@super-protocol/solution-utils';
-import { EngineConfiguration } from './types';
 
 export const getDomainConfigs = async (
-  tunnelClientConfiguration?: EngineConfiguration['tunnel_client'],
+  tunnelsConfiguration?: TunnelsConfiguration,
 ): Promise<DomainConfig[]> => {
-  if (!tunnelClientConfiguration) {
+  if (!tunnelsConfiguration) {
     return findConfigsRecursive(
       config.inputDataFolder,
       config.configFileName,
@@ -17,7 +21,7 @@ export const getDomainConfigs = async (
   }
 
   const domainConfig = await getDomainConfig({
-    configuration: tunnelClientConfiguration,
+    configuration: tunnelsConfiguration,
     mrSigner: config.mrSigner,
     mrEnclave: config.mrEnclave,
     async getCertFiles() {

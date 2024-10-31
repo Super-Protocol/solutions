@@ -22,7 +22,7 @@ export const getCliParams = async (params: {
 
   return [
     ...(await setupBaseConfiguration(
-      configuration.basic_settings,
+      configuration.main_settings,
       serverPort,
       engineFolder,
       logger,
@@ -39,14 +39,14 @@ export const getCliParams = async (params: {
 };
 
 const setupBaseConfiguration = async (
-  baseSettings: EngineConfiguration['basic_settings'],
+  baseSettings: EngineConfiguration['main_settings'],
   serverPort: number,
   engineFolder: string,
   logger: Logger,
 ): Promise<string[]> => {
   const cliParams: string[] = [];
 
-  if (baseSettings.multi_user) {
+  if (baseSettings.mode?.multi_user) {
     logger.info('Run in multi-user mode');
     cliParams.push('--multi-user');
   }
@@ -97,8 +97,13 @@ const setupModelConfiguration = async (
     cliParams.push(`--chat-buttons`);
   }
 
-  const parametersString = Object.keys(modelSettings.parameters)
-    .map((key) => `${key}: ${modelSettings.parameters[key]}`)
+  const parameters = {
+    ...modelSettings.parameters,
+    ...modelSettings.parameters2,
+  };
+
+  const parametersString = Object.keys(parameters)
+    .map((key) => `${key}: ${parameters[key]}`)
     .join('\n');
 
   await fs.promises.writeFile(`${engineFolder}/presets/min_p.yaml`, parametersString);
@@ -106,7 +111,7 @@ const setupModelConfiguration = async (
   return cliParams;
 };
 
-const setupModelLoaderConfiguration = (
+export const setupModelLoaderConfiguration = (
   modelLoaderSettings: EngineConfiguration['model_loader'],
   logger: Logger,
 ): string[] => {
@@ -114,9 +119,14 @@ const setupModelLoaderConfiguration = (
   const modelLoader = modelLoaderSettings.loader_name;
   cliParams.push(`--loader`, modelLoader);
 
-  const loaderConfiguration = modelLoaderSettings[
-    `${modelLoader.toLowerCase().replaceAll('.', '')}_options` as keyof typeof modelLoaderSettings
-  ] as RawParameters | undefined;
+  const modelId = modelLoader.toLowerCase().replaceAll('.', '');
+
+  const loaderConfiguration = Object.assign(
+    {},
+    ...Object.entries(modelLoaderSettings)
+      .filter(([key]) => key.includes(modelId))
+      .map(([_, value]) => value),
+  ) as RawParameters | undefined;
 
   if (!loaderConfiguration) {
     logger.info(`Loader configurations for loader ${modelLoader} are not set`);
@@ -133,5 +143,5 @@ const setupModelLoaderConfiguration = (
     }
   });
 
-  return params;
+  return cliParams;
 };
