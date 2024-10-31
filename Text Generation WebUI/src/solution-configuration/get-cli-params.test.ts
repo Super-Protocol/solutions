@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
@@ -83,10 +84,7 @@ describe('setupModelLoaderConfiguration', () => {
       '--numa',
     ];
 
-    const actualResult = setupModelLoaderConfiguration(
-      modelLoaderConfiguration as any,
-      mockLogger
-    );
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
 
     assert.deepStrictEqual(actualResult, expectedResult);
   });
@@ -174,10 +172,7 @@ describe('setupModelLoaderConfiguration', () => {
       '--logits_all',
     ];
 
-    const actualResult = setupModelLoaderConfiguration(
-      modelLoaderConfiguration as any,
-      mockLogger
-    );
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
 
     assert.deepStrictEqual(actualResult, expectedResult);
   });
@@ -222,10 +217,7 @@ describe('setupModelLoaderConfiguration', () => {
       '2',
     ];
 
-    const actualResult = setupModelLoaderConfiguration(
-      modelLoaderConfiguration as any,
-      mockLogger
-    );
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
 
     assert.deepStrictEqual(actualResult, expectedResult);
   });
@@ -278,10 +270,7 @@ describe('setupModelLoaderConfiguration', () => {
       '--no_use_fast',
     ];
 
-    const actualResult = setupModelLoaderConfiguration(
-      modelLoaderConfiguration as any,
-      mockLogger
-    );
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
 
     assert.deepStrictEqual(actualResult, expectedResult);
   });
