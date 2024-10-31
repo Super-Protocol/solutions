@@ -12,37 +12,37 @@ describe('setupModelLoaderConfiguration', () => {
   it('returns correct CLI params for llamacpp', () => {
     const modelLoaderConfiguration = {
       loader_name: 'llama.cpp',
-      llama_common_options1: {
+      llamacpp_llamacpp_hf_options1: {
         'n-gpu-layers': 33,
       },
-      llama_common_options2: {
+      llamacpp_llamacpp_hf_options2: {
         n_ctx: 4096,
         tensor_split: 60,
         n_batch: 512,
         threads: 52,
       },
-      llama_common_options3: {
-        'threads-batch': 52,
-        rope_freq_base: 3,
+      llamacpp_llamacpp_hf_options3: {
+        'threads-batch': 26,
+        rope_freq_base: 64,
         compress_pos_emb: 1,
         'flash-attn': true,
       },
-      llama_common_options4: {
+      llamacpp_llamacpp_hf_options4: {
         tensorcores: true,
         cache_8bit: true,
         cache_4bit: true,
       },
-      llama_common_options5: {
+      llamacpp_llamacpp_hf_options5: {
         'streaming-llm': true,
         'attention-sink-size': 5,
         cpu: true,
       },
-      llama_common_options6: {
+      llamacpp_llamacpp_hf_options6: {
         row_split: true,
         no_offload_kqv: true,
         no_mul_mat_q: true,
       },
-      llama_common_options7: {
+      llamacpp_llamacpp_hf_options7: {
         'no-mmap': true,
         mlock: true,
         numa: true,
@@ -63,9 +63,9 @@ describe('setupModelLoaderConfiguration', () => {
       '--threads',
       '52',
       '--threads-batch',
-      '52',
+      '26',
       '--rope_freq_base',
-      '3',
+      '64',
       '--compress_pos_emb',
       '1',
       '--flash-attn',
@@ -92,37 +92,37 @@ describe('setupModelLoaderConfiguration', () => {
   it('returns correct CLI params for llamacpp_HF', () => {
     const modelLoaderConfiguration = {
       loader_name: 'llamacpp_HF',
-      llama_common_options1: {
+      llamacpp_llamacpp_hf_options1: {
         'n-gpu-layers': 33,
       },
-      llama_common_options2: {
+      llamacpp_llamacpp_hf_options2: {
         n_ctx: 4096,
         tensor_split: 60,
         n_batch: 512,
         threads: 52,
       },
-      llama_common_options3: {
-        'threads-batch': 52,
-        rope_freq_base: 3,
+      llamacpp_llamacpp_hf_options3: {
+        'threads-batch': 26,
+        rope_freq_base: 64,
         compress_pos_emb: 1,
         'flash-attn': true,
       },
-      llama_common_options4: {
+      llamacpp_llamacpp_hf_options4: {
         tensorcores: true,
         cache_8bit: true,
         cache_4bit: true,
       },
-      llama_common_options5: {
+      llamacpp_llamacpp_hf_options5: {
         'streaming-llm': true,
         'attention-sink-size': 5,
         cpu: true,
       },
-      llama_common_options6: {
+      llamacpp_llamacpp_hf_options6: {
         row_split: true,
         no_offload_kqv: true,
         no_mul_mat_q: true,
       },
-      llama_common_options7: {
+      llamacpp_llamacpp_hf_options7: {
         'no-mmap': true,
         mlock: true,
         numa: true,
@@ -148,9 +148,9 @@ describe('setupModelLoaderConfiguration', () => {
       '--threads',
       '52',
       '--threads-batch',
-      '52',
+      '26',
       '--rope_freq_base',
-      '3',
+      '64',
       '--compress_pos_emb',
       '1',
       '--flash-attn',
@@ -180,16 +180,16 @@ describe('setupModelLoaderConfiguration', () => {
   it('returns correct CLI params for ExLlamav2', () => {
     const modelLoaderConfiguration = {
       loader_name: 'ExLlamav2',
-      exllamav2_common_options1: {
+      exllamav2_exllamav2_hf_options1: {
         'gpu-split': '40,60',
       },
-      exllamav2_common_options2: {
+      exllamav2_exllamav2_hf_options2: {
         max_seq_len: 16384,
         compress_pos_emb: 1,
         cache_8bit: true,
         cache_4bit: true,
       },
-      exllamav2_common_options3: {
+      exllamav2_exllamav2_hf_options3: {
         autosplit: true,
         no_flash_attn: true,
         no_xformers: true,
@@ -225,16 +225,16 @@ describe('setupModelLoaderConfiguration', () => {
   it('returns correct CLI params for ExLlamav2_HF', () => {
     const modelLoaderConfiguration = {
       loader_name: 'ExLlamav2_HF',
-      exllamav2_common_options1: {
+      exllamav2_exllamav2_hf_options1: {
         'gpu-split': '40,60',
       },
-      exllamav2_common_options2: {
+      exllamav2_exllamav2_hf_options2: {
         max_seq_len: 16384,
         compress_pos_emb: 1,
         cache_8bit: true,
         cache_4bit: true,
       },
-      exllamav2_common_options3: {
+      exllamav2_exllamav2_hf_options3: {
         autosplit: true,
         no_flash_attn: true,
         no_xformers: true,

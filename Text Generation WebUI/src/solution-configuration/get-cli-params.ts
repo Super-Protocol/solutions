@@ -119,12 +119,12 @@ export const setupModelLoaderConfiguration = (
   const modelLoader = modelLoaderSettings.loader_name;
   cliParams.push(`--loader`, modelLoader);
 
-  const modelId = modelLoader.toLowerCase().replaceAll('.', '').slice(0, 5);
+  const modelId = modelLoader.toLowerCase().replaceAll('.', '');
 
   const loaderConfiguration = Object.assign(
     {},
     ...Object.entries(modelLoaderSettings)
-      .filter(([key]) => key.startsWith(modelId))
+      .filter(([key]) => key.includes(modelId))
       .map(([_, value]) => value),
   ) as RawParameters | undefined;
 
