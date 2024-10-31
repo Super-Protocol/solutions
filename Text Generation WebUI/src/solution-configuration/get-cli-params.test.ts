@@ -9,6 +9,71 @@ const mockLogger = {
 } as any;
 
 describe('setupModelLoaderConfiguration', () => {
+  it('returns correct CLI params for Transformers', () => {
+    const modelLoaderConfiguration = {
+      loader_name: 'Transformers',
+      transformers_options1: {
+        'cpu-memory': 1350000,
+      },
+      transformers_options2: {
+        'gpu-memory': 10,
+        compute_dtype: 'float16',
+        'load-in-4bit': true,
+        use_double_quant: true,
+        quant_type: 'fp4',
+        alpha_value: 1,
+        compress_pos_emb: 1,
+        'load-in-8bit': true,
+        use_flash_attention_2: true,
+      },
+      transformers_options3: {
+        use_eager_attention: true,
+        'auto-devices': true,
+        cpu: true,
+        disk: true,
+        bf16: true,
+        'trust-remote-code': true,
+        no_use_fast: true,
+        disable_exllama: true,
+        disable_exllamav2: true,
+      },
+    };
+
+    const expectedResult = [
+      '--loader',
+      'Transformers',
+      '--cpu-memory',
+      '1350000',
+      '--gpu-memory',
+      '10',
+      '--compute_dtype',
+      'float16',
+      '--load-in-4bit',
+      '--use_double_quant',
+      '--quant_type',
+      'fp4',
+      '--alpha_value',
+      '1',
+      '--compress_pos_emb',
+      '1',
+      '--load-in-8bit',
+      '--use_flash_attention_2',
+      '--use_eager_attention',
+      '--auto-devices',
+      '--cpu',
+      '--disk',
+      '--bf16',
+      '--trust-remote-code',
+      '--no_use_fast',
+      '--disable_exllama',
+      '--disable_exllamav2',
+    ];
+
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
+
+    assert.deepStrictEqual(actualResult, expectedResult);
+  });
+
   it('returns correct CLI params for llamacpp', () => {
     const modelLoaderConfiguration = {
       loader_name: 'llama.cpp',
@@ -268,6 +333,56 @@ describe('setupModelLoaderConfiguration', () => {
       '--cfg-cache',
       '--trust-remote-code',
       '--no_use_fast',
+    ];
+
+    const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
+
+    assert.deepStrictEqual(actualResult, expectedResult);
+  });
+
+  it('returns correct CLI params for AutoGPTQ', () => {
+    const modelLoaderConfiguration = {
+      loader_name: 'AutoGPTQ',
+      autogptq_options1: {
+        'cpu-memory': 4500000,
+      },
+      autogptq_options2: {
+        'auto-devices': true,
+        cpu: true,
+      },
+      autogptq_options3: {
+        triton: true,
+        no_inject_fused_mlp: true,
+        no_use_cuda_fp16: true,
+        desc_act: true,
+      },
+      autogptq_options4: {
+        disk: true,
+        'trust-remote-code': true,
+        no_use_fast: true,
+      },
+      autogptq_options5: {
+        disable_exllama: true,
+        disable_exllamav2: true,
+      },
+    };
+
+    const expectedResult = [
+      '--loader',
+      'AutoGPTQ',
+      '--cpu-memory',
+      '4500000',
+      '--auto-devices',
+      '--cpu',
+      '--triton',
+      '--no_inject_fused_mlp',
+      '--no_use_cuda_fp16',
+      '--desc_act',
+      '--disk',
+      '--trust-remote-code',
+      '--no_use_fast',
+      '--disable_exllama',
+      '--disable_exllamav2',
     ];
 
     const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
