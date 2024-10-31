@@ -2,7 +2,8 @@ import fs from 'fs';
 import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
 import { rootLogger } from './logger';
-import { serverConfig } from './server-config';
+import { getServerConfig } from './server-config';
+import { processConfigurationAngGetCliParams } from './engine-configuration/process-configuration-and-get-cli-params';
 
 const logger = rootLogger.child({ module: 'server.js' });
 
@@ -19,18 +20,24 @@ parentPort?.on('message', (message) => {
 });
 
 const run = async (): Promise<void> => {
+  const serverConfig = getServerConfig();
   await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
   await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
+
+  const cliParams = await processConfigurationAngGetCliParams();
 
   const spawnOptions = [
     `${serverConfig.engineFolder}/main.py`,
     '--port',
-    serverConfig.port,
+    String(serverConfig.port),
     '--tls-keyfile',
     serverConfig.privateKeyFilePath,
     '--tls-certfile',
     serverConfig.certificateFilePath,
+    ...cliParams,
   ];
+
+  logger.trace({ cliParams: spawnOptions }, `ComfyUI will be started with cli params`);
 
   await new Promise((_resolve, _reject) => {
     const pythonProcess = spawn(`python`, spawnOptions, {

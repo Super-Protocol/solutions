@@ -76,6 +76,10 @@ RUN npm ci &&\
 
 FROM base
 
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
+    dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
+    rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
 WORKDIR /home/node/app
 
 ENV LOG_LEVEL trace
@@ -84,16 +88,14 @@ ENV COMFYUI_PATH /home/node/app/ComfyUI
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
-COPY --from=builder /home/node/app/ComfyUI ./ComfyUI
-
-RUN pip install -r ./ComfyUI/requirements.txt &&\
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git ./ComfyUI &&\
+    cd ./ComfyUI && git checkout af8cf79a2dbdd541493d49c4f26c60d60d85ceae && cd .. &&\
+    pip install -r ./ComfyUI/requirements.txt &&\
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./ComfyUI/custom_nodes/ComfyUI-Manager &&\
-    wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
-    dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
-    rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+    pip install -r ./ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt
 
-COPY --from=builder /home/node/app/scripts ./scripts
-RUN node scripts/get-top-starts-custom-nodes.cjs /home/node/app/ComfyUI
+COPY --from=builder /home/node/app/plugins ./plugins
+RUN python ./ComfyUI/custom_nodes/ComfyUI-Manager/cm-cli.py install $(tr '\n' ' ' < ./plugins/custom_nodes_list | sed 's/ $//')
 
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
