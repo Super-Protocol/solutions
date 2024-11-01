@@ -23,13 +23,13 @@ env:
   IMAGE_RESOURCE: ''
   SOLUTION: ${{ inputs.solution }}
   PR_REPO_ARGO: super-protocol/argocd-clusters
-  DOCKERFILE: "./Text\ Generation\ WebUI/Dockerfile"
-  DOCKERFILE_CONTEXT: "./Text\ Generation\ WebUI/"
+  DOCKERFILE: ''
+  DOCKERFILE_CONTEXT: ''
   SUBMODULE_PATH: ''
   TARGET: ${{ inputs.target }}
 
 jobs:
-  build-text-genration-webui:
+  build-engine:
     runs-on: self-hosted
     permissions:
       contents: read
