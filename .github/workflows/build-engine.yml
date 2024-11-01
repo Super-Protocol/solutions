@@ -1,9 +1,7 @@
 name: Build Engine
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build-engine:
