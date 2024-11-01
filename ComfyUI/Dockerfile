@@ -1,4 +1,4 @@
-FROM python:3.12-bookworm as base
+FROM python:3.12-bookworm AS base
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
@@ -64,7 +64,7 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 
 RUN apt update && apt install -y openssl git wget curl
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /home/node/app
 
@@ -100,6 +100,7 @@ RUN python ./ComfyUI/custom_nodes/ComfyUI-Manager/cm-cli.py install $(tr '\n' ' 
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package.json ./package.json
+COPY --from=builder /home/node/app/.env ./.env
 
 
-ENTRYPOINT ["node", "./dist/index.js"]
+ENTRYPOINT ["npm", "run", "start"]
