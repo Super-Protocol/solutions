@@ -46,7 +46,7 @@ jobs:
             DOCKERFILE="./Text\ Generation\ WebUI/Dockerfile"
             DOCKERFILE_CONTEXT="./Text\ Generation\ WebUI/"
             SUBMODULE_PATH="Text\ Generation\ WebUI/text-generation-webui"
-          elif [ "$INSTANCE" == "comfyui" ]; then
+          elif [ "$SOLUTION" == "comfyui" ]; then
             DOCKERFILE="./ComfyUI/Dockerfile"
             DOCKERFILE_CONTEXT="./ComfyUI/"
             SUBMODULE_PATH="ComfyUI/ComfyUI"
