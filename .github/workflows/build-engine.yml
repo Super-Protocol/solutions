@@ -1,0 +1,14 @@
+name: Build Engine
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-engine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run echo command
+        run: echo 1
