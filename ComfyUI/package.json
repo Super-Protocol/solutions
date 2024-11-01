@@ -4,7 +4,9 @@
   "description": "Super Protocol integration for ComfyUI (https://github.com/comfyanonymous/ComfyUI)",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "start:debug": "npm run build && node --enable-source-maps --inspect=0.0.0.0 dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,7 @@
   "homepage": "https://github.com/Super-Protocol/solutions#readme",
   "devDependencies": {
     "@super-protocol/eslint-config-typescript": "^2.0.1",
+    "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.7.9"
   },
@@ -25,6 +28,7 @@
     "@super-protocol/solution-utils": "1.1.2-beta.4",
     "@super-protocol/tunnels-lib": "^0.1.17",
     "dotenv": "^16.4.5",
+    "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "pino": "^7.11.0"
   }

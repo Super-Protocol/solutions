@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { getServerConfig } from '../server-config';
 import { rootLogger } from '../logger';
 
@@ -13,5 +13,5 @@ export const disableComfyuiManager = async (): Promise<void> => {
     'ComfyUI-Manager',
   );
 
-  await fs.promises.rename(comfyuiManagerPath, `${comfyuiManagerPath}.disabled`);
+  await fs.move(comfyuiManagerPath, `${comfyuiManagerPath}.disabled`);
 };

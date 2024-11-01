@@ -61,5 +61,5 @@ const run = async (): Promise<void> => {
 };
 
 run().catch((err) => {
-  logger.fatal({ err }, `Text-generation webui start command failed`);
+  logger.fatal({ err }, `ComfyUI start command failed`);
 });
