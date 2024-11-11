@@ -167,14 +167,15 @@ const addCondition = (obj, condition) => {
     if (value.startsWith('/') && value.endsWith('/')) {
       return {
         matchRegexp: value.slice(1, -1),
-      }
+      };
     }
 
     return {
-      value: value === 'true' || value === 'false'
-        ? { boolValue: Boolean(value) }
-        : { stringValue: value },
-    }
+      value:
+        value === 'true' || value === 'false'
+          ? { boolValue: Boolean(value) }
+          : { stringValue: value },
+    };
   };
 
   obj.useCondition = {
@@ -264,7 +265,7 @@ const run = async () => {
 
       const parseName = (name) => {
         return name === '[noname]' ? ' ' : name;
-      }
+      };
 
       const newItem = {
         type,

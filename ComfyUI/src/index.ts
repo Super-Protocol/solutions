@@ -1,5 +1,5 @@
 import { TunnelClient, TunnelClientOptions } from '@super-protocol/tunnels-lib';
-import { readConfiguration, DomainConfigManager } from '@super-protocol/solution-utils';
+import { readConfiguration, getDomainConfig } from '@super-protocol/solution-utils';
 import { rootLogger } from './logger';
 import { config } from './config';
 import { exitOnSignals, exitOnUncaughtException, exitOnUnhandledRejection } from './process';
@@ -14,12 +14,12 @@ const run = async (): Promise<void> => {
   const configuration = await readConfiguration(config.configurationPath);
   const engineConfiguration = configuration?.solution?.engine as ComfyuiConfiguration | undefined;
 
-  const domainConfigs = await new DomainConfigManager({
+  const domainConfigs = await getDomainConfig({
     tunnels: engineConfiguration?.tunnels,
     blockchainUrl: config.blockchainUrl,
     contractAddress: config.contractAddress,
     logger,
-  }).getDomainConfig();
+  });
 
   logger.debug(
     { domains: domainConfigs.map((config) => config.site.domain) },

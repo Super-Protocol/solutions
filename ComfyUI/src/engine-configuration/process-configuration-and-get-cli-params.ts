@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import { readConfiguration } from '@super-protocol/solution-utils';
+import { findModel, readConfiguration } from '@super-protocol/solution-utils';
 import { rootLogger } from '../logger';
 import { ComfyuiConfiguration } from './types';
 import { disableComfyuiManager } from './disable-comfyui-manager';
 import { getServerConfig, IServerConfig } from '../server-config';
-import { findModel } from '../utils';
 import { config } from '../config';
 import { Logger } from 'pino';
 import { ExtraModelPathBuilder } from './extra-model-path-builder';
@@ -34,10 +33,10 @@ export const processConfigurationAngGetCliParams = async (): Promise<string[]> =
     await disableComfyuiManager();
   }
 
-  return [...setupMainCOnfiguration(mainSettings), ...(await setupModels(serverConfig, logger))];
+  return [...setupMainConfiguration(mainSettings), ...(await setupModels(serverConfig, logger))];
 };
 
-const setupMainCOnfiguration = (
+const setupMainConfiguration = (
   mainSettings: ComfyuiConfiguration['engine']['main_settings'],
 ): string[] => {
   const params: string[] = [];
