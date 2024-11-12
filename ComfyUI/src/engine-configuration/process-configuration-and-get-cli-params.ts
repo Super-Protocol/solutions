@@ -4,7 +4,6 @@ import path from 'path';
 import { findModel, readConfiguration } from '@super-protocol/solution-utils';
 import { rootLogger } from '../logger';
 import { ComfyuiConfiguration } from './types';
-import { disableComfyuiManager } from './disable-comfyui-manager';
 import { getServerConfig, IServerConfig } from '../server-config';
 import { config } from '../config';
 import { Logger } from 'pino';
@@ -26,12 +25,6 @@ export const processConfigurationAngGetCliParams = async (): Promise<string[]> =
   }
 
   const mainSettings = engineConfiguration.main_settings;
-  if (
-    typeof mainSettings.comfyui_manager_enable === 'boolean' &&
-    mainSettings.comfyui_manager_enable === false
-  ) {
-    await disableComfyuiManager();
-  }
 
   return [...setupMainConfiguration(mainSettings), ...(await setupModels(serverConfig, logger))];
 };

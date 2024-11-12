@@ -4,7 +4,6 @@ export interface ComfyuiConfiguration {
   tunnels: TunnelsConfiguration;
   engine: {
     main_settings: {
-      comfyui_manager_enable: boolean;
       compute?: string;
       enable_cors_header?: boolean;
       cuda_malloc?: 'Enable' | 'Disable';

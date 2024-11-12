@@ -92,10 +92,12 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git ./ComfyUI &&\
     cd ./ComfyUI && git checkout af8cf79a2dbdd541493d49c4f26c60d60d85ceae && cd .. &&\
     pip install -r ./ComfyUI/requirements.txt &&\
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./ComfyUI/custom_nodes/ComfyUI-Manager &&\
-    pip install -r ./ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt
+    pip install -r ./ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt &&\
+    pip install ultralytics
 
 COPY --from=builder /home/node/app/plugins ./plugins
-RUN python ./ComfyUI/custom_nodes/ComfyUI-Manager/cm-cli.py install $(tr '\n' ' ' < ./plugins/custom_nodes_list | sed 's/ $//')
+RUN python ./ComfyUI/custom_nodes/ComfyUI-Manager/cm-cli.py install $(tr '\n' ' ' < ./plugins/custom_nodes_list | sed 's/ $//') &&\
+    rm -rf ./ComfyUI/custom_nodes/ComfyUI-Manager
 
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules

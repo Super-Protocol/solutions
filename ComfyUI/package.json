@@ -20,15 +20,13 @@
   "homepage": "https://github.com/Super-Protocol/solutions#readme",
   "devDependencies": {
     "@super-protocol/eslint-config-typescript": "^2.0.1",
-    "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.7.9"
   },
   "dependencies": {
-    "@super-protocol/solution-utils": "1.1.2-beta.5",
+    "@super-protocol/solution-utils": "1.1.2-beta.6",
     "@super-protocol/tunnels-lib": "^0.1.17",
     "dotenv": "^16.4.5",
-    "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "pino": "^7.11.0"
   }
