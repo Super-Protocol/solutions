@@ -22,6 +22,7 @@ const headersObj = {
   min: 'Min Value',
   max: 'Max Value',
   description: 'Description',
+  validateRegexp: 'Validate Regexp',
 };
 
 const types = {
@@ -314,6 +315,11 @@ const run = async () => {
 
       if (sourceObj[headersObj.useConditions]) {
         addCondition(newItem, sourceObj[headersObj.useConditions]);
+      }
+
+      const validateRegexp = sourceObj[headersObj.validateRegexp];
+      if (validateRegexp) {
+        newItem.validateRegexp = validateRegexp;
       }
 
       destinationArray.push(newItem);
