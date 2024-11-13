@@ -3,10 +3,12 @@ import {
   readConfiguration,
   getDomainConfigs,
   TunnelsConfiguration,
+  exitOnUnhandledRejection,
+  exitOnUncaughtException,
+  exitOnSignals,
 } from '@super-protocol/solution-utils';
 import { rootLogger } from './logger';
 import { config } from './config';
-import { exitOnSignals, exitOnUncaughtException, exitOnUnhandledRejection } from './process';
 
 exitOnUnhandledRejection(rootLogger);
 exitOnUncaughtException(rootLogger);
