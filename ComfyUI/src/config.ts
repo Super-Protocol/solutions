@@ -9,7 +9,7 @@ export const config = {
   appName: packageJson.name,
   appVersion: packageJson.version,
   blockchainUrl: getEnvValueOrFail('BLOCKCHAIN_URL'),
-  contractAddress: getEnvValueOrFail('BLOCKCHAIN_CONTRACT_ADDRESS'),
+  blockchainContractAddress: getEnvValueOrFail('BLOCKCHAIN_CONTRACT_ADDRESS'),
   logLevel: (process.env.LOG_LEVEL as string) || 'trace',
   inputDataFolder: (process.env.INPUT_DATA_FOLDER as string) || '/sp/inputs',
   clientServerPort: 9000,

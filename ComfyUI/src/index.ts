@@ -22,7 +22,7 @@ const run = async (): Promise<void> => {
   const domainConfigs = await getDomainConfigs({
     tunnels: tunnelsConfiguration,
     blockchainUrl: config.blockchainUrl,
-    contractAddress: config.contractAddress,
+    contractAddress: config.blockchainContractAddress,
     logger,
   });
 
