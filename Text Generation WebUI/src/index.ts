@@ -1,27 +1,30 @@
-import { readConfiguration, updateCertFilesIfNeeded } from '@super-protocol/solution-utils';
 import { TunnelClient, TunnelClientOptions } from '@super-protocol/tunnels-lib';
-import { config } from './config';
+import {
+  readConfiguration,
+  getDomainConfigs,
+  TunnelsConfiguration,
+  exitOnUnhandledRejection,
+  exitOnUncaughtException,
+  exitOnSignals,
+} from '@super-protocol/solution-utils';
 import { rootLogger } from './logger';
-import { SolutionConfiguration } from './solution-configuration';
-import { getDomainConfigs } from './solution-configuration/get-domain-configs';
+import { config } from './config';
+
+exitOnUnhandledRejection(rootLogger);
+exitOnUncaughtException(rootLogger);
+exitOnSignals(rootLogger);
 
 const run = async (): Promise<void> => {
   const logger = rootLogger.child({ method: run.name });
   const configuration = await readConfiguration(config.configurationPath);
-  const solutionConfiguration = configuration?.solution as SolutionConfiguration | undefined;
-  const tunnelsConfiguration = solutionConfiguration?.tunnels;
+  const tunnelsConfiguration = configuration?.solution?.tunnels as TunnelsConfiguration | undefined;
 
-  if (!tunnelsConfiguration) {
-    await updateCertFilesIfNeeded({
-      certFileName: config.certFileName,
-      certPrivateKeyFileName: config.certPrivateKeyFileName,
-      inputDataFolder: config.inputDataFolder,
-      secretsDataFolder: config.secretsDataFolder,
-      logger,
-    });
-  }
-
-  const domainConfigs = await getDomainConfigs(tunnelsConfiguration);
+  const domainConfigs = await getDomainConfigs({
+    tunnels: tunnelsConfiguration,
+    blockchainUrl: config.blockchainUrl,
+    contractAddress: config.blockchainContractAddress,
+    logger,
+  });
 
   logger.debug(
     { domains: domainConfigs.map((config) => config.site.domain) },
