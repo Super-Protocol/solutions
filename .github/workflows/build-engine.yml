@@ -61,7 +61,7 @@ jobs:
 
       - name: Checkout git submodules
         run: |
-          git submodule init && git submodule update $SUBMODULE_PATH
+          git submodule init && git submodule update "$SUBMODULE_PATH"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
