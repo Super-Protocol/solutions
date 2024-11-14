@@ -43,8 +43,8 @@ jobs:
       - name: Prepare variables
         run: |
           if [ "$SOLUTION" == "text-generation-webui" ]; then
-            DOCKERFILE="./Text\ Generation\ WebUI/Dockerfile"
-            DOCKERFILE_CONTEXT="./Text\ Generation\ WebUI/"
+            DOCKERFILE="./Text Generation WebUI/Dockerfile"
+            DOCKERFILE_CONTEXT="./Text Generation WebUI/"
             SUBMODULE_PATH="Text\ Generation\ WebUI/text-generation-webui"
           elif [ "$SOLUTION" == "comfyui" ]; then
             DOCKERFILE="./ComfyUI/Dockerfile"
@@ -72,7 +72,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          cd $DOCKERFILE_CONTEXT
+          cd "$DOCKERFILE_CONTEXT"
 
           if [ "$TARGET" == "develop" ]; then
             echo "${{ secrets.DEVELOP_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
