@@ -72,7 +72,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          cd "$DOCKERFILE_CONTEXT"
+          cd $DOCKERFILE_CONTEXT
 
           if [ "$TARGET" == "develop" ]; then
             echo "${{ secrets.DEVELOP_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
@@ -84,6 +84,7 @@ jobs:
             echo "Invalid instance: $TARGET"
             exit 1
           fi
+
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
