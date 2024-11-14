@@ -75,11 +75,11 @@ jobs:
           cd "$DOCKERFILE_CONTEXT"
 
           if [ "$TARGET" == "develop" ]; then
-            echo "${{ secrets.DEV_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+            echo "${{ secrets.DEVELOP_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           elif [ "$TARGET" == "stage" ]; then
-            echo "${{ secrets.STG_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+            echo "${{ secrets.STAGING_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           elif [ "$TARGET" == "testnet" ]; then
-            echo "${{ secrets.TESTNET_TGWUI_ENV_BASE64 }}" | base64 --decode > .env
+            echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           else
             echo "Invalid instance: $TARGET"
             exit 1
