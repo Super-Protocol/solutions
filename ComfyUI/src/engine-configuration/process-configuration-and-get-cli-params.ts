@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import { findModel, readConfiguration } from '@super-protocol/solution-utils';
@@ -49,7 +48,7 @@ const setupMainConfiguration = (
   }
 
   if (mainSettings.fp) {
-    params.push(`--${_.kebabCase(mainSettings.fp)}`);
+    params.push(`--${mainSettings.fp.replaceAll(' ', '-')}`);
   }
 
   if (mainSettings.fpunet) {
