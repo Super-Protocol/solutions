@@ -2,11 +2,141 @@ name: Build Engine
 
 on:
   workflow_dispatch:
+    inputs:
+      solution:
+        required: true
+        type: choice
+        options:
+          - text-generation-webui
+          - comfyui
+      target:
+        description: 'Target'
+        required: true
+        type: choice
+        options:
+          - develop
+          - stage
+          - testnet
+
+env:
+  IMAGE_FILE: ''
+  IMAGE_RESOURCE: ''
+  SOLUTION: ${{ inputs.solution }}
+  PR_REPO_ARGO: super-protocol/argocd-clusters
+  DOCKERFILE: ''
+  DOCKERFILE_CONTEXT: ''
+  SUBMODULE_PATH: ''
+  TARGET: ${{ inputs.target }}
 
 jobs:
   build-engine:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+      repository-projects: read
 
     steps:
-      - name: Run echo command
-        run: echo 1
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare variables
+        run: |
+          if [ "$SOLUTION" == "text-generation-webui" ]; then
+            DOCKERFILE="./Text Generation WebUI/Dockerfile"
+            DOCKERFILE_CONTEXT="./Text Generation WebUI/"
+            SUBMODULE_PATH="Text\ Generation\ WebUI/text-generation-webui"
+          elif [ "$SOLUTION" == "comfyui" ]; then
+            DOCKERFILE="./ComfyUI/Dockerfile"
+            DOCKERFILE_CONTEXT="./ComfyUI/"
+            SUBMODULE_PATH="ComfyUI/ComfyUI"
+          else
+            echo "Invalid solution name"
+            exit 1
+          fi
+
+          echo "DOCKERFILE=$DOCKERFILE" >> $GITHUB_ENV
+          echo "DOCKERFILE_CONTEXT=$DOCKERFILE_CONTEXT" >> $GITHUB_ENV
+          echo "SUBMODULE_PATH=$SUBMODULE_PATH" >> $GITHUB_ENV
+
+      - name: Checkout git submodules
+        run: |
+          git submodule init && git submodule update "$SUBMODULE_PATH"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+          driver-opts: |
+            image=moby/buildkit:v0.12.0
+
+      - name: Create .env file
+        run: |
+          cd "$DOCKERFILE_CONTEXT"
+
+          if [ "$TARGET" == "develop" ]; then
+            echo "${{ secrets.DEVELOP_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
+          elif [ "$TARGET" == "stage" ]; then
+            echo "${{ secrets.STAGING_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
+          elif [ "$TARGET" == "testnet" ]; then
+            echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
+          else
+            echo "Invalid instance: $TARGET"
+            exit 1
+          fi
+
+      - name: Build Docker image and save to file
+        run: |
+          IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
+          docker build -t $SOLUTION:latest -f "$DOCKERFILE" "$DOCKERFILE_CONTEXT"
+          docker save $SOLUTION:latest | gzip > $IMAGE_FILE
+
+          echo "IMAGE_FILE=$IMAGE_FILE" >> $GITHUB_ENV
+
+      - name: Set SPCTL repository type
+        run: |
+          if [ "$TARGET" == "develop" || "$TARGET" == "stage" ]; then
+            SPCTL_REPOSITORY_TYPE=private
+          else
+            SPCTL_REPOSITORY_TYPE=public
+          fi
+
+          echo "SPCTL_REPOSITORY_TYPE=$SPCTL_REPOSITORY_TYPE" >> $GITHUB_ENV
+
+      - name: Download and install SPCTL
+        uses: Super-Protocol/sp-build-tools/actions/download-spctl@v1
+        with:
+          version: latest
+          repository: ${{ env.SPCTL_REPOSITORY_TYPE }}
+          gh_token: ${{ secrets.GHFG_TOKEN_SPCTL_RELEASES_DOWNLOAD }}
+
+      - name: Prepare SPCTL config
+        run: |
+          if [ "$TARGET" == "develop" ]; then
+            SPCTL_CONFIG="${{ secrets.DEVELOP_SPCTL_CONFIG_BASE64 }}"
+
+          elif [ "$TARGET" == "stage" ]; then
+            SPCTL_CONFIG="${{ secrets.STAGING_SPCTL_CONFIG_BASE64 }}"
+
+          elif [ "$TARGET" == "testnet" ]; then
+            SPCTL_CONFIG="${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}"
+          fi
+
+          echo "$SPCTL_CONFIG" | base64 --decode > ./config.json
+          ./spctl --version
+
+      - name: Encrypt and upload image
+        id: upload_image
+        uses: Super-Protocol/sp-build-tools/actions/upload-file@v1
+        with:
+          file_to_upload: ${{ env.IMAGE_FILE }}
+
+      - name: Update argocd
+        uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
+        with:
+          gh_token: ${{ secrets.TOKEN_FOR_ARGOCD_REPO }}
+          target: ${{ inputs.target }}
+          resource_type: solution
+          resource_file: ${{ steps.upload_image.outputs.resource }}
+          solution_name: ${{ env.SOLUTION }}
+          commit_type: pull-request
