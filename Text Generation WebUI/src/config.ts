@@ -19,7 +19,5 @@ export const config = {
   configSearchFolderDepth: 1 as number,
   clientServerPort: 9000,
   serverFilePath: path.join(__dirname, './server.js'),
-  mrEnclave: getEnvValueOrFail('MRENCLAVE'),
-  mrSigner: getEnvValueOrFail('MRSIGNER'),
   configurationPath: process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
 };
