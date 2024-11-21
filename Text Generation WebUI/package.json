@@ -26,8 +26,8 @@
   "dependencies": {
     "@super-protocol/dto-js": "0.1.11",
     "@super-protocol/sdk-js": "^2.2.0-beta.115",
-    "@super-protocol/solution-utils": "1.3.0",
-    "@super-protocol/tunnels-lib": "^0.1.21",
+    "@super-protocol/solution-utils": "1.3.1",
+    "@super-protocol/tunnels-lib": "^0.1.23",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"
   }
