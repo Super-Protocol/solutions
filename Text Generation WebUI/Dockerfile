@@ -1,5 +1,7 @@
 FROM node:20-bookworm AS builder
 
+ARG GPU_CHOICE
+
 WORKDIR /home/node/app
 
 COPY . /home/node/app
