@@ -18,10 +18,12 @@ RUN mkdir -p /sp/inputs /sp/output /sp/run
 
 COPY --from=builder /home/node/app/text-generation-webui ./text-generation-webui
 
+ENV GPU_CHOICE=${GPU_CHOICE}
+
 RUN apt update && apt install -y git &&\
     git config --global --add safe.directory /home/node/app/text-generation-webui &&\
     chmod +x ./text-generation-webui/start_linux.sh &&\
-    GPU_CHOICE=${GPU_CHOICE} USE_CUDA118=FALSE LAUNCH_AFTER_INSTALL=FALSE INSTALL_EXTENSIONS=FALSE ./text-generation-webui/start_linux.sh &&\
+    USE_CUDA118=FALSE LAUNCH_AFTER_INSTALL=FALSE INSTALL_EXTENSIONS=FALSE ./text-generation-webui/start_linux.sh &&\
     apt remove git -y &&\
     wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
     dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
