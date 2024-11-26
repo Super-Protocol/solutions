@@ -1,6 +1,6 @@
-FROM node:20-bookworm AS builder
-
 ARG GPU_CHOICE
+
+FROM node:20-bookworm AS builder
 
 WORKDIR /home/node/app
 
