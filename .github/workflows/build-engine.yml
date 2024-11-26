@@ -43,17 +43,15 @@ jobs:
 
       - name: Prepare variables
         run: |
-          BUILD_ARGS=()
-
           if [[ "$SOLUTION" == text-generation-webui* ]]; then
             DOCKERFILE="./Text Generation WebUI/Dockerfile"
             DOCKERFILE_CONTEXT="./Text Generation WebUI/"
             SUBMODULE_PATH="Text\ Generation\ WebUI/text-generation-webui"
 
             if [[ "$SOLUTION" == *cpu ]]; then
-              BUILD_ARGS+="GPU_CHOICE=N"
+              BUILD_ARGS="--build-arg GPU_CHOICE=N"
             elif [[ "$SOLUTION" == *gpu ]]; then
-              BUILD_ARGS+="GPU_CHOICE=A"
+              BUILD_ARGS="--build-arg GPU_CHOICE=A"
             fi
 
           elif [ "$SOLUTION" == "comfyui" ]; then
@@ -99,13 +97,9 @@ jobs:
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
-          COMMAND="docker build -t $SOLUTION:latest"
-          for ARG in "${BUILD_ARGS[@]}"; do
-            COMMAND+=" --build-arg $ARG"
-          done
-          COMMAND+=" -f \"$DOCKERFILE\" \"$DOCKERFILE_CONTEXT\""
-          echo "$COMMAND"
-          $COMMAND
+          echo "docker build -t $SOLUTION:latest -f $DOCKERFILE $(echo $BUILD_ARGS) $DOCKERFILE_CONTEXT"
+          docker build -t $SOLUTION:latest -f "$DOCKERFILE" $(echo $BUILD_ARGS) "$DOCKERFILE_CONTEXT"
+
           docker save $SOLUTION:latest | gzip > $IMAGE_FILE
 
           echo "IMAGE_FILE=$IMAGE_FILE" >> $GITHUB_ENV
