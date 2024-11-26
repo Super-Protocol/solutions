@@ -1,5 +1,3 @@
-ARG GPU_CHOICE
-
 FROM node:20-bookworm AS builder
 
 WORKDIR /home/node/app
@@ -12,13 +10,15 @@ RUN npm ci &&\
 
 FROM node:20-bookworm
 
+ARG GPU_CHOICE
+
 WORKDIR /home/node/app
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
 COPY --from=builder /home/node/app/text-generation-webui ./text-generation-webui
 
-ENV GPU_CHOICE=${GPU_CHOICE}
+ENV GPU_CHOICE=$GPU_CHOICE
 
 RUN apt update && apt install -y git &&\
     git config --global --add safe.directory /home/node/app/text-generation-webui &&\
