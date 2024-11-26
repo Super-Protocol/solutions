@@ -101,9 +101,9 @@ jobs:
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
           COMMAND="docker build -t $SOLUTION:latest"
           for ARG in "${BUILD_ARGS[@]}"; do
-            COMMAND+="--build-arg $ARG"
+            COMMAND+=" --build-arg $ARG"
           done
-          COMMAND+="-f \"$DOCKERFILE\" \"$DOCKERFILE_CONTEXT\""
+          COMMAND+=" -f \"$DOCKERFILE\" \"$DOCKERFILE_CONTEXT\""
           echo "$COMMAND"
           $COMMAND
           docker save $SOLUTION:latest | gzip > $IMAGE_FILE
