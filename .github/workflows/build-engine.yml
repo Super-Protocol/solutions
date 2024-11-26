@@ -97,7 +97,7 @@ jobs:
       - name: Build Docker image and save to file
         run: |
           IMAGE_FILE="$SOLUTION-image-b${{ github.run_id }}.tar.gz"
-          docker build -t $SOLUTION:latest -f "$DOCKERFILE" $(echo $BUILD_ARGS) "$DOCKERFILE_CONTEXT"
+          docker build -t $SOLUTION:latest -f "$DOCKERFILE" "$BUILD_ARGS" "$DOCKERFILE_CONTEXT"
           docker save $SOLUTION:latest | gzip > $IMAGE_FILE
 
           echo "IMAGE_FILE=$IMAGE_FILE" >> $GITHUB_ENV
