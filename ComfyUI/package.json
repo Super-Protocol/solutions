@@ -1,6 +1,6 @@
 {
   "name": "sp-comfyui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Super Protocol integration for ComfyUI (https://github.com/comfyanonymous/ComfyUI)",
   "main": "dist/index.js",
   "scripts": {
