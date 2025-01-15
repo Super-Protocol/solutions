@@ -3,6 +3,10 @@ import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
 import { findModel, setupCharacter } from './utils';
 
+const mandatoryParams = {
+  '--tensor_split': '100',
+};
+
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
   engineFolder: string;
@@ -20,7 +24,7 @@ export const getCliParams = async (params: {
     return ['--listen-port', String(serverPort)];
   }
 
-  return [
+  const cliParams = [
     ...(await setupBaseConfiguration(
       configuration.main_settings,
       serverPort,
@@ -36,6 +40,14 @@ export const getCliParams = async (params: {
     )),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
   ];
+
+  Object.entries(mandatoryParams).forEach(([key, value]) => {
+    if (!cliParams.includes(key)) {
+      cliParams.push(key, value);
+    }
+  });
+
+  return cliParams;
 };
 
 const setupBaseConfiguration = async (
