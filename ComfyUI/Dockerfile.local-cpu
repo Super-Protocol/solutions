@@ -37,7 +37,7 @@ RUN git config --local user.email "container@super-protocol.com" \
 
 # Create Python virtual environment
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv venv --seed .venv
+    uv venv --seed --relocatable .venv
 ENV VIRTUAL_ENV=$COMFYUI_DIR/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
