@@ -3,8 +3,7 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 # The installer requires curl (and certificates) to download the release archive
-RUN --mount=type=cache,target=/var/cache/apt,rw --mount=type=cache,target=/var/lib/apt,rw \
-    apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     git-lfs \
     build-essential \
