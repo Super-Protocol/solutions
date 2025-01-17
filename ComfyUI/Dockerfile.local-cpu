@@ -50,11 +50,22 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install -r requirements.txt
 
 # Clones the ComfyUI Manager repository and checks out the latest release
-# remove gitignore to allow adding submodule into custom_nodes
-RUN rm .gitignore
+# edit gitignore entries
+RUN for l in custom_nodes user models web web_custom_versions; do sed -i "/$l/d" .gitignore ; done
+# add more gitignore entries
+RUN <<EOF cat >> .gitignore
+user/*.log
+user/default/ComfyUI-Manager/cache/
+user/default/ComfyUI-Manager/channels.list
+EOF
+
 RUN git submodule add $COMFYUI_MANAGER_REPO custom_nodes/ComfyUI-Manager \
     && cd custom_nodes/ComfyUI-Manager \
     && git checkout tags/$COMFYUI_MANAGER_VERSION
+# edit gitignore entries - see https://github.com/ltdrdata/ComfyUI-Manager/blob/main/.gitignore
+RUN for l in config.ini code-workspace snapshots startup-scripts pip_overrides openart_key matrix_auth youml comfyworkflows_sharekey; \
+    do sed -i "/$l/d" custom_nodes/ComfyUI-Manager/.gitignore ; done
+# add more gitignore entries
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install -r custom_nodes/ComfyUI-Manager/requirements.txt
 
@@ -70,7 +81,7 @@ model_download_by_agent = False
 EOF
 
 # commit current state so we can trace changes
-RUN git add . && git commit -m "chore: initial setup"
+RUN git add . && git commit -m "chore: initial setup" && git checkout -b container/dev
 
 # Expose the port the ComfyUI runs on
 EXPOSE 8188
