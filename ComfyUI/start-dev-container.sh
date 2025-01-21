@@ -13,7 +13,7 @@ docker run -d \
   --mount type=bind,source="$(pwd)"/models,target=/opt/ComfyUI/models \
   --mount type=bind,source="$(pwd)"/changeset,target=/opt/ComfyUI/changeset \
   --mount type=bind,source="$(pwd)"/snapshots,target=/opt/ComfyUI/user/default/ComfyUI-Manager/snapshots/ \
-  comfyui
+  ghcr.io/super-protocol/solutions/comfyui-composer:latest
 
 echo Waiting for ComfyUI to start...
 until curl --output /dev/null --silent --head --fail http://localhost:8188; do
