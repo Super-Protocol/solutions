@@ -80,8 +80,24 @@ skip_migration_check = True
 model_download_by_agent = False
 EOF
 
+# create changeset saving script
+RUN mkdir changeset
+RUN <<EOF cat >> save-changeset.sh
+#!/bin/bash
+git add --all
+git commit -m 'All changes'
+git archive -o changeset/update.tar.gz HEAD
+EOF
+RUN chmod +x save-changeset.sh
+RUN echo "save-changeset.sh" >> .gitignore
+RUN echo "changeset/" >> .gitignore
+
+
 # commit current state so we can trace changes
-RUN git add . && git commit -m "chore: initial setup" && git checkout -b container/dev
+RUN git add . \
+    && git commit -m "chore: initial setup" \
+    && git checkout -b container/dev \
+    && git tag -a start -m "start"
 
 # Expose the port the ComfyUI runs on
 EXPOSE 8188
