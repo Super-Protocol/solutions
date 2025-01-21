@@ -10,4 +10,4 @@ docker exec comfyui /opt/ComfyUI/save-changeset.sh
 docker stop comfyui
 
 # show the folder with changeset
-npx -y -q opener ./changeset
+npx -y -q opener ./changeset || echo "Open ./changeset in your file explorer"

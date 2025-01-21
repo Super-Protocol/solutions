@@ -20,4 +20,4 @@ until curl --output /dev/null --silent --head --fail http://localhost:8188; do
     printf '.'
     sleep 1
 done
-npx -y -q opener http://localhost:8188
+npx -y -q opener http://localhost:8188 || echo "Open http://localhost:8188 in your browser"
