@@ -10,7 +10,6 @@ docker run -d \
   -it \
   --name comfyui \
   --publish 8188:8188 \
-  --mount type=bind,source="$(pwd)"/models,target=/opt/ComfyUI/models \
   --mount type=bind,source="$(pwd)"/changeset,target=/opt/ComfyUI/changeset \
   --mount type=bind,source="$(pwd)"/snapshots,target=/opt/ComfyUI/user/default/ComfyUI-Manager/snapshots/ \
   ghcr.io/super-protocol/solutions/comfyui-composer:latest
