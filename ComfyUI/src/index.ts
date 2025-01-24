@@ -1,4 +1,4 @@
-import { TunnelClient, TunnelClientOptions } from "@super-protocol/tunnels-lib";
+import { TunnelClient, TunnelClientOptions } from '@super-protocol/tunnels-lib';
 import {
   readConfiguration,
   getDomainConfigs,
@@ -6,9 +6,9 @@ import {
   exitOnUnhandledRejection,
   exitOnUncaughtException,
   exitOnSignals,
-} from "@super-protocol/solution-utils";
-import { rootLogger } from "./logger";
-import { config } from "./config";
+} from '@super-protocol/solution-utils';
+import { rootLogger } from './logger';
+import { config } from './config';
 
 exitOnUnhandledRejection(rootLogger);
 exitOnUncaughtException(rootLogger);
@@ -30,7 +30,7 @@ const run = async (): Promise<void> => {
 
   logger.debug(
     { domains: domainConfigs.map((config) => config.site.domain) },
-    "Found tunnel client domain configs"
+    'Found tunnel client domain configs',
   );
 
   const options: TunnelClientOptions = {
@@ -41,7 +41,7 @@ const run = async (): Promise<void> => {
   const tunnelClient = new TunnelClient(
     config.serverFilePath,
     domainConfigs,
-    options
+    options,
   );
   await tunnelClient.start();
 };

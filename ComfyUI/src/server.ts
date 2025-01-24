@@ -1,18 +1,18 @@
-import fs from "fs";
-import readline from "node:readline";
-import { once } from "node:events";
-import { spawn } from "child_process";
-import { parentPort } from "worker_threads";
-import { rootLogger } from "./logger";
-import { getServerConfig } from "./server-config";
-import { processConfigurationAngGetCliParams } from "./engine-configuration/process-configuration-and-get-cli-params";
+import fs from 'fs';
+import readline from 'node:readline';
+import { once } from 'node:events';
+import { spawn } from 'child_process';
+import { parentPort } from 'worker_threads';
+import { rootLogger } from './logger';
+import { getServerConfig } from './server-config';
+import { processConfigurationAngGetCliParams } from './engine-configuration/process-configuration-and-get-cli-params';
 
-const logger = rootLogger.child({ module: "server.js" });
+const logger = rootLogger.child({ module: 'server.js' });
 
 const abortController = new AbortController();
 
-const handledSignals = ["SIGINT", "SIGTERM"];
-parentPort?.on("message", (message) => {
+const handledSignals = ['SIGINT', 'SIGTERM'];
+parentPort?.on('message', (message) => {
   if (handledSignals.includes(message)) {
     logger.info(`${message} received. Stopping`);
     abortController.abort();
@@ -25,33 +25,33 @@ const run = async (): Promise<void> => {
     fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey),
     fs.promises.writeFile(
       serverConfig.certificateFilePath,
-      serverConfig.tlsCert
+      serverConfig.tlsCert,
     ),
   ]);
 
   const cliParams = await processConfigurationAngGetCliParams();
 
   const spawnOptions = [
-    "launch",
-    "--",
-    "--listen",
-    "*",
-    "--port",
+    'launch',
+    '--',
+    '--listen',
+    '*',
+    '--port',
     String(serverConfig.port),
-    "--tls-keyfile",
+    '--tls-keyfile',
     serverConfig.privateKeyFilePath,
-    "--tls-certfile",
+    '--tls-certfile',
     serverConfig.certificateFilePath,
-    "--disable-auto-launch",
+    '--disable-auto-launch',
     ...cliParams,
   ];
 
   logger.trace(
     { cliParams: spawnOptions },
-    `ComfyUI will be started with cli params`
+    `ComfyUI will be started with cli params`,
   );
 
-  const pythonProcess = spawn("comfy", spawnOptions, {
+  const pythonProcess = spawn('comfy', spawnOptions, {
     shell: process.env.SHELL || true,
     signal: abortController.signal,
   });
@@ -67,10 +67,10 @@ const run = async (): Promise<void> => {
     crlfDelay: Infinity,
   });
 
-  rlOut.on("line", (line) => logger.info(line));
-  rlErr.on("line", (line) => logger.error(line));
+  rlOut.on('line', (line) => logger.info(line));
+  rlErr.on('line', (line) => logger.error(line));
 
-  const [code] = await once(pythonProcess, "close");
+  const [code] = await once(pythonProcess, 'close');
   logger.info(`Process exited with code ${code}`);
   rlErr.close();
   rlOut.close();

@@ -10,8 +10,12 @@ import { ExtraModelPathBuilder } from './extra-model-path-builder';
 
 const EXTRA_MODEL_PATH_FILENAME = 'extra_model_paths.yaml';
 
-export const processConfigurationAngGetCliParams = async (): Promise<string[]> => {
-  const logger = rootLogger.child({ method: processConfigurationAngGetCliParams.name });
+export const processConfigurationAngGetCliParams = async (): Promise<
+  string[]
+> => {
+  const logger = rootLogger.child({
+    method: processConfigurationAngGetCliParams.name,
+  });
   const serverConfig = getServerConfig();
   const configuration = await readConfiguration(serverConfig.configurationPath);
   const engineConfiguration = configuration?.solution?.engine as
@@ -25,7 +29,10 @@ export const processConfigurationAngGetCliParams = async (): Promise<string[]> =
 
   const mainSettings = engineConfiguration.main_settings;
 
-  return [...setupMainConfiguration(mainSettings), ...(await setupModels(serverConfig, logger))];
+  return [
+    ...setupMainConfiguration(mainSettings),
+    ...(await setupModels(serverConfig, logger)),
+  ];
 };
 
 const setupMainConfiguration = (
@@ -43,7 +50,9 @@ const setupMainConfiguration = (
 
   if (mainSettings.cuda_malloc) {
     const cudaParam =
-      mainSettings.cuda_malloc === 'Enable' ? '--cuda-malloc' : '--disable-cuda-malloc';
+      mainSettings.cuda_malloc === 'Enable'
+        ? '--cuda-malloc'
+        : '--disable-cuda-malloc';
     params.push(cudaParam);
   }
 
@@ -94,8 +103,14 @@ const setupMainConfiguration = (
   return params;
 };
 
-const setupModels = async (serverConfig: IServerConfig, logger: Logger): Promise<string[]> => {
-  const modelInfo = await findModel(config.inputDataFolder, serverConfig.modelSizeThreshold);
+const setupModels = async (
+  serverConfig: IServerConfig,
+  logger: Logger,
+): Promise<string[]> => {
+  const modelInfo = await findModel(
+    config.inputDataFolder,
+    serverConfig.modelSizeThreshold,
+  );
   if (!modelInfo) {
     logger.info(`Model was not found. Launching without model`);
 
@@ -108,7 +123,10 @@ const setupModels = async (serverConfig: IServerConfig, logger: Logger): Promise
     .setModelPath('checkpoints', modelInfo.folder)
     .build();
 
-  const extraModelPathFilepath = path.join(serverConfig.engineFolder, EXTRA_MODEL_PATH_FILENAME);
+  const extraModelPathFilepath = path.join(
+    serverConfig.engineFolder,
+    EXTRA_MODEL_PATH_FILENAME,
+  );
   await fs.promises.writeFile(extraModelPathFilepath, extraModelPathData);
 
   return ['--extra-model-paths-config', extraModelPathFilepath];
