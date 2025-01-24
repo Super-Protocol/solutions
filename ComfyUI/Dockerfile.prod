@@ -22,6 +22,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   unzip \
   ffmpeg
 
+# Cleanup apt
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+### Installing Node.js
+# Download and install nvm:
+ENV NODE_VERSION 22.13.1
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir -p $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN . $NVM_DIR/nvm.sh \
+  && nvm install $NODE_VERSION \
+  && nvm alias default $NODE_VERSION \
+  && nvm use default \
+  && type node
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN  node -v \
+  && npm -v \
+  && npm config get cache
+
+# Add and build Node.js app
+WORKDIR /opt/app
+COPY src src
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+COPY tsconfig.json tsconfig.json
+COPY tsconfig.build.json tsconfig.build.json
+RUN --mount=type=cache,target=/root/.npm \
+  npm ci && \
+  npm run build &&\
+  npm ci --omit=dev
+
 # Set environment variables
 ARG COMFYUI_VERSION=0.3.10
 ARG COMFYUI_MANAGER_VERSION=3.6.5
@@ -75,7 +107,7 @@ find . -mindepth 1 -exec bash -c '
 fi
 cd ${COMFYUI_PATH}
 comfy node fix all
-comfy launch -- --listen * --port 8188 --disable-auto-launch --gpu
+npm start
 EOF
 RUN cat ${ENTRYPOINT_SCRIPT_NAME}
 RUN chmod +x $ENTRYPOINT_SCRIPT_NAME

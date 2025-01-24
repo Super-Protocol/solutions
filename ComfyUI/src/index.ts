@@ -1,4 +1,4 @@
-import { TunnelClient, TunnelClientOptions } from '@super-protocol/tunnels-lib';
+import { TunnelClient, TunnelClientOptions } from "@super-protocol/tunnels-lib";
 import {
   readConfiguration,
   getDomainConfigs,
@@ -6,9 +6,9 @@ import {
   exitOnUnhandledRejection,
   exitOnUncaughtException,
   exitOnSignals,
-} from '@super-protocol/solution-utils';
-import { rootLogger } from './logger';
-import { config } from './config';
+} from "@super-protocol/solution-utils";
+import { rootLogger } from "./logger";
+import { config } from "./config";
 
 exitOnUnhandledRejection(rootLogger);
 exitOnUncaughtException(rootLogger);
@@ -17,7 +17,9 @@ exitOnSignals(rootLogger);
 const run = async (): Promise<void> => {
   const logger = rootLogger.child({ method: run.name });
   const configuration = await readConfiguration(config.configurationPath);
-  const tunnelsConfiguration = configuration?.solution?.tunnels as TunnelsConfiguration | undefined;
+  const tunnelsConfiguration = configuration?.solution?.tunnels as
+    | TunnelsConfiguration
+    | undefined;
 
   const domainConfigs = await getDomainConfigs({
     tunnels: tunnelsConfiguration,
@@ -28,7 +30,7 @@ const run = async (): Promise<void> => {
 
   logger.debug(
     { domains: domainConfigs.map((config) => config.site.domain) },
-    'Found tunnel client domain configs',
+    "Found tunnel client domain configs"
   );
 
   const options: TunnelClientOptions = {
@@ -36,7 +38,11 @@ const run = async (): Promise<void> => {
     applicationPort: config.clientServerPort,
     sgxMockEnabled: true,
   };
-  const tunnelClient = new TunnelClient(config.serverFilePath, domainConfigs, options);
+  const tunnelClient = new TunnelClient(
+    config.serverFilePath,
+    domainConfigs,
+    options
+  );
   await tunnelClient.start();
 };
 
