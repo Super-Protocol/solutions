@@ -13,14 +13,14 @@ ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
 # The installer requires curl (and certificates) to download the release archive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    git-lfs \
-    build-essential \
-    libgl1-mesa-glx \
-    wget \
-    curl \
-    unzip \
-    ffmpeg
+  git \
+  git-lfs \
+  build-essential \
+  libgl1-mesa-glx \
+  wget \
+  curl \
+  unzip \
+  ffmpeg
 
 # Set environment variables
 ARG COMFYUI_VERSION=0.3.10
@@ -28,11 +28,11 @@ ARG COMFYUI_MANAGER_VERSION=3.6.5
 ARG COMFYUI_PATH=/opt/ComfyUI
 
 RUN git config --global user.email "container@super-protocol.com" \
-    && git config --global user.name "Container Builder" \
-    && git config --global init.defaultBranch main \
-    && git config --global core.editor "nano" \
-    && git config --global --add safe.directory ${COMFYUI_PATH} \
-    && git config --global --add safe.directory ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager
+  && git config --global user.name "Container Builder" \
+  && git config --global init.defaultBranch main \
+  && git config --global core.editor "nano" \
+  && git config --global --add safe.directory ${COMFYUI_PATH} \
+  && git config --global --add safe.directory ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager
 
 # Installing ComfyUI CLI
 # see https://docs.comfy.org/comfy-cli/getting-started
@@ -56,15 +56,15 @@ EXPOSE 8188
 
 # Add a healthcheck to ensure the service is running
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8188/ || exit 1
+  CMD curl -f http://localhost:8188/ || exit 1
 
 # creating an entrypoint script
 ARG ENTRYPOINT_SCRIPT_NAME=sync-and-start.sh
 RUN <<EOF cat >> $ENTRYPOINT_SCRIPT_NAME
 #!/bin/bash
 set -e
-if [ -d /inputs ]; then
-cd /inputs && \
+if [ -d /sp/inputs/input-0001 ]; then
+cd /sp/inputs/input-0001 && \
 find . -mindepth 1 -exec bash -c '
   for path in "\$@"; do
     target="${COMFYUI_PATH}/\${path#./}"
