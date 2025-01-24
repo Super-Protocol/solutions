@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# create a ComfyUI Manager snapshot
-curl -H 'Comfy-User;' http://localhost:8188/api/snapshot/save
+echo "Saving changeset of $1..."
 
 # run the script
-docker exec comfyui /opt/ComfyUI/save-changeset.sh
+docker exec comfyui sh -c "/opt/ComfyUI/save-changeset.sh $1"
 
 # stop the container
 docker stop comfyui

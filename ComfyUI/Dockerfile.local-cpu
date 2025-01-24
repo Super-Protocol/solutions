@@ -2,6 +2,15 @@
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
+# Prefer binary wheels over source distributions for faster pip installations
+ENV PIP_PREFER_BINARY=1
+ENV PIP_ROOT_USER_ACTION=ignore
+# Ensures output from python is printed immediately to the terminal without buffering
+ENV PYTHONUNBUFFERED=1 
+# Speed up some cmake builds
+ENV CMAKE_BUILD_PARALLEL_LEVEL=8
+
 # The installer requires curl (and certificates) to download the release archive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -17,81 +26,77 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
 # Set environment variables
-ARG COMFYUI_VERSION=v0.3.10
+ARG COMFYUI_VERSION=0.3.10
 ARG COMFYUI_MANAGER_VERSION=3.6.5
-ENV PYTHONUNBUFFERED=1 \
-    COMFYUI_REPO=https://github.com/comfyanonymous/ComfyUI.git \
-    COMFYUI_MANAGER_REPO=https://github.com/ltdrdata/ComfyUI-Manager.git \
-    COMFYUI_DIR=/opt/ComfyUI
+ARG COMFYUI_PATH=/opt/ComfyUI
 
-# Clones the ComfyUI repository and checks out the latest release
-# Clone the ComfyUI repository
-RUN git clone --branch $COMFYUI_VERSION --single-branch $COMFYUI_REPO $COMFYUI_DIR
+RUN git config --global user.email "container@super-protocol.com" \
+    && git config --global user.name "Container Builder" \
+    && git config --global init.defaultBranch main \
+    && git config --global core.editor "nano" \
+    && git config --global --add safe.directory ${COMFYUI_PATH} \
+    && git config --global --add safe.directory ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager
+
+# Installing ComfyUI CLI
+# see https://docs.comfy.org/comfy-cli/getting-started
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system comfy-cli
+RUN comfy --version
+RUN comfy --skip-prompt tracking disable
+
+# Installing ComfyUI
+RUN --mount=type=cache,target=/root/.cache/uv \
+    comfy --skip-prompt --workspace $COMFYUI_PATH install --version $COMFYUI_VERSION --manager-commit $COMFYUI_MANAGER_VERSION --cpu --fast-deps
+
+RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
 
 # Change into ComfyUI directory
-WORKDIR $COMFYUI_DIR
-
-RUN git config --local user.email "container@super-protocol.com" \
-    && git config --global user.name "Container Builder"
-
-# Create Python virtual environment
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv venv --seed --relocatable .venv
-ENV VIRTUAL_ENV=$COMFYUI_DIR/.venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install PyTorch and its dependencies
-# see https://docs.astral.sh/uv/guides/integration/pytorch/#the-uv-pip-interface
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-
-# Install the required Python packages for ComfyUI
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install -r requirements.txt
+WORKDIR ${COMFYUI_PATH}
 
 # Clones the ComfyUI Manager repository and checks out the latest release
 # edit gitignore entries
 RUN for l in custom_nodes user models web web_custom_versions; do sed -i "/$l/d" .gitignore ; done
 # add more gitignore entries
 RUN <<EOF cat >> .gitignore
+custom_nodes/ComfyUI-Manager/
+.github/
 user/*.log
 user/default/ComfyUI-Manager/cache/
 user/default/ComfyUI-Manager/channels.list
 EOF
 
-RUN git submodule add $COMFYUI_MANAGER_REPO custom_nodes/ComfyUI-Manager \
-    && cd custom_nodes/ComfyUI-Manager \
-    && git checkout tags/$COMFYUI_MANAGER_VERSION
-# edit gitignore entries - see https://github.com/ltdrdata/ComfyUI-Manager/blob/main/.gitignore
-RUN for l in config.ini code-workspace snapshots startup-scripts pip_overrides openart_key matrix_auth youml comfyworkflows_sharekey; \
-    do sed -i "/$l/d" custom_nodes/ComfyUI-Manager/.gitignore ; done
-# add more gitignore entries
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install -r custom_nodes/ComfyUI-Manager/requirements.txt
+RUN comfy node simple-show installed
 
 # Creating ComfyUI Manager config file
 RUN mkdir -p user/default/ComfyUI-Manager
 RUN <<EOF cat >> user/default/ComfyUI-Manager/config.ini
 [default]
-preview_method = auto
 file_logging = False
 security_level = weak
-skip_migration_check = True
-model_download_by_agent = False
 EOF
 
 # create changeset saving script
 RUN mkdir changeset
 RUN <<EOF cat >> save-changeset.sh
 #!/bin/bash
+set -e
+if [ -f ${COMFYUI_PATH}/user/default/workflows/\$1.json ]; then
+    comfy node install-deps --workflow user/default/workflows/\$1.json
+else
+    echo "Workflow ${COMFYUI_PATH}/user/default/workflows/\$1.json not found"
+    ls -la ${COMFYUI_PATH}/user/default/workflows/
+fi
+comfy node fix all
+find . -mindepth 2 -type d -name ".git" -exec rm -rf {} +
+find . -mindepth 2 -type f -name ".gitignore" -exec rm -f {} +
 git add --all
 git commit -m 'All changes'
-git archive -o changeset/update.tar.gz HEAD
+git diff --diff-filter=d --submodule=diff --name-only HEAD^ \
+  | tar -czf changeset/\${1:-snapshot}.tar.gz -T -
 EOF
 RUN chmod +x save-changeset.sh
 RUN echo "save-changeset.sh" >> .gitignore
 RUN echo "changeset/" >> .gitignore
-
 
 # commit current state so we can trace changes
 RUN git add . \
@@ -106,7 +111,4 @@ EXPOSE 8188
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8188/ || exit 1
 
-# On startup, ComfyUI is started at its default port; the IP address is changed from localhost to 0.0.0.0, because Docker is only forwarding traffic
-# to the IP address it assigns to the container, which is unknown at build time; listening to 0.0.0.0 means that ComfyUI listens to all incoming
-# traffic; the auto-launch feature is disabled, because we do not want (nor is it possible) to open a browser window in a Docker container
-CMD [".venv/bin/python", "main.py", "--listen", "0.0.0.0", "--port", "8188", "--disable-auto-launch", "--cpu", "--cpu-vae"]
+CMD ["comfy", "launch", "--", "--listen", "*", "--port", "8188", "--disable-auto-launch", "--cpu", "--cpu-vae"]
