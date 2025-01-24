@@ -63,7 +63,7 @@ const run = async (): Promise<void> => {
   });
 
   const rlErr = readline.createInterface({
-    input: pythonProcess.stdout,
+    input: pythonProcess.stderr,
     crlfDelay: Infinity,
   });
 
