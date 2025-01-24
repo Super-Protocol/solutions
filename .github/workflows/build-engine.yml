@@ -11,7 +11,7 @@ on:
           - text-generation-webui-cpu
           - comfyui
       target:
-        description: "Target"
+        description: 'Target'
         required: true
         type: choice
         options:
@@ -20,13 +20,13 @@ on:
           - testnet
 
 env:
-  IMAGE_FILE: ""
-  IMAGE_RESOURCE: ""
+  IMAGE_FILE: ''
+  IMAGE_RESOURCE: ''
   SOLUTION: ${{ inputs.solution }}
   PR_REPO_ARGO: super-protocol/argocd-clusters
-  DOCKERFILE: ""
-  DOCKERFILE_CONTEXT: ""
-  SUBMODULE_PATH: ""
+  DOCKERFILE: ''
+  DOCKERFILE_CONTEXT: ''
+  SUBMODULE_PATH: ''
   TARGET: ${{ inputs.target }}
 
 jobs:
