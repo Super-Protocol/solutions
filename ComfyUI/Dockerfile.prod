@@ -96,10 +96,14 @@ RUN <<EOF cat >> $ENTRYPOINT_SCRIPT_NAME
 #!/bin/bash
 set -e
 for i in \$(seq -w 1 9999); do
-    snapshots_dir="/sp/inputs/input-\$i/user/default/ComfyUI-Manager/snapshots"
+    input_dir="/sp/inputs/input-\$i"
+    if [ ! -d "\$input_dir" ]; then
+        break
+    fi
+    snapshots_dir="\$input_dir/user/default/ComfyUI-Manager/snapshots"
     if [ -d "\$snapshots_dir" ]; then
-        echo "Found snapshots directory in: /sp/inputs/input-\$i"
-        cd /sp/inputs/input-\$i
+        echo "Found snapshots directory in: \$input_dir"
+        cd \$input_dir
         find . -mindepth 1 -exec bash -c '
           for path in "\$@"; do
             target="${COMFYUI_PATH}/\${path#./}"
