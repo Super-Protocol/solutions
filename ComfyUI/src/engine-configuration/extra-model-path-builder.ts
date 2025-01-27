@@ -17,9 +17,7 @@ export class ExtraModelPathBuilder {
 
   build(): string {
     if (!Object.keys(this.modelPath).length) {
-      throw new Error(
-        'No data in ExtraModelPathBuilder. Set smth before build',
-      );
+      throw new Error('No data in ExtraModelPathBuilder. Set smth before build');
     }
 
     const allPaths = Object.values(this.modelPath).flat();

@@ -14,6 +14,5 @@ export const config = {
   inputDataFolder: (process.env.INPUT_DATA_FOLDER as string) || '/sp/inputs',
   clientServerPort: 9000,
   serverFilePath: path.join(__dirname, './server.js'),
-  configurationPath:
-    process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
+  configurationPath: process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
 };

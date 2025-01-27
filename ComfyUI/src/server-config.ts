@@ -18,8 +18,7 @@ let serverConfig: IServerConfig;
 export const getServerConfig = (): IServerConfig => {
   if (!serverConfig) {
     serverConfig = {
-      engineFolder:
-        process.env.COMFYUI_PATH ?? path.join(__dirname, '../ComfyUI'),
+      engineFolder: process.env.COMFYUI_PATH ?? path.join(__dirname, '../ComfyUI'),
       privateKeyFilePath: `${__dirname}/private.pem`,
       certificateFilePath: `${__dirname}/certificate.crt`,
       port: Number.parseInt(getEnvValueOrFail('HTTPS_PORT')),

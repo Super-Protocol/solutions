@@ -23,10 +23,7 @@ const run = async (): Promise<void> => {
   const serverConfig = getServerConfig();
   await Promise.all([
     fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey),
-    fs.promises.writeFile(
-      serverConfig.certificateFilePath,
-      serverConfig.tlsCert,
-    ),
+    fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert),
   ]);
 
   const cliParams = await processConfigurationAngGetCliParams();
@@ -46,10 +43,7 @@ const run = async (): Promise<void> => {
     ...cliParams,
   ];
 
-  logger.trace(
-    { cliParams: spawnOptions },
-    `ComfyUI will be started with cli params`,
-  );
+  logger.trace({ cliParams: spawnOptions }, `ComfyUI will be started with cli params`);
 
   const pythonProcess = spawn('comfy', spawnOptions, {
     shell: process.env.SHELL || true,

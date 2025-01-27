@@ -17,9 +17,7 @@ exitOnSignals(rootLogger);
 const run = async (): Promise<void> => {
   const logger = rootLogger.child({ method: run.name });
   const configuration = await readConfiguration(config.configurationPath);
-  const tunnelsConfiguration = configuration?.solution?.tunnels as
-    | TunnelsConfiguration
-    | undefined;
+  const tunnelsConfiguration = configuration?.solution?.tunnels as TunnelsConfiguration | undefined;
 
   const domainConfigs = await getDomainConfigs({
     tunnels: tunnelsConfiguration,
@@ -38,11 +36,7 @@ const run = async (): Promise<void> => {
     applicationPort: config.clientServerPort,
     sgxMockEnabled: true,
   };
-  const tunnelClient = new TunnelClient(
-    config.serverFilePath,
-    domainConfigs,
-    options,
-  );
+  const tunnelClient = new TunnelClient(config.serverFilePath, domainConfigs, options);
   await tunnelClient.start();
 };
 
