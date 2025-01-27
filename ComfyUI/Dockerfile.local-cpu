@@ -87,6 +87,7 @@ else
     ls -la ${COMFYUI_PATH}/user/default/workflows/
 fi
 comfy node fix all
+comfy node save-snapshot 
 find . -mindepth 2 -type d -name ".git" -exec rm -rf {} +
 find . -mindepth 2 -type f -name ".gitignore" -exec rm -f {} +
 git add --all

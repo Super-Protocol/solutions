@@ -27,7 +27,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ### Installing Node.js
 # Download and install nvm:
-ENV NODE_VERSION 22.13.1
+ENV NODE_VERSION 20.18.0
 ENV NVM_DIR /usr/local/nvm
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
@@ -95,16 +95,21 @@ ARG ENTRYPOINT_SCRIPT_NAME=sync-and-start.sh
 RUN <<EOF cat >> $ENTRYPOINT_SCRIPT_NAME
 #!/bin/bash
 set -e
-if [ -d /sp/inputs/input-0001 ]; then
-cd /sp/inputs/input-0001 && \
-find . -mindepth 1 -exec bash -c '
-  for path in "\$@"; do
-    target="${COMFYUI_PATH}/\${path#./}"
-    mkdir -p "\$(dirname "\$target")"
-    mv -f -- "\$path" "\$target"
-  done
-' _ {} +
-fi
+for i in \$(seq -w 1 9999); do
+    snapshots_dir="/sp/inputs/input-\$i/user/default/ComfyUI-Manager/snapshots"
+    if [ -d "\$snapshots_dir" ]; then
+        echo "Found snapshots directory in: /sp/inputs/input-\$i"
+        cd /sp/inputs/input-\$i
+        find . -mindepth 1 -exec bash -c '
+          for path in "\$@"; do
+            target="${COMFYUI_PATH}/\${path#./}"
+            mkdir -p "\$(dirname "\$target")"
+            mv -f -- "\$path" "\$target"
+          done
+        ' _ {} +
+        break
+    fi
+done
 cd ${COMFYUI_PATH}
 comfy node fix all
 npm start
