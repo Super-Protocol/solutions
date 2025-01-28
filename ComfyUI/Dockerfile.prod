@@ -11,6 +11,7 @@ ENV PYTHONUNBUFFERED=1
 # Speed up some cmake builds
 ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
+
 # The installer requires curl (and certificates) to download the release archive
 RUN apt-get update && apt-get install -y --no-install-recommends \
   git \
@@ -29,6 +30,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Download and install nvm:
 ENV NODE_VERSION 20.18.0
 ENV NVM_DIR /usr/local/nvm
+ENV NODE_OPTIONS --enable-source-maps --experimental-websocket --experimental-require-module
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 RUN . $NVM_DIR/nvm.sh \
@@ -47,6 +49,9 @@ ADD https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubun
 RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
   rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
+ENV LOG_LEVEL trace
+ENV INPUT_DATA_FOLDER /sp/inputs
+
 # Add and build Node.js app
 WORKDIR /opt/app
 COPY src src
@@ -54,6 +59,7 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 COPY tsconfig.json tsconfig.json
 COPY tsconfig.build.json tsconfig.build.json
+COPY .env .env
 RUN --mount=type=cache,target=/root/.npm \
   npm ci && \
   npm run build &&\
