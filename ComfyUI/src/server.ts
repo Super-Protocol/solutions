@@ -1,5 +1,4 @@
 import fs from 'fs';
-import readline from 'node:readline';
 import { once } from 'node:events';
 import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
@@ -46,28 +45,29 @@ const run = async (): Promise<void> => {
   logger.trace({ cliParams: spawnOptions }, `ComfyUI will be started with cli params`);
 
   const pythonProcess = spawn('comfy', spawnOptions, {
+    stdio: 'inherit',
     shell: process.env.SHELL || true,
     signal: abortController.signal,
   });
 
-  // Create readline interfaces for stdout and stderr
-  const rlOut = readline.createInterface({
-    input: pythonProcess.stdout,
-    crlfDelay: Infinity,
-  });
+  // // Create readline interfaces for stdout and stderr
+  // const rlOut = readline.createInterface({
+  //   input: pythonProcess.stdout,
+  //   crlfDelay: Infinity,
+  // });
 
-  const rlErr = readline.createInterface({
-    input: pythonProcess.stderr,
-    crlfDelay: Infinity,
-  });
+  // const rlErr = readline.createInterface({
+  //   input: pythonProcess.stderr,
+  //   crlfDelay: Infinity,
+  // });
 
-  rlOut.on('line', (line) => logger.info(line));
-  rlErr.on('line', (line) => logger.error(line));
+  // rlOut.on('line', (line) => logger.info(line));
+  // rlErr.on('line', (line) => logger.error(line));
 
   const [code] = await once(pythonProcess, 'close');
   logger.info(`Process exited with code ${code}`);
-  rlErr.close();
-  rlOut.close();
+  // rlErr.close();
+  // rlOut.close();
 };
 
 run().catch((err) => {
