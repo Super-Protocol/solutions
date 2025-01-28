@@ -45,8 +45,8 @@ const run = async (): Promise<void> => {
   logger.trace({ cliParams: spawnOptions }, `ComfyUI will be started with cli params`);
 
   const pythonProcess = spawn('comfy', spawnOptions, {
-    stdio: 'inherit',
-    shell: process.env.SHELL || true,
+    stdio: ['ignore', 'inherit', 'inherit'],
+    // shell: process.env.SHELL || true,
     signal: abortController.signal,
   });
 
