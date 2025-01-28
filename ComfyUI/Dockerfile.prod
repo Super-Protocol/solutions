@@ -116,7 +116,8 @@ for i in \$(seq -w 1 9999); do
 done
 cd ${COMFYUI_PATH}
 comfy node fix all
-npm start
+cd 
+npm --prefix /opt/app start
 EOF
 RUN cat ${ENTRYPOINT_SCRIPT_NAME}
 RUN chmod +x $ENTRYPOINT_SCRIPT_NAME
