@@ -42,6 +42,11 @@ RUN  node -v \
   && npm -v \
   && npm config get cache
 
+# Required native dependencies for @super-protocol/addons-tee
+ADD https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
+  rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
 # Add and build Node.js app
 WORKDIR /opt/app
 COPY src src
