@@ -121,4 +121,4 @@ EOF
 RUN cat ${ENTRYPOINT_SCRIPT_NAME}
 RUN chmod +x $ENTRYPOINT_SCRIPT_NAME
 
-CMD ["./sync-and-start.sh"]
+ENTRYPOINT ["./sync-and-start.sh"]
