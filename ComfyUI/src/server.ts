@@ -39,6 +39,8 @@ const run = async (): Promise<void> => {
     '--tls-certfile',
     serverConfig.certificateFilePath,
     '--disable-auto-launch',
+    '--cpu',
+    '--cpu-vae',
     ...cliParams,
   ];
 
@@ -46,7 +48,6 @@ const run = async (): Promise<void> => {
 
   const pythonProcess = spawn('comfy', spawnOptions, {
     stdio: ['ignore', 'inherit', 'inherit'],
-    // shell: process.env.SHELL || true,
     signal: abortController.signal,
   });
 
