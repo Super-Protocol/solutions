@@ -1,0 +1,139 @@
+# This image is based on the latest official PyTorch image, because it already contains CUDA, CuDNN, and PyTorch
+# see https://github.com/pytorch/pytorch/blob/main/Dockerfile
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime
+
+ENV DEBIAN_FRONTEND=noninteractive
+# Prefer binary wheels over source distributions for faster pip installations
+ENV PIP_PREFER_BINARY=1
+ENV PIP_ROOT_USER_ACTION=ignore
+# Ensures output from python is printed immediately to the terminal without buffering
+ENV PYTHONUNBUFFERED=1 
+# Speed up some cmake builds
+ENV CMAKE_BUILD_PARALLEL_LEVEL=8
+
+
+# The installer requires curl (and certificates) to download the release archive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  git \
+  git-lfs \
+  build-essential \
+  libgl1-mesa-glx \
+  wget \
+  curl \
+  unzip \
+  ffmpeg
+
+# Cleanup apt
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+### Installing Node.js
+# Download and install nvm:
+ENV NODE_VERSION=20.18.0
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_OPTIONS="--enable-source-maps --experimental-websocket --experimental-require-module"
+RUN mkdir -p $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN . $NVM_DIR/nvm.sh \
+  && nvm install $NODE_VERSION \
+  && nvm alias default $NODE_VERSION \
+  && nvm use default \
+  && type node
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN  node -v \
+  && npm -v \
+  && npm config get cache
+
+# Required native dependencies for @super-protocol/addons-tee
+ADD https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
+  rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+ENV LOG_LEVEL=trace
+ENV INPUT_DATA_FOLDER=/sp/inputs
+
+# Add and build Node.js app
+WORKDIR /opt/app
+COPY src src
+COPY package.json package-lock.json tsconfig.json tsconfig.build.json .env* ./
+RUN --mount=type=cache,target=/root/.npm \
+  npm ci && \
+  npm run build &&\
+  npm ci --omit=dev
+
+# Set environment variables
+ARG COMFYUI_VERSION=0.3.10
+ARG COMFYUI_MANAGER_VERSION=3.6.5
+ARG COMFYUI_PATH=/opt/ComfyUI
+
+RUN git config --global user.email "container@super-protocol.com" \
+  && git config --global user.name "Container Builder" \
+  && git config --global init.defaultBranch main \
+  && git config --global core.editor "nano" \
+  && git config --global --add safe.directory ${COMFYUI_PATH} \
+  && git config --global --add safe.directory ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager
+
+# Installing ComfyUI CLI
+# see https://docs.comfy.org/comfy-cli/getting-started
+RUN pip install --break-system-packages comfy-cli
+RUN comfy --version
+RUN comfy --skip-prompt tracking disable
+
+# Installing ComfyUI
+RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version $COMFYUI_VERSION --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
+
+RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
+RUN comfy manager disable-gui
+
+# Change into ComfyUI directory
+WORKDIR ${COMFYUI_PATH}
+
+RUN comfy node simple-show installed
+
+# Expose the port the ComfyUI runs on
+EXPOSE 8188
+
+# Add a healthcheck to ensure the service is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8188/ || exit 1
+
+# creating an entrypoint script
+ARG ENTRYPOINT_SCRIPT_NAME=sync-and-start.sh
+RUN <<EOF cat >> $ENTRYPOINT_SCRIPT_NAME
+#!/bin/bash
+set -e
+ls -la ${INPUT_DATA_FOLDER}
+for i in \$(seq -w 1 9999); do
+    input_dir="${INPUT_DATA_FOLDER}/input-\$i"
+    if [ ! -d "\$input_dir" ]; then
+        break
+    fi
+    ls -la \$input_dir
+    snapshots_dir="\$input_dir/user/default/ComfyUI-Manager/snapshots"
+    if [ -d "\$snapshots_dir" ]; then
+        echo "Found snapshots directory in: \$input_dir"
+        cd \$input_dir
+        find . -type d -mindepth 1 -exec sh -c '
+          for path; do
+            target="${COMFYUI_PATH}/\${path#./}"
+            mkdir -pv "\$target"
+          done
+        ' _ {} +
+
+        find . -type f -mindepth 1 -exec sh -c '
+          for path; do
+            target="${COMFYUI_PATH}/\${path#./}"
+            mv -v -f -- "\$path" "\$target"
+          done
+        ' _ {} +
+        break
+    fi
+done
+cd ${COMFYUI_PATH}
+comfy node fix all
+npm --prefix /opt/app start
+EOF
+RUN cat ${ENTRYPOINT_SCRIPT_NAME}
+RUN chmod +x $ENTRYPOINT_SCRIPT_NAME
+
+ENTRYPOINT ["./sync-and-start.sh"]

@@ -4,23 +4,28 @@
 docker buildx build -f Dockerfile.local-cpu -t comfyui .
 ```
 
+## Building prod image
+
+```
+docker buildx build -f Dockerfile.prod --platform linux/amd64 --progress=plain -t comfyui-prod .
+```
+
 ## Running the container
 
 ```sh
-docker run \
-    --name comfyui \
-    --publish 8188:8188 \
-    # optionally to run in background
-    --detach \ 
-    --restart unless-stopped \
-    comfyui
+./start-dev-container.sh
 ```
 
-## Getting changes from the container
+## Stopping and saving changes from the container
 
 ```sh
-git add --all
-git commit -m 'Getting all my changes'
-git archive -o update.zip HEAD $(git diff --submodule=diff --name-only HEAD HEAD^)
+save-and-stop-dev-container.sh
 ```
 
+## Getting a snapshot of a workflow file:
+1. `mkdir $(pwd)/workflows`
+2. Copy `<your-workflow>.json` file into `workflows` dir
+3. Execute in the terminal:
+```sh
+./snapshot-workflow.sh <your-workflow>
+```

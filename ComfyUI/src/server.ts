@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { once } from 'node:events';
 import { spawn } from 'child_process';
 import { parentPort } from 'worker_threads';
 import { rootLogger } from './logger';
@@ -7,59 +8,68 @@ import { processConfigurationAngGetCliParams } from './engine-configuration/proc
 
 const logger = rootLogger.child({ module: 'server.js' });
 
-const terminationHandler = (signal: string): never => {
-  logger.info(`${signal} received. Stopping`);
-  process.exit(0);
-};
+const abortController = new AbortController();
 
 const handledSignals = ['SIGINT', 'SIGTERM'];
 parentPort?.on('message', (message) => {
   if (handledSignals.includes(message)) {
-    terminationHandler(message);
+    logger.info(`${message} received. Stopping`);
+    abortController.abort();
   }
 });
 
 const run = async (): Promise<void> => {
   const serverConfig = getServerConfig();
-  await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
-  await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
+  await Promise.all([
+    fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey),
+    fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert),
+  ]);
 
   const cliParams = await processConfigurationAngGetCliParams();
 
   const spawnOptions = [
-    `${serverConfig.engineFolder}/main.py`,
+    'launch',
+    '--',
+    '--listen',
+    '*',
     '--port',
     String(serverConfig.port),
     '--tls-keyfile',
     serverConfig.privateKeyFilePath,
     '--tls-certfile',
     serverConfig.certificateFilePath,
+    '--disable-auto-launch',
     ...cliParams,
   ];
 
   logger.trace({ cliParams: spawnOptions }, `ComfyUI will be started with cli params`);
 
-  await new Promise((_resolve, _reject) => {
-    const pythonProcess = spawn(`python`, spawnOptions, {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-      },
-    });
-
-    pythonProcess.stdout?.on('data', (data) => {
-      const message = data?.toString();
-      logger.info(message);
-    });
-
-    pythonProcess.stderr?.on('data', (data) => logger.error(data.toString()));
-
-    pythonProcess.on('close', (code) => {
-      logger.info(`Process exited with code ${code}`);
-    });
+  const pythonProcess = spawn('comfy', spawnOptions, {
+    stdio: ['ignore', 'inherit', 'inherit'],
+    signal: abortController.signal,
   });
+
+  // Create readline interfaces for stdout and stderr
+  // const rlOut = readline.createInterface({
+  //   input: pythonProcess.stdout,
+  //   crlfDelay: Infinity,
+  // });
+
+  // const rlErr = readline.createInterface({
+  //   input: pythonProcess.stderr,
+  //   crlfDelay: Infinity,
+  // });
+
+  // rlOut.on('line', (line) => logger.info(line));
+  // rlErr.on('line', (line) => logger.error(line));
+
+  const [code] = await once(pythonProcess, 'close');
+  logger.info(`Process exited with code ${code}`);
+  // rlErr.close();
+  // rlOut.close();
 };
 
 run().catch((err) => {
   logger.fatal({ err }, `ComfyUI start command failed`);
+  process.exit(1);
 });

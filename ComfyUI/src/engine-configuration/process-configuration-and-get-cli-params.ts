@@ -11,7 +11,9 @@ import { ExtraModelPathBuilder } from './extra-model-path-builder';
 const EXTRA_MODEL_PATH_FILENAME = 'extra_model_paths.yaml';
 
 export const processConfigurationAngGetCliParams = async (): Promise<string[]> => {
-  const logger = rootLogger.child({ method: processConfigurationAngGetCliParams.name });
+  const logger = rootLogger.child({
+    method: processConfigurationAngGetCliParams.name,
+  });
   const serverConfig = getServerConfig();
   const configuration = await readConfiguration(serverConfig.configurationPath);
   const engineConfiguration = configuration?.solution?.engine as

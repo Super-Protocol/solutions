@@ -55,7 +55,7 @@ jobs:
             fi
 
           elif [ "$SOLUTION" == "comfyui" ]; then
-            DOCKERFILE="./ComfyUI/Dockerfile"
+            DOCKERFILE="./ComfyUI/Dockerfile.prod"
             DOCKERFILE_CONTEXT="./ComfyUI/"
             SUBMODULE_PATH="ComfyUI/ComfyUI"
           else
