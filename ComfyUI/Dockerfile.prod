@@ -28,9 +28,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ### Installing Node.js
 # Download and install nvm:
-ENV NODE_VERSION 20.18.0
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_OPTIONS --enable-source-maps --experimental-websocket --experimental-require-module
+ENV NODE_VERSION=20.18.0
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_OPTIONS="--enable-source-maps --experimental-websocket --experimental-require-module"
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 RUN . $NVM_DIR/nvm.sh \
@@ -38,8 +38,8 @@ RUN . $NVM_DIR/nvm.sh \
   && nvm alias default $NODE_VERSION \
   && nvm use default \
   && type node
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN  node -v \
   && npm -v \
   && npm config get cache
@@ -49,17 +49,13 @@ ADD https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubun
 RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
   rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
-ENV LOG_LEVEL trace
-ENV INPUT_DATA_FOLDER /sp/inputs
+ENV LOG_LEVEL=trace
+ENV INPUT_DATA_FOLDER=/sp/inputs
 
 # Add and build Node.js app
 WORKDIR /opt/app
 COPY src src
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-COPY tsconfig.json tsconfig.json
-COPY tsconfig.build.json tsconfig.build.json
-COPY .env .env
+COPY package.json package-lock.json tsconfig.json tsconfig.build.json .env* ./
 RUN --mount=type=cache,target=/root/.npm \
   npm ci && \
   npm run build &&\
@@ -106,20 +102,28 @@ ARG ENTRYPOINT_SCRIPT_NAME=sync-and-start.sh
 RUN <<EOF cat >> $ENTRYPOINT_SCRIPT_NAME
 #!/bin/bash
 set -e
+ls -la ${INPUT_DATA_FOLDER}
 for i in \$(seq -w 1 9999); do
-    input_dir="/sp/inputs/input-\$i"
+    input_dir="${INPUT_DATA_FOLDER}/input-\$i"
     if [ ! -d "\$input_dir" ]; then
         break
     fi
+    ls -la \$input_dir
     snapshots_dir="\$input_dir/user/default/ComfyUI-Manager/snapshots"
     if [ -d "\$snapshots_dir" ]; then
         echo "Found snapshots directory in: \$input_dir"
         cd \$input_dir
-        find . -mindepth 1 -exec bash -c '
-          for path in "\$@"; do
+        find . -type d -mindepth 1 -exec sh -c '
+          for path; do
             target="${COMFYUI_PATH}/\${path#./}"
-            mkdir -p "\$(dirname "\$target")"
-            mv -f -- "\$path" "\$target"
+            mkdir -pv "\$target"
+          done
+        ' _ {} +
+
+        find . -type f -mindepth 1 -exec sh -c '
+          for path; do
+            target="${COMFYUI_PATH}/\${path#./}"
+            mv -v -f -- "\$path" "\$target"
           done
         ' _ {} +
         break
@@ -127,7 +131,6 @@ for i in \$(seq -w 1 9999); do
 done
 cd ${COMFYUI_PATH}
 comfy node fix all
-cd 
 npm --prefix /opt/app start
 EOF
 RUN cat ${ENTRYPOINT_SCRIPT_NAME}
