@@ -39,8 +39,6 @@ const run = async (): Promise<void> => {
     '--tls-certfile',
     serverConfig.certificateFilePath,
     '--disable-auto-launch',
-    '--cpu',
-    '--cpu-vae',
     ...cliParams,
   ];
 
@@ -51,7 +49,7 @@ const run = async (): Promise<void> => {
     signal: abortController.signal,
   });
 
-  // // Create readline interfaces for stdout and stderr
+  // Create readline interfaces for stdout and stderr
   // const rlOut = readline.createInterface({
   //   input: pythonProcess.stdout,
   //   crlfDelay: Infinity,
