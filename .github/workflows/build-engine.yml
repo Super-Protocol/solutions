@@ -18,6 +18,7 @@ on:
           - develop
           - stage
           - testnet
+          - mainnet
 
 env:
   IMAGE_FILE: ''
@@ -89,6 +90,8 @@ jobs:
             echo "${{ secrets.STAGING_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           elif [ "$TARGET" == "testnet" ]; then
             echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
+          elif [ "$TARGET" == "mainnet" ]; then
+            echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           else
             echo "Invalid instance: $TARGET"
             exit 1
@@ -131,6 +134,9 @@ jobs:
 
           elif [ "$TARGET" == "testnet" ]; then
             SPCTL_CONFIG="${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}"
+
+          elif [ "$TARGET" == "mainnet" ]; then
+            SPCTL_CONFIG="${{ secrets.MAINNET_SPCTL_CONFIG_BASE64 }}"
           fi
 
           echo "$SPCTL_CONFIG" | base64 --decode > ./config.json
