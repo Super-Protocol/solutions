@@ -91,7 +91,7 @@ jobs:
           elif [ "$TARGET" == "testnet" ]; then
             echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           elif [ "$TARGET" == "mainnet" ]; then
-            echo "${{ secrets.TESTNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
+            echo "${{ secrets.MAINNET_SOLUTION_ENV_BASE64 }}" | base64 --decode > .env
           else
             echo "Invalid instance: $TARGET"
             exit 1
