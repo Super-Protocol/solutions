@@ -83,18 +83,7 @@ RUN comfy --skip-prompt tracking disable
 RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version $COMFYUI_VERSION --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
 
 RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
-
-# Creating ComfyUI Manager config file
-RUN mkdir -p ${COMFYUI_PATH}/user/default/ComfyUI-Manager
-RUN <<EOF cat >> ${COMFYUI_PATH}/user/default/ComfyUI-Manager/config.ini
-[default]
-security_level = strong
-EOF
-# FIXME: following command is failing for some reason - 
 RUN comfy manager disable-gui
-# simulating the same command
-# see https://github.com/jiangyangfan/ComfyUI-Manager/blob/5bf9914e17244560ef69ad4de218150fa755e88d/cm-cli.py#L748-L764
-RUN echo "yes" > ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager/.enable-cli-only-mode
 
 # Change into ComfyUI directory
 WORKDIR ${COMFYUI_PATH}
