@@ -43,5 +43,5 @@ const run = async (): Promise<void> => {
 
 run().catch((err) => {
   rootLogger.fatal({ err }, `Failed to start application`);
-  process.exit(1);
+  process.exit(3);
 });

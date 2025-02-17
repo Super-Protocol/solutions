@@ -111,7 +111,12 @@ const setupModels = async (serverConfig: IServerConfig, logger: Logger): Promise
     .build();
 
   const extraModelPathFilepath = path.join(serverConfig.engineFolder, EXTRA_MODEL_PATH_FILENAME);
-  await fs.promises.writeFile(extraModelPathFilepath, extraModelPathData);
+  await fs.promises.writeFile(extraModelPathFilepath, extraModelPathData).catch((err) => {
+    logger.error({ err }, `Write extraModelPathData file failed`);
+    throw err;
+  });
+
+  logger.info({ extraModelPathFilepath }, `extraModelPathFilepath file save successfully`);
 
   return ['--extra-model-paths-config', extraModelPathFilepath];
 };
