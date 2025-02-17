@@ -64,7 +64,7 @@ RUN --mount=type=cache,target=/root/.npm \
 # Set environment variables
 ARG COMFYUI_VERSION=0.3.10
 ARG COMFYUI_MANAGER_VERSION=3.6.5
-ARG COMFYUI_PATH=/opt/ComfyUI
+ENV COMFYUI_PATH=/opt/ComfyUI
 
 RUN git config --global user.email "container@super-protocol.com" \
   && git config --global user.name "Container Builder" \
