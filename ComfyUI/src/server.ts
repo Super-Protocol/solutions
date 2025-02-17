@@ -71,5 +71,5 @@ const run = async (): Promise<void> => {
 
 run().catch((err) => {
   logger.fatal({ err }, `ComfyUI start command failed`);
-  process.exit(2);
+  process.exit(1);
 });
