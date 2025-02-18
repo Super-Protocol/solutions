@@ -45,7 +45,7 @@ jobs:
       - name: Prepare variables
         run: |
           if [[ "$SOLUTION" == text-generation-webui* ]]; then
-            DOCKERFILE="./ComfyUI/Dockerfile.test"
+            DOCKERFILE="./Text Generation WebUI/Dockerfile"
             DOCKERFILE_CONTEXT="./Text Generation WebUI/"
             SUBMODULE_PATH="Text\ Generation\ WebUI/text-generation-webui"
 
@@ -157,4 +157,3 @@ jobs:
           resource_file: ${{ steps.upload_image.outputs.resource }}
           solution_name: ${{ env.SOLUTION }}
           commit_type: pull-request
-          allow_multiple_update: true
