@@ -29,6 +29,7 @@ env:
   DOCKERFILE_CONTEXT: ''
   SUBMODULE_PATH: ''
   TARGET: ${{ inputs.target }}
+  ALLOW_MULTIPLE_UPDATE: false
 
 jobs:
   build-engine:
@@ -59,6 +60,7 @@ jobs:
             DOCKERFILE="./ComfyUI/Dockerfile.prod"
             DOCKERFILE_CONTEXT="./ComfyUI/"
             SUBMODULE_PATH="ComfyUI/ComfyUI"
+            ALLOW_MULTIPLE_UPDATE="true"
           else
             echo "Invalid solution name"
             exit 1
@@ -68,6 +70,7 @@ jobs:
           echo "DOCKERFILE_CONTEXT=$DOCKERFILE_CONTEXT" >> $GITHUB_ENV
           echo "SUBMODULE_PATH=$SUBMODULE_PATH" >> $GITHUB_ENV
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
+          echo "ALLOW_MULTIPLE_UPDATE=$ALLOW_MULTIPLE_UPDATE" >> $GITHUB_ENV
 
       - name: Checkout git submodules
         run: |
@@ -157,3 +160,4 @@ jobs:
           resource_file: ${{ steps.upload_image.outputs.resource }}
           solution_name: ${{ env.SOLUTION }}
           commit_type: pull-request
+          allow_multiple_update: ${{ env.ALLOW_MULTIPLE_UPDATE }}
