@@ -56,7 +56,7 @@ jobs:
             fi
 
           elif [ "$SOLUTION" == "comfyui" ]; then
-            DOCKERFILE="./ComfyUI/Dockerfile.test"
+            DOCKERFILE="./ComfyUI/Dockerfile.prod"
             DOCKERFILE_CONTEXT="./ComfyUI/"
             SUBMODULE_PATH="ComfyUI/ComfyUI"
           else
@@ -149,7 +149,7 @@ jobs:
           file_to_upload: ${{ env.IMAGE_FILE }}
 
       - name: Update argocd
-        uses: Super-Protocol/sp-build-tools/actions/update-argocd@feat/allow-multiple-update
+        uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
         with:
           gh_token: ${{ secrets.TOKEN_FOR_ARGOCD_REPO }}
           target: ${{ inputs.target }}
@@ -157,3 +157,4 @@ jobs:
           resource_file: ${{ steps.upload_image.outputs.resource }}
           solution_name: ${{ env.SOLUTION }}
           commit_type: pull-request
+          allow_multiple_update: true
