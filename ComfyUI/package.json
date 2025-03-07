@@ -1,6 +1,6 @@
 {
   "name": "sp-comfyui",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Super Protocol integration for ComfyUI (https://github.com/comfyanonymous/ComfyUI)",
   "main": "dist/index.js",
   "scripts": {
@@ -23,10 +23,8 @@
     "@types/node": "^22.7.9"
   },
   "dependencies": {
-    "@super-protocol/dto-js": "1.1.2",
-    "@super-protocol/sdk-js": "3.4.0-beta.11",
-    "@super-protocol/solution-utils": "1.4.2",
-    "@super-protocol/tunnels-lib": "^0.2.1",
+    "@super-protocol/solution-utils": "^1.5.1",
+    "@super-protocol/tunnels-lib": "^1.0.2",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"
   }
