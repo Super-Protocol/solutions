@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@super-protocol/solution-utils": "1.5.1",
-    "@super-protocol/tunnels-lib": "1.0.2",
+    "@super-protocol/tunnels-lib": "1.0.5",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"
   }
