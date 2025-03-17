@@ -34,7 +34,6 @@ const run = async (): Promise<void> => {
   const options: TunnelClientOptions = {
     logger: rootLogger,
     applicationPort: config.clientServerPort,
-    sgxMockEnabled: true,
     localServerStartTimeout: config.localServerStartTimeoutMs,
   };
   const tunnelClient = new TunnelClient(config.serverFilePath, domainConfigs, options);
