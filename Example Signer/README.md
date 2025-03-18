@@ -1,6 +1,6 @@
 # Example Signer
 
-A comprehensive solution for signing and verifying data within confidential environments using order report chain.
+A comprehensive solution for signing and verifying data within confidential environments using an order report chain.
 
 ## Overview
 
@@ -25,18 +25,18 @@ This repository provides tools and scripts for secure data signing operations in
 
 ### Testing Steps
 
-1. **Generate Test Certificate**
+1. **Generate a test certificate**
    ```bash
    ./generate_certs.sh
    ```
 
-2. **Create Output Directory and Generate Signature**
+2. **Create the output directory and generate a signature**
    ```bash
    mkdir ./output
    ./sign_data.sh crypto
    ```
 
-3. **Verify Signature**
+3. **Verify the signature**
    ```bash
    ./verify_signature.sh
    ```
@@ -47,21 +47,21 @@ This repository provides tools and scripts for secure data signing operations in
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [SPCTL](https://docs.superprotocol.com/cli/)
-- Valid configuration file (`config.example.json`)
+- Valid SPCTL configuration file (`config.example.json`)
 
 ### Deployment Steps
 
-1. **Build Docker Image**
+1. **Build a Docker image**
    ```bash
    docker build -t example_signer:latest .
    ```
 
-2. **Export Docker Image**
+2. **Export the Docker image**
    ```bash
    docker save example_signer:latest | gzip > example_signer:latest.tar.gz
    ```
 
-3. **Upload to Decentralized Storage**
+3. **Upload to decentralized storage**
    ```bash
    ./spctl files upload example_signer:latest.tar.gz \
      --output example_signer.json \
@@ -69,32 +69,32 @@ This repository provides tools and scripts for secure data signing operations in
      --config ./config.example.json
    ```
 
-4. **Create Order**
+4. **Create an order**
    ```bash
    ./spctl workflows create \
      --tee 7,13 \
      --tee-slot-count 1 \
      --solution ./example_signer.json \
-     --storage 49 \
+     --storage 47 \
      --config ./config.example.json
    ```
 
-5. **Monitor Order Status**
+5. **Monitor the order status**
    ```bash
    ./spctl orders get <YOUR_ORDER_ID> --config ./config.example.json
    ```
 
-6. **Download Results**
+6. **Download the order result**
    ```bash
    ./spctl orders download-result <YOUR_ORDER_ID> --config ./config.example.json
    ```
 
-7. **Extract Results**
+7. **Extract the order results**
    ```bash
    tar -xvzf result.tar.gz
    ```
 
-8. **Verify Signature**
+8. **Verify the signature**
    ```bash
    CERTS_DIR=./output ./verify_signature.sh
    ```
