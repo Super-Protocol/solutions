@@ -9,7 +9,6 @@ export interface IServerConfig {
   port: number;
   tlsKey: string;
   tlsCert: string;
-  modelSizeThreshold: number;
   configurationPath: string;
 }
 
@@ -24,7 +23,6 @@ export const getServerConfig = (): IServerConfig => {
       port: Number.parseInt(getEnvValueOrFail('HTTPS_PORT')),
       tlsKey: getEnvValueOrFail('TLS_KEY'),
       tlsCert: getEnvValueOrFail('TLS_CERT'),
-      modelSizeThreshold: 100 * 1024 * 1024, // 100Mb
       configurationPath: config.configurationPath,
     };
   }
