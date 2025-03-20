@@ -1,18 +1,17 @@
 import fs from 'fs';
 import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
-import { findModel, setupCharacter } from './utils';
+import { setupCharacter } from './utils';
+import { ModelDetector } from './model-detector';
 
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
   engineFolder: string;
   inputDataFolder: string;
-  modelSizeThreshold: number;
   serverPort: number;
   logger: Logger;
 }): Promise<string[]> => {
-  const { configuration, engineFolder, serverPort, inputDataFolder, modelSizeThreshold, logger } =
-    params;
+  const { configuration, engineFolder, serverPort, inputDataFolder, logger } = params;
 
   if (!configuration) {
     logger.info('Configuration not found. Run with default params');
@@ -27,13 +26,7 @@ export const getCliParams = async (params: {
       engineFolder,
       logger,
     )),
-    ...(await setupModelConfiguration(
-      configuration.model,
-      engineFolder,
-      inputDataFolder,
-      modelSizeThreshold,
-      logger,
-    )),
+    ...(await setupModelConfiguration(configuration.model, engineFolder, inputDataFolder, logger)),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
   ];
 };
@@ -78,13 +71,12 @@ const setupModelConfiguration = async (
   modelSettings: EngineConfiguration['model'],
   engineFolder: string,
   inputDataFolder: string,
-  modelSizeThreshold: number,
   logger: Logger,
 ): Promise<string[]> => {
   const modelName = modelSettings.model_name;
   const cliParams: string[] = [];
 
-  const modelInfo = await findModel(inputDataFolder, modelSizeThreshold, modelName);
+  const modelInfo = await ModelDetector.detectModelPath(inputDataFolder, modelName);
   if (modelInfo) {
     cliParams.push(`--model-dir ${modelInfo.folder}`);
     cliParams.push(`--model ${modelInfo.model}`);

@@ -34,7 +34,6 @@ const run = async (): Promise<void> => {
     inputDataFolder: config.inputDataFolder,
     serverPort: serverConfig.port,
     logger: rootLogger,
-    modelSizeThreshold: serverConfig.modelSizeThreshold,
   });
 
   const spawnOptions = [
