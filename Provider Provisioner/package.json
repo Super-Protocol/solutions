@@ -22,6 +22,6 @@
     "cron": "3.1.6",
     "dotenv": "16.4.5",
     "pino": "8.19.0",
-    "spctl": "https://github.com/Super-Protocol/ctl/releases/download/v0.10.5/super-protocol-ctl-0.10.5.tgz"
+    "spctl": "https://github.com/Super-Protocol/ctl/releases/download/v0.10.18/super-protocol-ctl-0.10.18.tgz"
   }
 }
