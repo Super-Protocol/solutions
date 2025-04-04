@@ -23,6 +23,7 @@ ENV GPU_CHOICE=$GPU_CHOICE
 RUN apt update && apt install -y git &&\
     git config --global --add safe.directory /home/node/app/text-generation-webui &&\
     chmod +x ./text-generation-webui/start_linux.sh &&\
+    find ./text-generation-webui -maxdepth 1 -type f -name "requirements*" -exec sed -i 's/transformers==/transformers[torch,flax,timm,sentencepiece,onnx,ftfy,tokenizers]==/g' {} \; &&\
     USE_CUDA118=FALSE LAUNCH_AFTER_INSTALL=FALSE INSTALL_EXTENSIONS=FALSE ./text-generation-webui/start_linux.sh &&\
     apt remove git -y &&\
     wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
