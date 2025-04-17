@@ -15,7 +15,7 @@ FROM node:22-bookworm-slim
 
 WORKDIR /home/node/app
 
-RUN mkdir -p /sp/inputs /sp/output /sp/run
+RUN mkdir -p /sp/inputs /sp/output /sp/run /sp/secrets
 
 ENV INPUT_DATA_FOLDER=/sp/inputs
 ENV OUTPUT_DATA_FOLDER=/sp/output
