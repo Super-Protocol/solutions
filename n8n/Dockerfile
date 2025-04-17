@@ -20,10 +20,10 @@ RUN mkdir -p /sp/inputs /sp/output /sp/run /sp/secrets
 ENV INPUT_DATA_FOLDER=/sp/inputs
 ENV OUTPUT_DATA_FOLDER=/sp/output
 
-COPY --from=builder /home/node/app/dist ./dist
-COPY --from=builder /home/node/app/node_modules ./node_modules
-COPY --from=builder /home/node/app/package.json ./package.json
-COPY --from=builder /home/node/app/.env ./.env
+COPY --from=builder --chown=node:node /home/node/app/dist ./dist
+COPY --from=builder --chown=node:node /home/node/app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /home/node/app/package.json ./package.json
+COPY --from=builder --chown=node:node /home/node/app/.env ./.env
 
 USER node
 

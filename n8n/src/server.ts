@@ -21,29 +21,25 @@ parentPort?.on('message', (message) => {
 const run = async (): Promise<void> => {
   const serverConfig = getServerConfig();
 
-  await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey);
-  await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert);
+  // Write TLS files with restricted permissions (read/write only for owner)
+  await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey, {
+    mode: 0o600,
+  });
+  await fs.promises.writeFile(serverConfig.certificateFilePath, serverConfig.tlsCert, {
+    mode: 0o600,
+  });
 
-  await new Promise((_resolve, _reject) => {
-    const webSshProcess = spawn(`node_modules/.bin/n8n`, [], {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        N8N_HIRING_BANNER_ENABLED: 'false',
-        N8N_DIAGNOSTICS_ENABLED: 'false',
-        N8N_PROTOCOL: 'https',
-        N8N_PORT: String(serverConfig.port),
-        N8N_SSL_KEY: serverConfig.privateKeyFilePath,
-        N8N_SSL_CERT: serverConfig.certificateFilePath,
-      },
-    });
-
-    webSshProcess.stdout?.on('data', (data) => {
-      const message = data?.toString();
-      logger.info(message);
-    });
-
-    webSshProcess.stderr?.on('data', (data) => logger.error(data.toString()));
+  spawn(`node_modules/.bin/n8n`, [], {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      N8N_HIRING_BANNER_ENABLED: 'false',
+      N8N_DIAGNOSTICS_ENABLED: 'false',
+      N8N_PROTOCOL: 'https',
+      N8N_PORT: String(serverConfig.port),
+      N8N_SSL_KEY: serverConfig.privateKeyFilePath,
+      N8N_SSL_CERT: serverConfig.certificateFilePath,
+    },
   });
 };
 

@@ -13,7 +13,9 @@ services:
     entrypoint: bash -c "npm ci"
 
   n8n:
-    image: n8n:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: n8n
     tty: true
     restart: on-failure
@@ -21,11 +23,10 @@ services:
     ports:
       - 9229:9229 #uncomment for debug
     volumes:
-      - .:/home/node/app
+      # - .:/home/node/app
       - ./sp-inputs:/sp/inputs
       - ./sp-secrets:/sp/secrets
       - ./sp-certs:/sp/certs
       - ./sp-configurations:/sp/configurations
     entrypoint: bash -c "\
-      npm run build &&\
       node --inspect=0.0.0.0:9229 dist/index.js"
