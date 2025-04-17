@@ -10,6 +10,7 @@ on:
           - text-generation-webui-gpu
           - text-generation-webui-cpu
           - comfyui
+          - n8n
       target:
         description: 'Target'
         required: true
@@ -61,6 +62,11 @@ jobs:
             DOCKERFILE_CONTEXT="./ComfyUI/"
             SUBMODULE_PATH="ComfyUI/ComfyUI"
             ALLOW_MULTIPLE_UPDATE="true"
+
+          elif [ "$SOLUTION" == "n8n" ]; then
+            DOCKERFILE="./n8n/Dockerfile"
+            DOCKERFILE_CONTEXT="./n8n/"
+            
           else
             echo "Invalid solution name"
             exit 1
@@ -73,6 +79,7 @@ jobs:
           echo "ALLOW_MULTIPLE_UPDATE=$ALLOW_MULTIPLE_UPDATE" >> $GITHUB_ENV
 
       - name: Checkout git submodules
+        if: env.SUBMODULE_PATH != ''
         run: |
           git submodule init && git submodule update "$SUBMODULE_PATH"
 
