@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  npm-i:
+    image: node:22-bookworm-slim
+    container_name: npm-i
+    tty: true
+    restart: on-failure
+    platform: linux/amd64
+    working_dir: /home/node/app
+    volumes:
+      - .:/home/node/app
+    entrypoint: bash -c "npm ci"
+
+  n8n:
+    image: n8n:latest
+    container_name: n8n
+    tty: true
+    restart: on-failure
+    platform: linux/amd64
+    ports:
+      - 9229:9229 #uncomment for debug
+    volumes:
+      - .:/home/node/app
+      - ./sp-inputs:/sp/inputs
+      - ./sp-secrets:/sp/secrets
+      - ./sp-certs:/sp/certs
+      - ./sp-configurations:/sp/configurations
+    entrypoint: bash -c "\
+      npm run build &&\
+      node --inspect=0.0.0.0:9229 dist/index.js"
