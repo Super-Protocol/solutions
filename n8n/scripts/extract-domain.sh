@@ -112,8 +112,8 @@ if [[ -n "$result_path" && -f "$result_path" ]]; then
     
     # Clean up
     rm -rf "$temp_dir"
+
+    echo "Script completed successfully."
 else
     echo "Error: Could not download order result or result file not found"
 fi
-
-echo "Script completed successfully."
