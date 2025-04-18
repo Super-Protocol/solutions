@@ -105,3 +105,8 @@ tools
 .idea
 
 text-generation-webui/
+
+sp-secrets
+sp-inputs
+sp-configurations
+sp-certs
