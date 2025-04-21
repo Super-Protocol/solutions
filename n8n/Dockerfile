@@ -6,7 +6,8 @@ COPY package.json package-lock.json tsconfig.json tsconfig.build.json .env ./
 
 COPY src/ ./src/
 
-RUN npm ci &&\
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci &&\
     npm run build &&\
     npm ci --omit=dev
 
