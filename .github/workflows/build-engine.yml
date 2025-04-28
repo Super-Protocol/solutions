@@ -161,13 +161,11 @@ jobs:
 
       - name: Choose commit type
         run: |
-          if [[ "${{ inputs.target }}" == "testnet" || "${{ inputs.target }}" == "mainnet" ]]; then
-            ARGO_COMMIT_TYPE=pull-request
+          if [[ "$TARGET" == "testnet" || "$TARGET" == "mainnet" ]]; then
+            echo "ARGO_COMMIT_TYPE=pull-request" >> $GITHUB_ENV
           else
-            ARGO_COMMIT_TYPE=direct-commit
+            echo "ARGO_COMMIT_TYPE=direct-commit" >> $GITHUB_ENV
           fi
-
-          echo "ARGO_COMMIT_TYPE=$ARGO_COMMIT_TYPE" >> $GITHUB_ENV
 
       - name: Update argocd
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
