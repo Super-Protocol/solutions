@@ -31,6 +31,7 @@ env:
   SUBMODULE_PATH: ''
   TARGET: ${{ inputs.target }}
   ALLOW_MULTIPLE_UPDATE: false
+  ARGO_COMMIT_TYPE: ''
 
 jobs:
   build-engine:
@@ -158,6 +159,14 @@ jobs:
         with:
           file_to_upload: ${{ env.IMAGE_FILE }}
 
+      - name: Choose commit type
+        run: |
+          if [[ "$TARGET" == "testnet" || "$TARGET" == "mainnet" ]]; then
+            echo "ARGO_COMMIT_TYPE=pull-request" >> $GITHUB_ENV
+          else
+            echo "ARGO_COMMIT_TYPE=direct-commit" >> $GITHUB_ENV
+          fi
+
       - name: Update argocd
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@v1
         with:
@@ -166,5 +175,5 @@ jobs:
           resource_type: solution
           resource_file: ${{ steps.upload_image.outputs.resource }}
           solution_name: ${{ env.SOLUTION }}
-          commit_type: pull-request
+          commit_type: ${{ env.ARGO_COMMIT_TYPE }}
           allow_multiple_update: ${{ env.ALLOW_MULTIPLE_UPDATE }}
