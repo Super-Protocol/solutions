@@ -26,10 +26,10 @@ const run = async (): Promise<void> => {
     logger,
   });
 
-  logger.debug(
-    { domains: domainConfigs.map((config) => config.site.domain) },
-    'Found tunnel client domain configs',
-  );
+  const domains = domainConfigs.map((config) => config.site.domain);
+  logger.debug({ domains }, 'Found tunnel client domain configs');
+
+  process.env.WEBHOOK_URL = `https://${domains[0]}`
 
   const options: TunnelClientOptions = {
     logger: rootLogger,

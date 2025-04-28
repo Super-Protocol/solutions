@@ -12,6 +12,7 @@ usage() {
 
 # Set defaults
 CONFIG="./config.json"
+INPUT="mainnet"  # Default to mainnet if not specified
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -104,6 +105,11 @@ case $INPUT in
         BASE_IMAGE=13
         TUNNEL_LAUNCHER_SOLUTION=19
         STORAGE=47
+        if [[ -z "$USER_SOLUTION" ]]; then
+            N8N_SOLUTION=3232
+        else
+            N8N_SOLUTION=$USER_SOLUTION
+        fi
         ;;
 esac
 
