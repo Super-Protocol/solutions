@@ -12,7 +12,7 @@
     "@types/node": "^22.14.1"
   },
   "dependencies": {
-    "@super-protocol/sdk-js": "3.7",
+    "@super-protocol/sdk-js": "3.8.7",
     "@super-protocol/solution-utils": "^1.5.2",
     "@super-protocol/tunnels-lib": "^1.0.6",
     "dotenv": "^16.5.0",
