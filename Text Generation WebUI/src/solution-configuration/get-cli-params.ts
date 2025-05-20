@@ -3,6 +3,8 @@ import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
 import { setupCharacter } from './utils';
 import { ModelDetector } from './model-detector';
+import path from 'path';
+import { spawn } from 'child_process';
 
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
@@ -19,7 +21,7 @@ export const getCliParams = async (params: {
     return ['--listen-port', String(serverPort)];
   }
 
-  return [
+  const cliParams = [
     ...(await setupBaseConfiguration(
       configuration.main_settings,
       serverPort,
@@ -29,6 +31,21 @@ export const getCliParams = async (params: {
     ...(await setupModelConfiguration(configuration.model, engineFolder, inputDataFolder, logger)),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
   ];
+
+
+  // if model is loaded is autodetect or llama.cpp
+  try {
+    if (!cliParams.includes('--n_ctx')) {
+      logger.warn('n_ctx not set, calculating optimal value...');
+
+      const nCtx = await calculateModelContext(params.inputDataFolder);
+      cliParams.push('--n_ctx', nCtx.toString());
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Failed to calculate optimal n_ctx, using default values');
+  }
+
+  return cliParams;
 };
 
 const setupBaseConfiguration = async (
@@ -136,4 +153,42 @@ export const setupModelLoaderConfiguration = (
   });
 
   return cliParams;
+};
+
+const calculateModelContext = async (modelPath: string): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    const scriptPath = path.resolve(__dirname, '..', 'scripts', 'calculate_n_ctx.py');
+    const pythonProcess = spawn('python3', [scriptPath, modelPath, '--vram', '12'], {
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+
+    let output = '';
+    let error = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      error += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Python script failed: ${error}`));
+        return;
+      }
+
+      try {
+        const result = JSON.parse(output);
+        if (result.error) {
+          reject(new Error(result.error));
+          return;
+        }
+        resolve(result.n_ctx);
+      } catch (e) {
+        reject(new Error(`Failed to parse Python script output: ${e}`));
+      }
+    });
+  });
 };
