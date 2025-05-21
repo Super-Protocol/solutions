@@ -35,6 +35,7 @@ export const getCliParams = async (params: {
 
   // if model is loaded is autodetect or llama.cpp
   try {
+    logger.warn('check if n_ctx is set');
     if (!cliParams.includes('--n_ctx')) {
       logger.warn('n_ctx not set, calculating optimal value...');
 
