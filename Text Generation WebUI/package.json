@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "tsx --test src/**/*.test.ts",
-    "build": "tsc -p tsconfig.build.json"
+    "copy-files": "mkdir -p dist/scripts && cp src/scripts/calculate_n_ctx.py dist/scripts/",
+    "build": "tsc -p tsconfig.build.json && npm run copy-files"
   },
   "repository": {
     "type": "git",
