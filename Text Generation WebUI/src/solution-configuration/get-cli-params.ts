@@ -176,7 +176,7 @@ const calculateModelContext = async (modelPath: string): Promise<number> => {
 
     pythonProcess.on('close', (code) => {
       if (code !== 0) {
-        reject(new Error(`Python script failed: ${error}`));
+        reject(new Error(`Python script failed. Code: ${code}. Output: ${output}. Error: ${error}`));
         return;
       }
 
