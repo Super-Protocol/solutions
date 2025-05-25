@@ -39,7 +39,7 @@ export const getCliParams = async (params: {
     if (!cliParams.includes('--n_ctx')) {
       logger.warn('n_ctx not set, calculating optimal value...');
 
-      const nCtx = await calculateModelContext(params.inputDataFolder);
+      const nCtx = await calculateModelContext(`${params.inputDataFolder}/input-0001`);
       cliParams.push('--n_ctx', nCtx.toString());
     }
   } catch (err) {
