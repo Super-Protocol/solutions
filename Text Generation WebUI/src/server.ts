@@ -43,6 +43,7 @@ const run = async (): Promise<void> => {
     serverConfig.certificateFilePath,
     ...cliParams,
   ];
+  logger.warn(`spawnOptions: ${spawnOptions.join(' ')}`);
 
   await new Promise((_resolve, _reject) => {
     const pythonProcess = spawn(`${serverConfig.engineFolder}/start_linux.sh`, spawnOptions, {
