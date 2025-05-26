@@ -86,7 +86,6 @@ fi
 echo "Step 4: Setting environment variables..."
 case $INPUT in
     "dev")
-        BASE_IMAGE=6
         TUNNEL_LAUNCHER_SOLUTION=12
         STORAGE=39
         # Set default value for N8N_SOLUTION in dev environment if not provided
@@ -97,12 +96,10 @@ case $INPUT in
         fi
         ;;
     "stg")
-        BASE_IMAGE=4
         TUNNEL_LAUNCHER_SOLUTION=9
         STORAGE=38
         ;;
     "mainnet")
-        BASE_IMAGE=13
         TUNNEL_LAUNCHER_SOLUTION=19
         STORAGE=47
         if [[ -z "$USER_SOLUTION" ]]; then
@@ -127,7 +124,7 @@ fi
 echo "Using N8N_SOLUTION: $N8N_SOLUTION"
 
 echo "Step 5: Creating tunnels launcher..."
-SPCTL_CMD="$SPCTL workflows create --tee 1 --solution $BASE_IMAGE --solution $TUNNEL_LAUNCHER_SOLUTION --storage $STORAGE --config $CONFIG"
+SPCTL_CMD="$SPCTL workflows create --tee 7 --solution $TUNNEL_LAUNCHER_SOLUTION --storage $STORAGE --config $CONFIG"
 if [[ -n "$ORDERS_LIMIT" ]]; then
     SPCTL_CMD="$SPCTL_CMD --orders-limit $ORDERS_LIMIT"
 fi
