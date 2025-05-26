@@ -38,7 +38,7 @@ context: |-
     .replace(contextPlaceholder, normalizeData(character.context) || defaultContext);
 
   await fs.promises.writeFile(
-    `${engineFolder}/characters/${characterFileName}.yaml`,
+    `${engineFolder}/user_data/characters/${characterFileName}.yaml`,
     characterFile,
   );
 
