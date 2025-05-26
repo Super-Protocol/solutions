@@ -117,7 +117,7 @@ const setupModelConfiguration = async (
     .map((key) => `${key}: ${parameters[key]}`)
     .join('\n');
 
-  await fs.promises.writeFile(`${engineFolder}/presets/min_p.yaml`, parametersString);
+  await fs.promises.writeFile(`${engineFolder}/user_data/presets/min_p.yaml`, parametersString);
 
   return cliParams;
 };
