@@ -41,7 +41,7 @@ export const getCliParams = async (params: {
 
       const nCtx = await calculateModelContext(`${params.inputDataFolder}/input-0001`);
       logger.warn(`n_ctx: ${nCtx}`);
-      cliParams.push('--n_ctx', '4096');
+      // cliParams.push('--n_ctx', '4096');
     }
   } catch (err) {
     logger.warn({ err }, 'Failed to calculate optimal n_ctx, using default values');
