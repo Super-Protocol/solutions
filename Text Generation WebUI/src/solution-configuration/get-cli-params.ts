@@ -57,7 +57,7 @@ const setupBaseConfiguration = async (
     }
   } else {
     logger.info('Run in UI-server mode');
-    cliParams.push('--listen-port', String(serverPort));
+    cliParams.push('--listen', '--listen-port', String(serverPort));
   }
 
   const character = await setupCharacter(baseSettings.character, engineFolder);
