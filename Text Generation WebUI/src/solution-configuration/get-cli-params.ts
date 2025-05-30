@@ -57,7 +57,7 @@ const setupBaseConfiguration = async (
     }
   } else {
     logger.info('Run in UI-server mode');
-    cliParams.push('--listen-port', String(serverPort));
+    cliParams.push('--listen', '--listen-port', String(serverPort));
   }
 
   const character = await setupCharacter(baseSettings.character, engineFolder);
@@ -98,7 +98,7 @@ const setupModelConfiguration = async (
     .map((key) => `${key}: ${parameters[key]}`)
     .join('\n');
 
-  await fs.promises.writeFile(`${engineFolder}/presets/min_p.yaml`, parametersString);
+  await fs.promises.writeFile(`${engineFolder}/user_data/presets/min_p.yaml`, parametersString);
 
   return cliParams;
 };
