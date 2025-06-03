@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_PREFER_BINARY=1
 ENV PIP_ROOT_USER_ACTION=ignore
 # Ensures output from python is printed immediately to the terminal without buffering
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 # Speed up some cmake builds
 ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
@@ -90,11 +90,17 @@ RUN <<EOF cat >> ${COMFYUI_PATH}/user/default/ComfyUI-Manager/config.ini
 [default]
 security_level = strong
 EOF
-# FIXME: following command is failing for some reason - 
+# FIXME: following command is failing for some reason -
 RUN comfy manager disable-gui
 # simulating the same command
 # see https://github.com/jiangyangfan/ComfyUI-Manager/blob/5bf9914e17244560ef69ad4de218150fa755e88d/cm-cli.py#L748-L764
 RUN echo "yes" > ${COMFYUI_PATH}/custom_nodes/ComfyUI-Manager/.enable-cli-only-mode
+
+RUN <<EOF cat >> ${COMFYUI_PATH}/user/default/comfy.settings.json
+{
+    "Comfy.TutorialCompleted": true
+}
+EOF
 
 # Change into ComfyUI directory
 WORKDIR ${COMFYUI_PATH}
