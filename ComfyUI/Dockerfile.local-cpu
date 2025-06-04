@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_PREFER_BINARY=1
 ENV PIP_ROOT_USER_ACTION=ignore
 # Ensures output from python is printed immediately to the terminal without buffering
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 # Speed up some cmake builds
 ENV CMAKE_BUILD_PARALLEL_LEVEL=8
 
@@ -74,7 +74,11 @@ RUN <<EOF cat >> user/default/ComfyUI-Manager/config.ini
 file_logging = False
 security_level = weak
 EOF
-
+RUN <<EOF cat >> ${COMFYUI_PATH}/user/default/comfy.settings.json
+{
+    "Comfy.TutorialCompleted": true
+}
+EOF
 # create changeset saving script
 RUN mkdir changeset
 RUN <<EOF cat >> save-changeset.sh
@@ -87,7 +91,7 @@ else
     ls -la ${COMFYUI_PATH}/user/default/workflows/
 fi
 comfy node fix all
-comfy node save-snapshot 
+comfy node save-snapshot
 find . -mindepth 2 -type d -name ".git" -exec rm -rf {} +
 find . -mindepth 2 -type f -name ".gitignore" -exec rm -f {} +
 git add --all
