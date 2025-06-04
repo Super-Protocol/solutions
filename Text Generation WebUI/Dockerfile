@@ -35,5 +35,8 @@ COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules
 COPY --from=builder /home/node/app/package.json ./package.json
 COPY --from=builder /home/node/app/.env ./.env
+RUN cp ./text-generation-webui/user_data/settings-template.yaml ./text-generation-webui/user_data/settings.yaml &&\
+    sed -Ei 's/^mode:\s+instruct$/mode: chat-instruct/' ./text-generation-webui/user_data/settings.yaml
+
 
 ENTRYPOINT ["node", "./dist/index.js"]
