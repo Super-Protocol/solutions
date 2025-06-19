@@ -1,9 +1,6 @@
 name: Update Engine Configuration
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       solution:
@@ -71,7 +68,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { core, context } = require('@actions/core');
             const fs = require('fs');
             const allVars = ${{ toJSON(vars) }};
             const configFilePath = "${{ steps.prepare.outputs.config_file_path }}";
@@ -131,26 +127,24 @@ jobs:
 
       - name: Prepare SPCTL config
         uses: actions/github-script@v7
+        env:
+          SECRET_DEVELOP: ${{ secrets.DEVELOP_SPCTL_CONFIG_BASE64 }}
+          SECRET_STAGE: ${{ secrets.STAGING_SPCTL_CONFIG_BASE64 }}
+          SECRET_TESTNET: ${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}
+          SECRET_MAINNET: ${{ secrets.MAINNET_SPCTL_CONFIG_BASE64 }}
         with:
           script: |
-            const { core, context } = require('@actions/core');
             const fs = require('fs');
-            const allSecrets = ${{ toJSON(secrets) }};
-            const secretMap = {
-              develop: 'DEVELOP_SPCTL_CONFIG_BASE64',
-              stage: 'STAGING_SPCTL_CONFIG_BASE64',
-              testnet: 'TESTNET_SPCTL_CONFIG_BASE64',
-              mainnet: 'MAINNET_SPCTL_CONFIG_BASE64'
+            const secretEnvMap = {
+              develop: process.env.SECRET_DEVELOP,
+              stage: process.env.SECRET_STAGE,
+              testnet: process.env.SECRET_TESTNET,
+              mainnet: process.env.SECRET_MAINNET
             };
             const targetEnv = context.payload.inputs.target;
-            const secretName = secretMap[targetEnv];
-            if (!secretName) {
-              core.setFailed(`Internal error: No SPCTL config secret mapping found for target "${targetEnv}".`);
-              return;
-            }
-            const encodedConfig = allSecrets[secretName];
+            const encodedConfig = secretEnvMap[targetEnv];
             if (!encodedConfig) {
-              core.setFailed(`GitHub Secret '${secretName}' is not set or is empty.`);
+              core.setFailed(`Secret for target environment '${targetEnv}' is not set or is empty. Check Actions Secrets.`);
               return;
             }
             const decodedConfig = Buffer.from(encodedConfig, 'base64').toString('utf8');
@@ -161,7 +155,6 @@ jobs:
         run: ./spctl --version
 
       - name: Update offer configuration
-        if: github.event_name == 'workflow_dispatch'
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@feature/SP-6620
         with:
           offer_id: ${{ steps.prepare.outputs.offer_id }}
