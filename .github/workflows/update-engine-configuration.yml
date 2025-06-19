@@ -1,6 +1,9 @@
 name: Update Engine Configuration
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       solution:
@@ -159,6 +162,7 @@ jobs:
         run: ./spctl --version
 
       - name: Update offer configuration
+        if: github.event_name == 'workflow_dispatch'
         uses: Super-Protocol/sp-build-tools/actions/update-argocd@feature/SP-6620
         with:
           offer_id: ${{ steps.prepare.outputs.offer_id }}
