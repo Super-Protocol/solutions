@@ -245,15 +245,15 @@
               "type": 11,
               "name": "Offer",
               "variable": "tunnel_provisioner_order",
-              "description": "19 - Tunnels Launcher",
+              "description": "$VAR_TUNNELS_LAUNCHER_OFFER_ID - Tunnels Launcher",
               "options": [
                 {
-                  "stringValue": "19"
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
                 }
               ],
               "defaultValue": [
                 {
-                  "stringValue": "19"
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
                 }
               ],
               "useCondition": {
