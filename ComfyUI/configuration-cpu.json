@@ -1,0 +1,396 @@
+{
+  "arguments": [
+    {
+      "type": 0,
+      "name": "Engine",
+      "variable": "engine",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Main Settings",
+          "variable": "main_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 6,
+              "name": "Multi-user",
+              "variable": "multi_user",
+              "description": "Enables per-user storage."
+            },
+            {
+              "type": 8,
+              "name": "Compute",
+              "variable": "compute",
+              "description": "cpu: To use the CPU for everything (slow)\nhighvram: By default models will be unloaded to CPU memory after being used. This option keeps them in GPU memory.\nlowvram: Split the unet in parts to use less vram\nnovram: When lowvram isn't enough",
+              "defaultValue": [
+                {
+                  "stringValue": "cpu"
+                }
+              ],
+              "options": [
+                {
+                  "stringValue": "cpu"
+                },
+                {
+                  "stringValue": "highvram"
+                },
+                {
+                  "stringValue": "lowvram"
+                },
+                {
+                  "stringValue": "novram"
+                }
+              ]
+            },
+            {
+              "type": 6,
+              "name": "Enable CORS header",
+              "variable": "enable_cors_header",
+              "description": "Enable CORS (Cross-Origin Resource Sharing) with optional origin or allow all with default '*'"
+            },
+            {
+              "type": 7,
+              "name": "Cuda Malloc",
+              "variable": "cuda_malloc",
+              "description": "Enable or Disable cudaMallocAsync (enabled by default for torch 2.0 and up)",
+              "options": [
+                {
+                  "stringValue": "Enable"
+                },
+                {
+                  "stringValue": "Disable"
+                }
+              ]
+            },
+            {
+              "type": 7,
+              "name": "General precision",
+              "variable": "fp",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "force fp16"
+                },
+                {
+                  "stringValue": "force fp32"
+                }
+              ]
+            },
+            {
+              "type": 8,
+              "name": "Unet precision",
+              "variable": "fpunet",
+              "description": "Store UNET weights in precision",
+              "options": [
+                {
+                  "stringValue": "bf16-unet"
+                },
+                {
+                  "stringValue": "fp16-unet"
+                },
+                {
+                  "stringValue": "fp8_e4m3fn-unet"
+                },
+                {
+                  "stringValue": "fp8_e5m2-unet"
+                }
+              ]
+            },
+            {
+              "type": 8,
+              "name": "VAE precision",
+              "variable": "fpvae",
+              "description": "Run VAE in precision",
+              "options": [
+                {
+                  "stringValue": "fp16-vae"
+                },
+                {
+                  "stringValue": "fp32-vae"
+                },
+                {
+                  "stringValue": "bf16-vae"
+                }
+              ]
+            },
+            {
+              "type": 6,
+              "name": "CPU Vae",
+              "variable": "cpu_vae",
+              "description": "Run the VAE on the CPU."
+            },
+            {
+              "type": 8,
+              "name": "Text encoder precision",
+              "variable": "text-enc",
+              "description": "Store text encoder weights in precision",
+              "options": [
+                {
+                  "stringValue": "fp8_e4m3fn-text-enc"
+                },
+                {
+                  "stringValue": "fp8_e5m2-text-enc"
+                },
+                {
+                  "stringValue": "fp16-text-enc"
+                },
+                {
+                  "stringValue": "fp32-text-enc"
+                }
+              ]
+            },
+            {
+              "type": 6,
+              "name": "Force channels last",
+              "variable": "force_channel_last",
+              "description": "Force channels last format when inferencing the models."
+            },
+            {
+              "type": 8,
+              "name": "Preview method",
+              "variable": "preview_method",
+              "description": "Default preview method for sampler nodes.",
+              "options": [
+                {
+                  "stringValue": "none"
+                },
+                {
+                  "stringValue": "auto"
+                },
+                {
+                  "stringValue": "latent2rgb"
+                },
+                {
+                  "stringValue": "teasd"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "none"
+                }
+              ]
+            },
+            {
+              "type": 3,
+              "name": "Preview size",
+              "variable": "preview_size",
+              "description": "Sets the maximum preview size for sampler nodes",
+              "valueType": 5,
+              "defaultValue": [
+                {
+                  "uint32Value": 512
+                }
+              ]
+            },
+            {
+              "type": 7,
+              "name": "Upcast attestation",
+              "variable": "upcast_attestation",
+              "description": "force-upcast-attention: Force enable attention upcasting\ndont-upcast-attention: Disable all upcasting of attention. Should be unnecessary except for debugging.",
+              "options": [
+                {
+                  "stringValue": "force-upcast-attention"
+                },
+                {
+                  "stringValue": "dont-upcast-attention"
+                }
+              ]
+            },
+            {
+              "type": 6,
+              "name": "Disable smart memory",
+              "variable": "disable_smart_memory",
+              "description": "Force ComfyUI to agressively offload to regular ram instead of keeping models in vram when it can"
+            },
+            {
+              "type": 6,
+              "name": "Deterministic",
+              "variable": "deterministic",
+              "description": "Make pytorch use slower deterministic algorithms when it can. Note that this might not make images deterministic in all cases."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "name": "Tunnels",
+      "variable": "tunnels",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Domain Settings",
+          "variable": "domain_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 7,
+              "name": "Tunnels",
+              "variable": "provision_type",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ]
+            },
+            {
+              "type": 11,
+              "name": "Offer",
+              "variable": "tunnel_provisioner_order",
+              "description": "$VAR_TUNNELS_LAUNCHER_OFFER_ID - Tunnels Launcher",
+              "options": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "useCondition": {
+                "variable": "tunnels.domain_settings.provision_type",
+                "value": {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "models": [
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image Classification"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Object Detection"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image Segmentation"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text-to-Image"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image-to-Text"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image-to-Image"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image-to-Video"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Video Classification"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text-to-Video"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Mask Generation"
+        }
+      }
+    ],
+    "datasets": []
+  }
+}

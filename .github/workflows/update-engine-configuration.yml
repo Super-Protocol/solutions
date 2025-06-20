@@ -1,0 +1,161 @@
+name: Update Engine Configuration
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution:
+        description: 'Choose the solution whose offer you want to update.'
+        required: true
+        type: choice
+        options:
+          - 'ComfyUI (CPU only)'
+          - 'ComfyUI (GPU only)'
+          - 'Text Generation Web UI (CPU only)'
+          - 'Text Generation Web UI (GPU only)'
+      target:
+        description: 'Target environment where the offer exists.'
+        required: true
+        type: choice
+        options:
+          - develop
+          - stage
+          - testnet
+          - mainnet
+
+jobs:
+  update-offer-job:
+    environment: ${{ inputs.target }}
+    runs-on: self-hosted
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+
+      - name: Prepare Variables and Get Offer ID
+        id: prepare
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allVars = ${{ toJSON(vars) }};
+            const configMap = {
+              'ComfyUI (CPU only)': { configFile: './ComfyUI/configuration-cpu.json', varName: 'COMFYUI_CPU_OFFER_ID' },
+              'ComfyUI (GPU only)': { configFile: './ComfyUI/configuration-gpu.json', varName: 'COMFYUI_GPU_OFFER_ID' },
+              'Text Generation Web UI (CPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_CPU_OFFER_ID' },
+              'Text Generation Web UI (GPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_GPU_OFFER_ID' }
+            };
+            const solution = context.payload.inputs.solution;
+            const targetEnv = context.payload.inputs.target;
+            core.info(`Selected solution: "${solution}" for environment "${targetEnv}"`);
+            const config = configMap[solution];
+            if (!config) {
+              core.setFailed(`Internal error: No configuration mapping found for solution "${solution}".`);
+              return;
+            }
+            const offerId = allVars[config.varName];
+            if (!offerId) {
+              core.setFailed(`GitHub Variable '${config.varName}' is not set for the '${targetEnv}' environment.`);
+              return;
+            }
+            core.info(`Found Offer ID: ${offerId}`);
+            core.info(`Using configuration file: ${config.configFile}`);
+            core.setOutput('offer_id', offerId);
+            core.setOutput('config_file_path', config.configFile);
+
+      - name: Process Configuration and Substitute Variables
+        id: process_config
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const allVars = ${{ toJSON(vars) }};
+            const configFilePath = "${{ steps.prepare.outputs.config_file_path }}";
+
+            core.info(`Processing config file: ${configFilePath}`);
+            let content = fs.readFileSync(configFilePath, 'utf8');
+
+            const placeholderRegex = /\$VAR_([A-Z0-9_]+)/g;
+            const placeholders = [...content.matchAll(placeholderRegex)];
+
+            if (placeholders.length === 0) {
+              core.info('No variables to substitute.');
+              core.setOutput('processed_config_path', configFilePath);
+              return;
+            }
+
+            let allVarsFound = true;
+            const uniqueVarNames = [...new Set(placeholders.map(p => p[1]))];
+
+            for (const varName of uniqueVarNames) {
+              if (!Object.prototype.hasOwnProperty.call(allVars, varName)) {
+                core.setFailed(`Required GitHub Variable '${varName}' is not set for the '${context.payload.inputs.target}' environment.`);
+                allVarsFound = false;
+              }
+            }
+
+            if (!allVarsFound) {
+              return;
+            }
+
+            core.info(`Substituting variables: ${uniqueVarNames.join(', ')}`);
+            content = content.replace(placeholderRegex, (match, varName) => {
+              return allVars[varName];
+            });
+
+            const newPath = './processed-config.json';
+            fs.writeFileSync(newPath, content);
+            core.info(`Processed configuration saved to ${newPath}`);
+            core.setOutput('processed_config_path', newPath);
+
+      - name: Set SPCTL repository type
+        id: set-spctl-repo
+        run: |
+          TARGET="${{ inputs.target }}"
+          if [ "$TARGET" == "develop" ] || [ "$TARGET" == "stage" ]; then
+            echo "type=private" >> $GITHUB_OUTPUT
+          else
+            echo "type=public" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download and install SPCTL
+        uses: Super-Protocol/sp-build-tools/actions/download-spctl@v1
+        with:
+          version: latest
+          repository: ${{ steps.set-spctl-repo.outputs.type }}
+          gh_token: ${{ secrets.GHFG_TOKEN_SPCTL_RELEASES_DOWNLOAD }}
+
+      - name: Prepare SPCTL config
+        uses: actions/github-script@v7
+        env:
+          SECRET_DEVELOP: ${{ secrets.DEVELOP_SPCTL_CONFIG_BASE64 }}
+          SECRET_STAGE: ${{ secrets.STAGING_SPCTL_CONFIG_BASE64 }}
+          SECRET_TESTNET: ${{ secrets.TESTNET_SPCTL_CONFIG_BASE64 }}
+          SECRET_MAINNET: ${{ secrets.MAINNET_SPCTL_CONFIG_BASE64 }}
+        with:
+          script: |
+            const fs = require('fs');
+            const secretEnvMap = {
+              develop: process.env.SECRET_DEVELOP,
+              stage: process.env.SECRET_STAGE,
+              testnet: process.env.SECRET_TESTNET,
+              mainnet: process.env.SECRET_MAINNET
+            };
+            const targetEnv = context.payload.inputs.target;
+            const encodedConfig = secretEnvMap[targetEnv];
+            if (!encodedConfig) {
+              core.setFailed(`Secret for target environment '${targetEnv}' is not set or is empty. Check Actions Secrets.`);
+              return;
+            }
+            const decodedConfig = Buffer.from(encodedConfig, 'base64').toString('utf8');
+            fs.writeFileSync('./config.json', decodedConfig);
+            core.info('SPCTL config file created successfully.');
+
+      - name: Verify SPCTL installation
+        run: ./spctl --version
+
+      - name: Update offer configuration
+        uses: Super-Protocol/sp-build-tools/actions/update-argocd@feature/SP-6620
+        with:
+          offer_id: ${{ steps.prepare.outputs.offer_id }}
+          configuration_file_path: ${{ steps.process_config.outputs.processed_config_path }}
