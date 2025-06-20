@@ -155,7 +155,7 @@ jobs:
         run: ./spctl --version
 
       - name: Update offer configuration
-        uses: Super-Protocol/sp-build-tools/actions/update-argocd@feature/SP-6620
+        uses: Super-Protocol/sp-build-tools/actions/update-offer@feature/SP-6620
         with:
           offer_id: ${{ steps.prepare.outputs.offer_id }}
           configuration_file_path: ${{ steps.process_config.outputs.processed_config_path }}
