@@ -81,6 +81,7 @@ jobs:
             if (placeholders.length === 0) {
               core.info('No variables to substitute.');
               core.setOutput('processed_config_path', configFilePath);
+              core.setOutput('substituted_variables', '[]');
               return;
             }
 
@@ -99,6 +100,12 @@ jobs:
             }
 
             core.info(`Substituting variables: ${uniqueVarNames.join(', ')}`);
+
+            const substitutedData = uniqueVarNames.map(varName => ({
+              name: `$VAR_${varName}`,
+              value: allVars[varName]
+            }));
+            core.setOutput('substituted_variables', JSON.stringify(substitutedData));
             content = content.replace(placeholderRegex, (match, varName) => {
               return allVars[varName];
             });
@@ -159,3 +166,39 @@ jobs:
         with:
           offer_id: ${{ steps.prepare.outputs.offer_id }}
           configuration_file_path: ${{ steps.process_config.outputs.processed_config_path }}
+
+      - name: Generate Job Summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const solution = '${{ inputs.solution }}';
+            const target = '${{ inputs.target }}';
+            const offerId = '${{ steps.prepare.outputs.offer_id }}';
+            const configFile = '${{ steps.prepare.outputs.config_file_path }}';
+            const substitutedJSON = '${{ steps.process_config.outputs.substituted_variables || '[]' }}';
+            const substitutedVars = JSON.parse(substitutedJSON);
+
+            await core.summary
+              .addHeading('Engine Configuration Update Summary', 2)
+              .addRaw(`The workflow has processed a configuration update for **${solution}**.`)
+              .addTable([
+                [ {data: 'Parameter', header: true}, {data: 'Value', header: true} ],
+                [ 'Environment (Target)', `\`${target}\`` ],
+                [ 'Offer ID', `\`${offerId}\`` ],
+                [ 'Source Configuration', `\`${configFile}\`` ]
+              ])
+              .addHeading('Variable Substitutions', 3)
+              .write();
+
+            if (substitutedVars.length > 0) {
+              const tableData = [
+                [ {data: 'Variable Name', header: true}, {data: 'Substituted Value', header: true} ]
+              ];
+              for (const v of substitutedVars) {
+                tableData.push([`\`${v.name}\``, `\`${v.value}\``]);
+              }
+              await core.summary.addTable(tableData).write();
+            } else {
+              await core.summary.addRaw('No variables were substituted in the configuration file.').write();
+            }
