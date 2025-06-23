@@ -163,7 +163,7 @@ jobs:
 
       - name: Update offer configuration
         shell: bash
-        run: ./spctl offers update value ${{ inputs.offer_id }} --configuration ${{ steps.process_config.outputs.processed_config_path  }}
+        run: ./spctl offers update value ${{ steps.prepare.outputs.offer_id }} --configuration ${{ steps.process_config.outputs.processed_config_path  }}
 
       - name: Generate Job Summary
         if: always()
