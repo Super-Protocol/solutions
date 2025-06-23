@@ -18,3 +18,9 @@ test-*.pem
 test-*.crt
 .env
 error.log
+
+# TypeScript build artifacts
+src/*.js
+src/*.js.map
+dist/
+node_modules/
