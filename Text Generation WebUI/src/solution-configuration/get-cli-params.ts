@@ -28,6 +28,7 @@ export const getCliParams = async (params: {
     )),
     ...(await setupModelConfiguration(configuration.model, engineFolder, inputDataFolder, logger)),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
+    ...setupExtensionsConfiguration(configuration.extensions, logger),
   ];
 };
 
@@ -136,4 +137,24 @@ export const setupModelLoaderConfiguration = (
   });
 
   return cliParams;
+};
+
+export const setupExtensionsConfiguration = (
+  extensionsSettings: EngineConfiguration['extensions'],
+  logger: Logger,
+): string => {
+  const extensions: string[] = [];
+
+  for (const [key, value] of Object.entries(extensionsSettings)) {
+    if (value) {
+      logger.info(`Extension ${key} is enabled`);
+      extensions.push(key);
+    }
+  }
+
+  if (extensions.length) {
+    return `--extensions ${extensions.join(' ')}`;
+  }
+
+  return '';
 };

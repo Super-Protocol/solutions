@@ -24,6 +24,9 @@ export type EngineConfiguration = {
     parameters: RawParameters;
     parameters2: RawParameters;
   };
+  extensions: {
+    send_pictures: boolean;
+  };
   model_loader: {
     loader_name: string;
     transformers_options1: RawParameters;

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
-import { setupModelLoaderConfiguration } from './get-cli-params';
+import { setupModelLoaderConfiguration, setupExtensionsConfiguration } from './get-cli-params';
 
 const mockLogger = {
   info: mock.fn(),
@@ -388,5 +388,35 @@ describe('setupModelLoaderConfiguration', () => {
     const actualResult = setupModelLoaderConfiguration(modelLoaderConfiguration as any, mockLogger);
 
     assert.deepStrictEqual(actualResult, expectedResult);
+  });
+});
+
+describe('setupExtensionsConfiguration', () => {
+  it('returns correct CLI string when extensions are enabled', () => {
+    const extensionsSettings = {
+      openai: true,
+      superboogav2: true,
+      whisper_stt: false,
+      character_bias: true,
+      gallery: false,
+    };
+
+    const expectedResult = '--extensions openai superboogav2 character_bias';
+    const actualResult = setupExtensionsConfiguration(extensionsSettings as any, mockLogger);
+
+    assert.strictEqual(actualResult, expectedResult);
+  });
+
+  it('returns empty string when no extensions are enabled', () => {
+    const extensionsSettings = {
+      openai: false,
+      superboogav2: false,
+      whisper_stt: false,
+    };
+
+    const expectedResult = '';
+    const actualResult = setupExtensionsConfiguration(extensionsSettings as any, mockLogger);
+
+    assert.strictEqual(actualResult, expectedResult);
   });
 });
