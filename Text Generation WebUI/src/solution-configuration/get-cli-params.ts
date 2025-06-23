@@ -64,6 +64,11 @@ const setupBaseConfiguration = async (
   logger.info(`Character ${character} configured successfully`);
   cliParams.push('--character', character);
 
+  const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
+  if (extensionsCliParams) {
+    cliParams.push(`--extensions`, ...extensionsCliParams);
+  }
+
   return cliParams;
 };
 
@@ -134,6 +139,21 @@ export const setupModelLoaderConfiguration = (
       cliParams.push(String(loaderConfiguration[key]));
     }
   });
-
   return cliParams;
+};
+
+export const setupExtensionsConfiguration = (
+  extensionsSettings: EngineConfiguration['main_settings']['extensions'],
+  logger: Logger,
+): string[] => {
+  const extensions: string[] = [];
+
+  for (const [key, value] of Object.entries(extensionsSettings)) {
+    if (value) {
+      logger.info(`Extension ${key} is enabled`);
+      extensions.push(key);
+    }
+  }
+
+  return extensions;
 };

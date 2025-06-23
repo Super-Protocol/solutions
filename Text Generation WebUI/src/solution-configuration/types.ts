@@ -17,6 +17,9 @@ export type EngineConfiguration = {
     mode: {
       multi_user: boolean;
     };
+    extensions: {
+      send_pictures: boolean;
+    };
   };
   model: {
     model_name?: string;
