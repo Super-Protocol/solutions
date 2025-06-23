@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env*
+test-*.pem
+test-*.crt
+*.log
+.vscode
+.idea
