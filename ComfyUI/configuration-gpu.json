@@ -387,15 +387,6 @@
           "id": "000001",
           "pipelineType": "Mask Generation"
         }
-      },
-      {
-        "languages": [],
-        "libraries": ["Adapters", "PyTorch"],
-        "license": "unknown",
-        "task": {
-          "id": "000001",
-          "pipelineType": "Image-Text-to-Text"
-        }
       }
     ],
     "datasets": []
