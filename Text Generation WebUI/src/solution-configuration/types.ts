@@ -17,15 +17,15 @@ export type EngineConfiguration = {
     mode: {
       multi_user: boolean;
     };
+    extensions: {
+      send_pictures: boolean;
+    };
   };
   model: {
     model_name?: string;
     chat_buttons?: boolean;
     parameters: RawParameters;
     parameters2: RawParameters;
-  };
-  extensions: {
-    send_pictures: boolean;
   };
   model_loader: {
     loader_name: string;

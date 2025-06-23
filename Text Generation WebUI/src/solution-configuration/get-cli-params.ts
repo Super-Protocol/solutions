@@ -28,7 +28,6 @@ export const getCliParams = async (params: {
     )),
     ...(await setupModelConfiguration(configuration.model, engineFolder, inputDataFolder, logger)),
     ...setupModelLoaderConfiguration(configuration.model_loader, logger),
-    ...setupExtensionsConfiguration(configuration.extensions, logger),
   ];
 };
 
@@ -64,6 +63,11 @@ const setupBaseConfiguration = async (
   const character = await setupCharacter(baseSettings.character, engineFolder);
   logger.info(`Character ${character} configured successfully`);
   cliParams.push('--character', character);
+
+  const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
+  if (extensionsCliParams) {
+    cliParams.push(`--extensions`, ...extensionsCliParams);
+  }
 
   return cliParams;
 };
@@ -135,14 +139,13 @@ export const setupModelLoaderConfiguration = (
       cliParams.push(String(loaderConfiguration[key]));
     }
   });
-
   return cliParams;
 };
 
 export const setupExtensionsConfiguration = (
-  extensionsSettings: EngineConfiguration['extensions'],
+  extensionsSettings: EngineConfiguration['main_settings']['extensions'],
   logger: Logger,
-): string => {
+): string[] => {
   const extensions: string[] = [];
 
   for (const [key, value] of Object.entries(extensionsSettings)) {
@@ -152,9 +155,5 @@ export const setupExtensionsConfiguration = (
     }
   }
 
-  if (extensions.length) {
-    return `--extensions ${extensions.join(' ')}`;
-  }
-
-  return '';
+  return extensions;
 };
