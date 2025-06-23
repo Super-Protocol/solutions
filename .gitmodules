@@ -5,3 +5,9 @@
 [submodule "ComfyUI/ComfyUI"]
 	path = ComfyUI/ComfyUI
 	url = https://github.com/comfyanonymous/ComfyUI
+[submodule "Dia-TTS-Server/dia-tts-server"]
+	path = Dia-TTS-Server/dia-tts-server
+	url = https://github.com/devnen/Dia-TTS-Server.git
+[submodule "Dia-TTS-Server"]
+	path = Dia-TTS-Server
+	url = https://github.com/devnen/Dia-TTS-Server.git
