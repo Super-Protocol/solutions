@@ -154,6 +154,20 @@
                   "description": "Multi-user mode. Chat histories are not saved or automatically loaded."
                 }
               ]
+            },
+            {
+              "type": 2,
+              "name": "Extensions",
+              "variable": "extensions",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "Send pictures",
+                  "variable": "send_pictures",
+                  "description": "Creates an image upload field that can be used to send images to the bot in chat mode. Captions are automatically generated using BLIP."
+                }
+              ]
             }
           ]
         },
