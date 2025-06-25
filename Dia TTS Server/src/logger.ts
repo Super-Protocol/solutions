@@ -1,13 +1,9 @@
 import pino from 'pino';
+import { config } from './config';
 
-export const rootLogger = pino({
-  level: process.env.LOG_LEVEL || 'info',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      translateTime: 'HH:MM:ss Z',
-      ignore: 'pid,hostname',
-    },
-  },
+const pinoConfig = { level: config.logLevel };
+
+export const rootLogger = pino(pinoConfig).child({
+  app: config.appName,
+  version: config.appVersion,
 });
