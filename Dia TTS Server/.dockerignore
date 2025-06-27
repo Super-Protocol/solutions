@@ -3,7 +3,7 @@ dist
 .git
 .gitignore
 *.md
-.env*
+!.env.example
 test-*.pem
 test-*.crt
 *.log

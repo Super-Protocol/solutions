@@ -42,7 +42,8 @@ WORKDIR /opt/app
 
 # Копируем и собираем Node.js приложение
 COPY src src
-COPY env .env
+COPY .env.example .env
+COPY config.json ./
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 RUN --mount=type=cache,target=/root/.npm \
   npm ci && \
