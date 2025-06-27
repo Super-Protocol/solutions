@@ -1,0 +1,30 @@
+# requirements.txt
+
+# Core Web Framework
+fastapi
+uvicorn[standard]
+
+# Machine Learning & Audio
+torch
+torchaudio
+numpy
+soundfile # Requires libsndfile system library (e.g., sudo apt-get install libsndfile1 on Debian/Ubuntu)
+huggingface_hub
+descript-audio-codec
+safetensors
+openai-whisper
+
+# Configuration & Utilities
+pydantic
+python-dotenv # Used ONLY for initial config seeding if config.yaml missing
+Jinja2
+python-multipart # For file uploads
+requests # For health checks or other potential uses
+PyYAML # For parsing presets.yaml AND primary config.yaml
+tqdm
+
+# Audio Post-processing
+pydub
+praat-parselmouth # For unvoiced segment removal
+librosa # for changes to sampling
+hf-transfer

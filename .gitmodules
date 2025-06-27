@@ -6,6 +6,6 @@
 	path = ComfyUI/ComfyUI
 	url = https://github.com/comfyanonymous/ComfyUI
 
-[submodule "Dia TTS Server/Dia_tts"]
-	path = Dia TTS Server/Dia_tts
+[submodule "Dia TTS Server/dia-tts-server"]
+	path = Dia TTS Server/dia-tts-server
 	url = https://github.com/devnen/Dia-TTS-Server.git
