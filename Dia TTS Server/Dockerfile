@@ -33,10 +33,6 @@ ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN node -v && npm -v
 
-ADD https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-RUN dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
-  rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-
 # Переменные окружения для Super Protocol
 ENV LOG_LEVEL=info
 ENV INPUT_DATA_FOLDER=/sp/inputs
@@ -46,6 +42,7 @@ WORKDIR /opt/app
 
 # Копируем и собираем Node.js приложение
 COPY src src
+COPY env .env
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 RUN --mount=type=cache,target=/root/.npm \
   npm ci && \
@@ -82,9 +79,6 @@ WORKDIR /opt/app
 
 # Создаем необходимые директории
 RUN mkdir -p /sp/inputs /sp/outputs /sp/secrets
-
-# Открываем порт
-EXPOSE 8443
 
 # Запускаем приложение
 ENTRYPOINT ["node", "dist/index.js"]
