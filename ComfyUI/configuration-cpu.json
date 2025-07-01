@@ -256,7 +256,7 @@
                   "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "tunnels.domain_settings.provision_type",
                 "value": {
                   "stringValue": "Temporary Domain (on *.superprotocol.io)"
