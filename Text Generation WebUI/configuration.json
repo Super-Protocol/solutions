@@ -170,7 +170,7 @@
                     {
                       "boolValue": true,
                       "condition": {
-                        "variable": "{{global.model.configuration.task.pipelineType}}",
+                        "variable": "{{global.model.task.pipelineType}}",
                         "value": {
                           "stringValue": "Image-Text-to-Text"
                         }
