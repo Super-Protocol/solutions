@@ -1,0 +1,11 @@
+services:
+
+  dia-tts-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    volumes:
+      - ./certs:/sp/certs
+      - ./tunnel-client-certs:/sp/inputs/input-0001
+      - ./dia-tts-server/model_cache:/opt/app/dia-tts-server/model_cache
