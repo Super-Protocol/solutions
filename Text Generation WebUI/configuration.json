@@ -168,7 +168,13 @@
                   "description": "Creates an image upload field that can be used to send images to the bot in chat mode. Captions are automatically generated using BLIP.",
                   "defaultValue": [
                     {
-                      "boolValue": true
+                      "boolValue": true,
+                      "condition": {
+                        "variable": "{{global.model.task.pipelineType}}",
+                        "value": {
+                          "stringValue": "Image-Text-to-Text"
+                        }
+                      }
                     }
                   ]
                 }
@@ -424,7 +430,7 @@
                   }
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "Transformers"
@@ -482,7 +488,7 @@
                   "name": "use_double_quant",
                   "variable": "use_double_quant",
                   "description": "",
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.transformers_options2.load-in-4bit",
                     "value": {
                       "boolValue": true
@@ -507,7 +513,7 @@
                       "stringValue": "nf4"
                     }
                   ],
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.transformers_options2.load-in-4bit",
                     "value": {
                       "boolValue": true
@@ -525,7 +531,7 @@
                       "doubleValue": 1
                     }
                   ],
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.transformers_options2.load-in-4bit",
                     "value": {
                       "boolValue": true
@@ -557,7 +563,7 @@
                   "description": "Set use_flash_attention_2=True while loading the model."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "Transformers"
@@ -625,7 +631,7 @@
                   "description": "Disable ExLlamav2 kernel."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "Transformers"
@@ -657,7 +663,7 @@
                   }
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -729,7 +735,7 @@
                   }
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -789,7 +795,7 @@
                   "description": "Use flash-attention."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -819,7 +825,7 @@
                   "description": "Use Q4 cache to save VRAM."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -847,7 +853,7 @@
                       "uint64Value": 5
                     }
                   ],
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.llamacpp_llamacpp_hf_options5.streaming-llm",
                     "value": {
                       "boolValue": true
@@ -861,7 +867,7 @@
                   "description": "Use the CPU to generate text. Warning: Training on CPU is extremely slow."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -891,7 +897,7 @@
                   "description": "Disable the mulmat kernels."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -921,7 +927,7 @@
                   "description": "Activate NUMA task allocation for llama.cpp."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^llama.*"
               }
@@ -951,7 +957,7 @@
                   "description": "Needs to be set for perplexity evaluation to work. Otherwise, ignore it, as it makes prompt processing slower."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "llamacpp_HF"
@@ -971,7 +977,7 @@
                   "description": "Comma-separated list of VRAM (in GB) to use per GPU device for model layers. Example: 20,7,7."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^ExLlamav2.*"
               }
@@ -1005,7 +1011,7 @@
                       "doubleValue": 1
                     }
                   ],
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.transformers_options2.load-in-4bit",
                     "value": {
                       "boolValue": true
@@ -1037,7 +1043,7 @@
                   "description": "Use Q4 cache to save VRAM."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^ExLlamav2.*"
               }
@@ -1085,7 +1091,7 @@
                   ]
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "matchRegexp": "^ExLlamav2.*"
               }
@@ -1115,7 +1121,7 @@
                   "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "ExLlamav2_HF"
@@ -1147,7 +1153,7 @@
                   }
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "AutoGPTQ"
@@ -1221,7 +1227,7 @@
                   "description": "Use the CPU to generate text. Warning: Training on CPU is extremely slow."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "AutoGPTQ"
@@ -1245,7 +1251,7 @@
                   "name": "no_inject_fused_mlp",
                   "variable": "no_inject_fused_mlp",
                   "description": "disable the use of fused MLP, which will use less VRAM at the cost of slower inference",
-                  "useCondition": {
+                  "condition": {
                     "variable": "engine.model_loader.autogptq_options3.triton",
                     "value": {
                       "boolValue": true
@@ -1265,7 +1271,7 @@
                   "description": "For models that do not have a quantize_config.json, this parameter is used to define whether to set desc_act or not in BaseQuantizeConfig."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "AutoGPTQ"
@@ -1297,7 +1303,7 @@
                   "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "AutoGPTQ"
@@ -1323,7 +1329,7 @@
                   "description": "Disable ExLlamav2 kernel."
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "AutoGPTQ"
@@ -1359,7 +1365,7 @@
                   ]
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "engine.model_loader.loader_name",
                 "value": {
                   "stringValue": "HQQ"
@@ -1413,7 +1419,7 @@
                   "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
                 }
               ],
-              "useCondition": {
+              "condition": {
                 "variable": "tunnels.domain_settings.provision_type",
                 "value": {
                   "stringValue": "Temporary Domain (on *.superprotocol.io)"
