@@ -9,12 +9,11 @@ services:
       - ./certs:/sp/certs
       - ./tunnel-client-certs:/sp/inputs/input-0002
       # Mount model folder (create local model folder with model files)
-      - ./model:/sp/inputs/input-0001
+      # - ./model:/sp/inputs/input-0001
       # Mount standard model_cache and create separate model folder
-      - ./dia-tts-server/model_cache:/opt/app/dia-tts-server/model_cache
+      - ./dia-tts-server/model_cache:/sp/inputs/input-0001
     environment:
       # Standard settings
-      - DIA_MODEL_CACHE_PATH=/opt/app/dia-tts-server/model_cache
       - DIA_MODEL_REPO_ID=ttj/dia-1.6b-safetensors
       - DIA_MODEL_CONFIG_FILENAME=config.json
       - DIA_MODEL_WEIGHTS_FILENAME=dia-v0_1_bf16.safetensors

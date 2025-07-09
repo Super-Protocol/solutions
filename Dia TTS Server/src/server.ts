@@ -41,6 +41,7 @@ const run = async (): Promise<void> => {
     cwd: serverConfig.diaServerPath,
     env: {
       ...process.env,
+      DIA_MODEL_CACHE_PATH: '/sp/inputs/input-0001'
     },
   });
 };
