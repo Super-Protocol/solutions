@@ -8,8 +8,6 @@ services:
     volumes:
       - ./certs:/sp/certs
       - ./tunnel-client-certs:/sp/inputs/input-0002
-      # Mount model folder (create local model folder with model files)
-      # - ./model:/sp/inputs/input-0001
       # Mount standard model_cache and create separate model folder
       - ./dia-tts-server/model_cache:/sp/inputs/input-0001
     environment:
@@ -17,16 +15,3 @@ services:
       - DIA_MODEL_REPO_ID=ttj/dia-1.6b-safetensors
       - DIA_MODEL_CONFIG_FILENAME=config.json
       - DIA_MODEL_WEIGHTS_FILENAME=dia-v0_1_bf16.safetensors
-    command: >
-      sh -c "
-        echo 'Copying model from /sp/inputs/input-0001 to cache...' &&
-        mkdir -p /opt/app/dia-tts-server/model_cache/models--ttj--dia-1.6b-safetensors/snapshots/local &&
-        if [ -d '/sp/inputs/input-0001' ] && [ '$(ls -A /sp/inputs/input-0001 2>/dev/null)' ]; then
-          cp -r /sp/inputs/input-0001/* /opt/app/dia-tts-server/model_cache/models--ttj--dia-1.6b-safetensors/snapshots/local/ &&
-          echo 'local' > /opt/app/dia-tts-server/model_cache/models--ttj--dia-1.6b-safetensors/refs/main &&
-          echo 'Model copied successfully';
-        else
-          echo 'Model not found in /sp/inputs/input-0001, will download from HF';
-        fi &&
-        exec node dist/index.js
-      "
