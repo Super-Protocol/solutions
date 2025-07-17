@@ -1,0 +1,14 @@
+certs/*
+tunnel-client-certs/*
+# TypeScript build artifacts
+src/*.js
+src/*.js.map
+dist/
+node_modules/
+
+# Open WebUI data directory (contains user data, databases, uploads)
+open-webui-data/
+
+# Build artifacts
+dist/
+node_modules/

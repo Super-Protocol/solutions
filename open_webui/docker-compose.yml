@@ -1,0 +1,26 @@
+services:
+
+  open-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    volumes:
+      - ./certs:/sp/certs
+      - ./tunnel-client-certs:/sp/inputs/input-0002
+      # Mount Open WebUI data directory
+      - ./open-webui-data:/opt/app/data
+    environment:
+      # Open WebUI specific settings
+      - WEBUI_AUTH=False
+      - ENABLE_LOGIN_FORM=false
+      - ENABLE_SIGNUP=false
+      - USE_OLLAMA_DOCKER=true
+      - OLLAMA_BASE_URL=http://localhost:11434
+      - DATA_DIR=/opt/app/data
+      - HTTPS_PORT=9000
+      # Tunnel client configuration
+      - BLOCKCHAIN_URL=https://testnet.superprotocol.com
+      - BLOCKCHAIN_CONTRACT_ADDRESS=0x1234567890abcdef1234567890abcdef12345678
+      - TLS_KEY=dummy_key
+      - TLS_CERT=dummy_cert
