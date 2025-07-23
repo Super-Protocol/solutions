@@ -65,7 +65,7 @@ const setupBaseConfiguration = async (
   cliParams.push('--character', character);
 
   const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
-  if (extensionsCliParams) {
+  if (extensionsCliParams.length) {
     cliParams.push(`--extensions`, ...extensionsCliParams);
   }
 
