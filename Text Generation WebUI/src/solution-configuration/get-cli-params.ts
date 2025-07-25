@@ -57,12 +57,17 @@ const setupBaseConfiguration = async (
     }
   } else {
     logger.info('Run in UI-server mode');
-    cliParams.push('--listen-port', String(serverPort));
+    cliParams.push('--listen', '--listen-port', String(serverPort));
   }
 
   const character = await setupCharacter(baseSettings.character, engineFolder);
   logger.info(`Character ${character} configured successfully`);
   cliParams.push('--character', character);
+
+  const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
+  if (extensionsCliParams.length) {
+    cliParams.push(`--extensions`, ...extensionsCliParams);
+  }
 
   return cliParams;
 };
@@ -98,7 +103,7 @@ const setupModelConfiguration = async (
     .map((key) => `${key}: ${parameters[key]}`)
     .join('\n');
 
-  await fs.promises.writeFile(`${engineFolder}/presets/min_p.yaml`, parametersString);
+  await fs.promises.writeFile(`${engineFolder}/user_data/presets/min_p.yaml`, parametersString);
 
   return cliParams;
 };
@@ -134,6 +139,21 @@ export const setupModelLoaderConfiguration = (
       cliParams.push(String(loaderConfiguration[key]));
     }
   });
-
   return cliParams;
+};
+
+export const setupExtensionsConfiguration = (
+  extensionsSettings: EngineConfiguration['main_settings']['extensions'],
+  logger: Logger,
+): string[] => {
+  const extensions: string[] = [];
+
+  for (const [key, value] of Object.entries(extensionsSettings)) {
+    if (value) {
+      logger.info(`Extension ${key} is enabled`);
+      extensions.push(key);
+    }
+  }
+
+  return extensions;
 };
