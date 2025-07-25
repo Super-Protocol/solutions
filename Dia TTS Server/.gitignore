@@ -1,0 +1,28 @@
+# Исключаем тяжелые файлы из dia-tts-server
+dia-tts-server/model_cache/
+dia-tts-server/outputs/
+dia-tts-server/reference_audio/
+dia-tts-server/voices/
+dia-tts-server/__pycache__/
+dia-tts-server/*.pth
+dia-tts-server/*.pt
+dia-tts-server/*.bin
+dia-tts-server/*.safetensors
+dia-tts-server/venv/
+certs/*
+tunnel-client-certs/*
+# Большие бинарники
+spctl
+model/
+
+# Локальные тесты
+test-*.pem
+test-*.crt
+.env
+error.log
+
+# TypeScript build artifacts
+src/*.js
+src/*.js.map
+dist/
+node_modules/
