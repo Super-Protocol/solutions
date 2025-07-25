@@ -23,9 +23,9 @@
     "@types/node": "^22.7.9"
   },
   "dependencies": {
-    "@super-protocol/sdk-js": "^3.11.5",
+    "@super-protocol/sdk-js": "^3.13.3",
     "@super-protocol/solution-utils": "1.5.2",
-    "@super-protocol/tunnels-lib": "^1.0.9",
+    "@super-protocol/tunnels-lib": "^1.1.1",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"
   }
