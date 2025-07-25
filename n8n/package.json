@@ -1,6 +1,6 @@
 {
   "name": "sp-n8n",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Super Protocol integration for n8n (https://github.com/n8n-io/n8n)",
   "main": "dist/index.js",
   "scripts": {
@@ -12,9 +12,9 @@
     "@types/node": "^22.14.1"
   },
   "dependencies": {
-    "@super-protocol/sdk-js": "3.13.3",
+    "@super-protocol/sdk-js": "3.13.5",
     "@super-protocol/solution-utils": "^1.5.2",
-    "@super-protocol/tunnels-lib": "^1.1.1",
+    "@super-protocol/tunnels-lib": "^1.1.2",
     "dotenv": "^16.5.0",
     "n8n": "^1.88.0",
     "sqlite3": "^5.1.7"
