@@ -1,6 +1,6 @@
 {
   "name": "sp-text-generation-webui",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Super Protocol integration for Text Generation Webui (https://github.com/oobabooga/text-generation-webui)",
   "main": "dist/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   "dependencies": {
     "@super-protocol/sdk-js": "^3.13.5",
     "@super-protocol/solution-utils": "1.5.2",
-    "@super-protocol/tunnels-lib": "1.1.2",
+    "@super-protocol/tunnels-lib": "1.1.3",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0"
   }
