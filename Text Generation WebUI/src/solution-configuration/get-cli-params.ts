@@ -46,7 +46,7 @@ const setupBaseConfiguration = async (
 
   if (baseSettings.api?.api_mode) {
     logger.info('Run in API-server mode');
-    cliParams.push('--api', '--api-port', String(serverPort));
+    cliParams.push('--api', '--api-port', String(serverPort), '--listen', '--listen-port', '8888');
 
     if (baseSettings.api?.api_key) {
       cliParams.push('--api-key', baseSettings.api?.api_key);
