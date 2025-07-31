@@ -1,6 +1,6 @@
 {
   "name": "provider-provisioner",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
@@ -22,6 +22,6 @@
     "cron": "3.1.6",
     "dotenv": "16.4.5",
     "pino": "8.19.0",
-    "spctl": "https://github.com/Super-Protocol/ctl/releases/download/v0.11.8/super-protocol-ctl-0.11.8.tgz"
+    "spctl": "https://github.com/Super-Protocol/ctl/releases/download/v0.12.1/super-protocol-ctl-0.12.1.tgz"
   }
 }
