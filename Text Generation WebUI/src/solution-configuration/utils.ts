@@ -30,7 +30,7 @@ context: |-
   ${contextPlaceholder}
   `;
   const characterName = normalizeData(character.name);
-  const characterFileName = characterName.replace(/\s/g, '');
+  const characterFileName = character.name;
 
   const characterFile = template
     .replace(namePlaceholder, characterName)
@@ -42,5 +42,23 @@ context: |-
     characterFile,
   );
 
+  await addCharacterToUserSettings(character, engineFolder);
+
   return characterFileName;
+};
+
+const addCharacterToUserSettings = async (
+  character: EngineConfiguration['main_settings']['character'],
+  engineFolder: string,
+): Promise<void> => {
+  let settingsFileData = await fs.promises
+    .readFile(`${engineFolder}/user_data/settings.yaml`, 'utf-8')
+    .catch(() => '');
+
+  settingsFileData += `\ncharacter: ${character.name}`;
+  settingsFileData += `\nname2: ${character.name}`;
+  settingsFileData += `\ncontext: ${character.context}`;
+  settingsFileData += `\ngreeting: ${character.greeting}`;
+
+  await fs.promises.writeFile(`${engineFolder}/user_data/settings.yaml`, settingsFileData);
 };

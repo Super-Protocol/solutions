@@ -62,7 +62,6 @@ const setupBaseConfiguration = async (
 
   const character = await setupCharacter(baseSettings.character, engineFolder);
   logger.info(`Character ${character} configured successfully`);
-  cliParams.push('--character', character);
 
   const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
   if (extensionsCliParams.length) {
