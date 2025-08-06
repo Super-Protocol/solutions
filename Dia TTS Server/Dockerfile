@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Install Node.js 20 from official repository
 RUN apt-get update && apt-get install -y curl \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs git git-lfs build-essential libgl1-mesa-glx libsndfile1 ffmpeg \
+    && apt-get install -y nodejs libgl1-mesa-glx libsndfile1 ffmpeg \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/app
