@@ -1,0 +1,27 @@
+{
+  "name": "sp-dia-tts-server",
+  "version": "0.1.1",
+  "description": "Super Protocol integration for Dia-TTS-Server (https://github.com/devnen/Dia-TTS-Server)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Super-Protocol/solutions.git"
+  },
+  "author": "SuperProtocol",
+  "license": "BSL",
+  "dependencies": {
+    "@super-protocol/sdk-js": "^3.13.6",
+    "@super-protocol/solution-utils": "1.5.2",
+    "@super-protocol/tunnels-lib": "1.1.2",
+    "dotenv": "^16.4.5",
+    "pino": "^7.11.0",
+    "pino-pretty": "^13.0.0"
+  },
+  "devDependencies": {
+    "@super-protocol/eslint-config-typescript": "^2.0.1",
+    "@types/node": "^20.16.6"
+  }
+}
