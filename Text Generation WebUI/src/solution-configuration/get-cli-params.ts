@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
-import { setupCharacter } from './utils';
+import { setupCharacter, updateUserSettings } from './utils';
 import { ModelDetector } from './model-detector';
 
 export const getCliParams = async (params: {
@@ -103,6 +103,8 @@ const setupModelConfiguration = async (
     .join('\n');
 
   await fs.promises.writeFile(`${engineFolder}/user_data/presets/min_p.yaml`, parametersString);
+
+  await updateUserSettings({ ...parameters, preset: 'min_p' }, engineFolder);
 
   return cliParams;
 };

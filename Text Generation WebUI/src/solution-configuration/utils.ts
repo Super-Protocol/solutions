@@ -42,23 +42,29 @@ context: |-
     characterFile,
   );
 
-  await addCharacterToUserSettings(character, engineFolder);
+  const characterUserSettings = {
+    character: character.name,
+    name2: character.name,
+    context: character.context,
+    greeting: character.greeting,
+  };
+
+  await updateUserSettings(characterUserSettings, engineFolder);
 
   return characterFileName;
 };
 
-const addCharacterToUserSettings = async (
-  character: EngineConfiguration['main_settings']['character'],
+export const updateUserSettings = async (
+  params: Record<string, string>,
   engineFolder: string,
 ): Promise<void> => {
   let settingsFileData = await fs.promises
     .readFile(`${engineFolder}/user_data/settings.yaml`, 'utf-8')
     .catch(() => '');
 
-  settingsFileData += `\ncharacter: ${character.name}`;
-  settingsFileData += `\nname2: ${character.name}`;
-  settingsFileData += `\ncontext: ${character.context}`;
-  settingsFileData += `\ngreeting: ${character.greeting}`;
+  for (const [key, value] of Object.entries(params)) {
+    settingsFileData += `\n${key}: ${value}`;
+  }
 
   await fs.promises.writeFile(`${engineFolder}/user_data/settings.yaml`, settingsFileData);
 };

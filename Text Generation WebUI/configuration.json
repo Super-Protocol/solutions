@@ -277,6 +277,24 @@
                   "maxValue": {
                     "doubleValue": 1
                   }
+                },
+                {
+                  "type": 10,
+                  "name": "max_new_tokens",
+                  "variable": "max_new_tokens",
+                  "description": "⚠️ Setting this too high can cause prompt truncation.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 128
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 1
+                  },
+                  "maxValue": {
+                    "uint32Value": 4096
+                  }
                 }
               ]
             },
@@ -357,6 +375,13 @@
                   "maxValue": {
                     "doubleValue": 2
                   }
+                },
+                {
+                  "type": 6,
+                  "name": "auto_max_new_tokens",
+                  "variable": "auto_max_new_tokens",
+                  "description": "Expand max_new_tokens to the available context length.",
+                  "valueType": 13
                 }
               ]
             }
