@@ -51,7 +51,10 @@
       },
       {
         "languages": [],
-        "libraries": ["Adapters", "PyTorch"],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
         "license": "unknown",
         "task": {
           "id": "000001",
@@ -277,6 +280,36 @@
                   "maxValue": {
                     "doubleValue": 1
                   }
+                },
+                {
+                  "type": 10,
+                  "name": "max_new_tokens",
+                  "variable": "max_new_tokens",
+                  "description": "⚠️ Setting this too high can cause prompt truncation.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 128
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 1
+                  },
+                  "maxValue": {
+                    "uint32Value": 4096
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "Truncate the prompt up to this length (Transformers only)",
+                  "variable": "truncation_length",
+                  "description": "The leftmost tokens are removed if the prompt exceeds this length.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 1024
+                    }
+                  ]
                 }
               ]
             },
@@ -357,6 +390,13 @@
                   "maxValue": {
                     "doubleValue": 2
                   }
+                },
+                {
+                  "type": 6,
+                  "name": "auto_max_new_tokens",
+                  "variable": "auto_max_new_tokens",
+                  "description": "Expand max_new_tokens to the available context length.",
+                  "valueType": 13
                 }
               ]
             }

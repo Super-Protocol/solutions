@@ -20,16 +20,11 @@ COPY --from=builder /home/node/app/text-generation-webui ./text-generation-webui
 
 ENV GPU_CHOICE=$GPU_CHOICE
 
-RUN apt update && apt install -y git &&\
+RUN apt update && apt install -y git gfortran libopenblas-dev liblapack-dev pkg-config &&\
     git config --global --add safe.directory /home/node/app/text-generation-webui &&\
     chmod +x ./text-generation-webui/start_linux.sh &&\
-    find ./text-generation-webui -maxdepth 1 -type f -name "requirements*" -exec sed -i 's/transformers==/transformers[torch,flax,timm,sentencepiece,onnx,ftfy,tokenizers]==/g' {} \; &&\
-    find ./text-generation-webui -maxdepth 1 -type f -name "requirements*" -exec sh -c 'echo "\nsacremoses\noptimum\nauto-gptq\nautoawq\nbitsandbytes" >> {}' \; &&\
     USE_CUDA118=FALSE LAUNCH_AFTER_INSTALL=FALSE INSTALL_EXTENSIONS=FALSE ./text-generation-webui/start_linux.sh &&\
-    apt remove git -y &&\
-    wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
-    dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb &&\
-    rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+    apt remove git gfortran libopenblas-dev liblapack-dev pkg-config -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/node_modules ./node_modules

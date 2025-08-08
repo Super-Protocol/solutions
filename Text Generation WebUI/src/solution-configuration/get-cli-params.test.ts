@@ -401,10 +401,10 @@ describe('setupExtensionsConfiguration', () => {
       gallery: false,
     };
 
-    const expectedResult = '--extensions openai superboogav2 character_bias';
+    const expectedResult = ['openai', 'superboogav2', 'character_bias'];
     const actualResult = setupExtensionsConfiguration(extensionsSettings as any, mockLogger);
 
-    assert.strictEqual(actualResult, expectedResult);
+    assert.deepStrictEqual(actualResult, expectedResult);
   });
 
   it('returns empty string when no extensions are enabled', () => {
@@ -414,9 +414,9 @@ describe('setupExtensionsConfiguration', () => {
       whisper_stt: false,
     };
 
-    const expectedResult = '';
+    const expectedResult: string[] = [];
     const actualResult = setupExtensionsConfiguration(extensionsSettings as any, mockLogger);
 
-    assert.strictEqual(actualResult, expectedResult);
+    assert.deepStrictEqual(actualResult, expectedResult);
   });
 });
