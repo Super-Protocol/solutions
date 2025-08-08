@@ -1,6 +1,6 @@
 {
   "name": "sp-text-generation-webui",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Super Protocol integration for Text Generation Webui (https://github.com/oobabooga/text-generation-webui)",
   "main": "dist/index.js",
   "scripts": {

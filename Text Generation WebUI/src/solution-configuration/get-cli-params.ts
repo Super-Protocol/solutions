@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
-import { setupCharacter, updateUserSettings } from './utils';
+import { setupCharacter, updateModelUserSettings, updateUserSettings } from './utils';
 import { ModelDetector } from './model-detector';
+import { MODEL_USER_SETTINGS } from './constants';
 
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
@@ -97,6 +98,14 @@ const setupModelConfiguration = async (
     ...modelSettings.parameters,
     ...modelSettings.parameters2,
   };
+
+  const modelUserSettings = Object.fromEntries(
+    MODEL_USER_SETTINGS.map((setting) => [setting, `${parameters[setting]}`]),
+  );
+  if (Object.keys(modelUserSettings).length > 0 && modelInfo) {
+    await updateModelUserSettings(modelUserSettings, modelInfo);
+    logger.info(`Model user settings updated: ${JSON.stringify(modelUserSettings)}`);
+  }
 
   const parametersString = Object.keys(parameters)
     .map((key) => `${key}: ${parameters[key]}`)

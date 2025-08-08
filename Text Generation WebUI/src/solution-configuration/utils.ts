@@ -68,3 +68,21 @@ export const updateUserSettings = async (
 
   await fs.promises.writeFile(`${engineFolder}/user_data/settings.yaml`, settingsFileData);
 };
+
+export const updateModelUserSettings = async (
+  params: Record<string, string>,
+  findModelResult: FindModelResult,
+): Promise<void> => {
+  let newSettings = '';
+  const { folder, model } = findModelResult;
+  const modelUserSettings = await fs.promises.readFile(folder, 'utf-8').catch(() => '');
+  if (!modelUserSettings) {
+    newSettings += `${model}:\n`;
+  }
+
+  for (const [key, value] of Object.entries(params)) {
+    newSettings += `  ${key}: ${value}\n`;
+  }
+
+  await fs.promises.writeFile(`${folder}/config-user.yaml`, modelUserSettings + newSettings);
+};
