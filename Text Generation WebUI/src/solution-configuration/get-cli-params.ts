@@ -103,7 +103,7 @@ const setupModelConfiguration = async (
     MODEL_USER_SETTINGS.map((setting) => [setting, `${parameters[setting]}`]),
   );
   if (Object.keys(modelUserSettings).length > 0 && modelInfo) {
-    await updateModelUserSettings(modelUserSettings, modelInfo);
+    await updateModelUserSettings(modelUserSettings, modelInfo.folder);
     logger.info(`Model user settings updated: ${JSON.stringify(modelUserSettings)}`);
   }
 

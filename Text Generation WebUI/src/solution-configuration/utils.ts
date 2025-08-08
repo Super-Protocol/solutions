@@ -71,18 +71,20 @@ export const updateUserSettings = async (
 
 export const updateModelUserSettings = async (
   params: Record<string, string>,
-  findModelResult: FindModelResult,
+  modelDir: string,
 ): Promise<void> => {
   let newSettings = '';
-  const { folder, model } = findModelResult;
-  const modelUserSettings = await fs.promises.readFile(folder, 'utf-8').catch(() => '');
+  const configUserSettingsFile = `${modelDir}/config-user.yaml`;
+  const modelUserSettings = await fs.promises
+    .readFile(configUserSettingsFile, 'utf-8')
+    .catch(() => '');
   if (!modelUserSettings) {
-    newSettings += `${model}:\n`;
+    newSettings += `.*:\n`;
   }
 
   for (const [key, value] of Object.entries(params)) {
     newSettings += `  ${key}: ${value}\n`;
   }
 
-  await fs.promises.writeFile(`${folder}/config-user.yaml`, modelUserSettings + newSettings);
+  await fs.promises.writeFile(configUserSettingsFile, modelUserSettings + newSettings);
 };

@@ -295,6 +295,18 @@
                   "maxValue": {
                     "uint32Value": 4096
                   }
+                },
+                {
+                  "type": 3,
+                  "name": "Truncate the prompt up to this length",
+                  "variable": "truncation_length",
+                  "description": "The leftmost tokens are removed if the prompt exceeds this length.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 1024
+                    }
+                  ]
                 }
               ]
             },
