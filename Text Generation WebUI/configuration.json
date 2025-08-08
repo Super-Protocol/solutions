@@ -51,7 +51,10 @@
       },
       {
         "languages": [],
-        "libraries": ["Adapters", "PyTorch"],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
         "license": "unknown",
         "task": {
           "id": "000001",
@@ -298,7 +301,7 @@
                 },
                 {
                   "type": 3,
-                  "name": "Truncate the prompt up to this length",
+                  "name": "Truncate the prompt up to this length (Transformers only)",
                   "variable": "truncation_length",
                   "description": "The leftmost tokens are removed if the prompt exceeds this length.",
                   "valueType": 5,
