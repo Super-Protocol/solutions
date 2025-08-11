@@ -1,5 +1,8 @@
 {
-  "attributes": {},
+  "attributes": {
+    "models": [],
+    "datasets": []
+  },
   "arguments": [
     {
       "type": 0,
