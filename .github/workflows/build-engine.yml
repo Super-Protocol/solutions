@@ -11,6 +11,7 @@ on:
           - text-generation-webui-cpu
           - comfyui
           - n8n
+          - dia-tts
       target:
         description: 'Target'
         required: true
@@ -67,6 +68,11 @@ jobs:
           elif [ "$SOLUTION" == "n8n" ]; then
             DOCKERFILE="./n8n/Dockerfile"
             DOCKERFILE_CONTEXT="./n8n/"
+
+          elif [ "$SOLUTION" == "dia-tts" ]; then
+            SUBMODULE_PATH="Dia TTS Server/dia-tts-server"
+            DOCKERFILE="./Dia TTS Server/Dockerfile"
+            DOCKERFILE_CONTEXT="./Dia TTS Server/"
             
           else
             echo "Invalid solution name"
