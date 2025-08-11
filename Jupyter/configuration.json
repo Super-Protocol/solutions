@@ -1,0 +1,120 @@
+{
+  "attributes": {},
+  "arguments": [
+    {
+      "type": 0,
+      "name": "Engine",
+      "variable": "engine",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Main Settings",
+          "variable": "main_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 7,
+              "name": " ",
+              "variable": "run_mode",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "Process ipynb file"
+                },
+                {
+                  "stringValue": "Start server"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Process ipynb file"
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "Process File Options",
+              "variable": "process_file_options",
+              "description": "",
+              "children": [
+                {
+                  "type": 4,
+                  "name": "ipynb filename",
+                  "variable": "filename",
+                  "description": "If the field is empty - the first found ipynb file will be launched"
+                }
+              ],
+              "condition": {
+                "variable": "engine.main_settings.run_mode",
+                "value": {
+                  "stringValue": "Process ipynb file"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "name": "Tunnels",
+      "variable": "tunnels",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Domain Settings",
+          "variable": "domain_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 7,
+              "name": " ",
+              "variable": "provision_type",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ]
+            },
+            {
+              "type": 11,
+              "name": "Offer",
+              "variable": "tunnel_provisioner_order",
+              "description": "12 - Tunnels Provisioner on dev",
+              "options": [
+                {
+                  "stringValue": "12"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "12"
+                }
+              ],
+              "condition": {
+                "variable": "tunnels.domain_settings.provision_type",
+                "value": {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "variable": "engine.main_settings.run_mode",
+        "value": {
+          "stringValue": "Start server"
+        }
+      }
+    }
+  ]
+}
