@@ -1,11 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { exec as execCallback } from 'child_process';
-import { promisify } from 'util';
+import { spawn } from 'child_process';
 import { FindFileResult } from './types';
 import { rootLogger } from './logger';
+import { config } from './config';
 
-const exec = promisify(execCallback);
 
 export const findIpynbFile = async (
   folderPath: string,
@@ -39,15 +38,23 @@ export const runIpymbFile = async (filePath: string): Promise<void> => {
   const filename = path.basename(filePath);
 
   try {
-    const command = `jupyter nbconvert --execute --inplace "${filePath}" --stdout > /sp/output/${filename}.log`;
-    logger.info(`Executing command: ${command}`);
-    const { stdout, stderr } = await exec(command);
-    if (stdout) {
-      logger.info(`Command output: ${stdout}`);
-    }
-    if (stderr) {
-      logger.error(`Command error output: ${stderr}`);
-    }
+    const commandParams = [`nbconvert`, `--execute`, `--inplace`, `"${filePath}"`, `--stdout`];
+
+    const logPath = path.join(config.outputDataFolder, `${filename}.log`);
+    const logStream = fs.createWriteStream(logPath);
+
+
+    logger.info({ commandParams }, `Executing jupyter with params`);
+    const commandProcess = await spawn('jupyter', commandParams, { stdio: 'pipe' });
+    commandProcess.stdout.pipe(logStream);
+
+    await new Promise((resolve, reject) => {
+      commandProcess.on('close', (code) => {
+        if (code === 0) resolve(void 0);
+        else reject(new Error(`Process exited with code ${code}`));
+      });
+      commandProcess.on('error', reject);
+    });
   } catch (error) {
     logger.error({ err: error }, `Failed to run ipynb file: ${filePath}`);
     throw error;

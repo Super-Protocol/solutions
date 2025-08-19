@@ -59,5 +59,5 @@ const run = async (): Promise<void> => {
 };
 
 run().catch((err) => {
-  logger.fatal({ err }, `Dia-TTS-Server start command failed`);
+  logger.fatal({ err }, `Jupyter server start command failed`);
 });
