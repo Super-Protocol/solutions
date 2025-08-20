@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { Logger } from 'pino';
 import { EngineConfiguration, RawParameters } from './types';
-import { setupCharacter } from './utils';
+import { setupCharacter, updateModelUserSettings, updateUserSettings } from './utils';
 import { ModelDetector } from './model-detector';
+import { MODEL_USER_SETTINGS } from './constants';
 
 export const getCliParams = async (params: {
   configuration?: EngineConfiguration;
@@ -62,7 +63,6 @@ const setupBaseConfiguration = async (
 
   const character = await setupCharacter(baseSettings.character, engineFolder);
   logger.info(`Character ${character} configured successfully`);
-  cliParams.push('--character', character);
 
   const extensionsCliParams = setupExtensionsConfiguration(baseSettings.extensions, logger);
   if (extensionsCliParams.length) {
@@ -99,11 +99,21 @@ const setupModelConfiguration = async (
     ...modelSettings.parameters2,
   };
 
+  const modelUserSettings = Object.fromEntries(
+    MODEL_USER_SETTINGS.map((setting) => [setting, `${parameters[setting]}`]),
+  );
+  if (Object.keys(modelUserSettings).length > 0 && modelInfo) {
+    await updateModelUserSettings(modelUserSettings, modelInfo.folder);
+    logger.info(`Model user settings updated: ${JSON.stringify(modelUserSettings)}`);
+  }
+
   const parametersString = Object.keys(parameters)
     .map((key) => `${key}: ${parameters[key]}`)
     .join('\n');
 
   await fs.promises.writeFile(`${engineFolder}/user_data/presets/min_p.yaml`, parametersString);
+
+  await updateUserSettings({ ...parameters, preset: 'min_p' }, engineFolder);
 
   return cliParams;
 };

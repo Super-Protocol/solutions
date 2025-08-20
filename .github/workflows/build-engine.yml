@@ -56,7 +56,7 @@ jobs:
             if [[ "$SOLUTION" == *cpu ]]; then
               BUILD_ARGS="--build-arg GPU_CHOICE=N"
             elif [[ "$SOLUTION" == *gpu ]]; then
-              BUILD_ARGS="--build-arg GPU_CHOICE=A"
+              BUILD_ARGS="--build-arg GPU_CHOICE=E"
             fi
 
           elif [ "$SOLUTION" == "comfyui" ]; then

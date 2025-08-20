@@ -30,7 +30,7 @@ context: |-
   ${contextPlaceholder}
   `;
   const characterName = normalizeData(character.name);
-  const characterFileName = characterName.replace(/\s/g, '');
+  const characterFileName = character.name;
 
   const characterFile = template
     .replace(namePlaceholder, characterName)
@@ -42,5 +42,49 @@ context: |-
     characterFile,
   );
 
+  const characterUserSettings = {
+    character: character.name,
+    name2: character.name,
+    context: character.context,
+    greeting: character.greeting,
+  };
+
+  await updateUserSettings(characterUserSettings, engineFolder);
+
   return characterFileName;
+};
+
+export const updateUserSettings = async (
+  params: Record<string, string>,
+  engineFolder: string,
+): Promise<void> => {
+  let settingsFileData = await fs.promises
+    .readFile(`${engineFolder}/user_data/settings.yaml`, 'utf-8')
+    .catch(() => '');
+
+  for (const [key, value] of Object.entries(params)) {
+    settingsFileData += `\n${key}: ${value}`;
+  }
+
+  await fs.promises.writeFile(`${engineFolder}/user_data/settings.yaml`, settingsFileData);
+};
+
+export const updateModelUserSettings = async (
+  params: Record<string, string>,
+  modelDir: string,
+): Promise<void> => {
+  let newSettings = '';
+  const configUserSettingsFile = `${modelDir}/config-user.yaml`;
+  const modelUserSettings = await fs.promises
+    .readFile(configUserSettingsFile, 'utf-8')
+    .catch(() => '');
+  if (!modelUserSettings) {
+    newSettings += `.*:\n`;
+  }
+
+  for (const [key, value] of Object.entries(params)) {
+    newSettings += `  ${key}: ${value}\n`;
+  }
+
+  await fs.promises.writeFile(configUserSettingsFile, modelUserSettings + newSettings);
 };
