@@ -10,7 +10,7 @@ import {
 import { rootLogger } from './logger';
 import { config } from './config';
 import { IJupyterEngineConfiguration, RunMode } from './types';
-import { findIpynbFile, runIpymbFile } from './ipynb';
+import { findIpynbFile, runIpynbFile } from './ipynb';
 
 exitOnUnhandledRejection(rootLogger);
 exitOnUncaughtException(rootLogger);
@@ -36,7 +36,7 @@ const run = async (): Promise<void> => {
       }
       logger.info(`Found ipynb file: ${foundFile.folder}/${foundFile.filename}`);
 
-      await runIpymbFile(`${foundFile.folder}/${foundFile.filename}`);
+      await runIpynbFile(`${foundFile.folder}/${foundFile.filename}`);
       return;
     }
     case RunMode.StartServer: {
