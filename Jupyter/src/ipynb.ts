@@ -5,7 +5,6 @@ import { FindFileResult } from './types';
 import { rootLogger } from './logger';
 import { config } from './config';
 
-
 export const findIpynbFile = async (
   folderPath: string,
   filename?: string,
@@ -33,20 +32,29 @@ export const findIpynbFile = async (
   }
 };
 
-export const runIpymbFile = async (filePath: string): Promise<void> => {
+export const runIpynbFile = async (filePath: string): Promise<void> => {
   const logger = rootLogger.child({ module: 'runIpymbFile' });
   const filename = path.basename(filePath);
 
   try {
-    const commandParams = [`nbconvert`, `--execute`, `--inplace`, `"${filePath}"`, `--stdout`];
+    // Run nbconvert in-place on the notebook file. Do not add shell quotes around filePath.
+    const commandParams = [
+      `nbconvert`,
+      `--execute`,
+      `--to`,
+      `notebook`,
+      `--inplace`,
+      filePath,
+      `--stdout`,
+    ];
 
     const logPath = path.join(config.outputDataFolder, `${filename}.log`);
     const logStream = fs.createWriteStream(logPath);
 
-
     logger.info({ commandParams }, `Executing jupyter with params`);
-    const commandProcess = await spawn('jupyter', commandParams, { stdio: 'pipe' });
+    const commandProcess = spawn('jupyter', commandParams, { stdio: 'pipe' });
     commandProcess.stdout.pipe(logStream);
+    commandProcess.stderr.pipe(logStream);
 
     await new Promise((resolve, reject) => {
       commandProcess.on('close', (code) => {
