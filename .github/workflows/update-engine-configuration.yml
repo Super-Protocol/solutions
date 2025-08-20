@@ -12,6 +12,7 @@ on:
           - 'ComfyUI (GPU only)'
           - 'Text Generation Web UI (CPU only)'
           - 'Text Generation Web UI (GPU only)'
+          - 'Jupyter'
       target:
         description: 'Target environment where the offer exists.'
         required: true
@@ -43,7 +44,8 @@ jobs:
               'ComfyUI (CPU only)': { configFile: './ComfyUI/configuration-cpu.json', varName: 'COMFYUI_CPU_OFFER_ID' },
               'ComfyUI (GPU only)': { configFile: './ComfyUI/configuration-gpu.json', varName: 'COMFYUI_GPU_OFFER_ID' },
               'Text Generation Web UI (CPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_CPU_OFFER_ID' },
-              'Text Generation Web UI (GPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_GPU_OFFER_ID' }
+              'Text Generation Web UI (GPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_GPU_OFFER_ID' },
+              'Jupyter': { configFile: './Jupyter/configuration.json', varName: 'JUPYTER_OFFER_ID' }
             };
             const solution = context.payload.inputs.solution;
             const targetEnv = context.payload.inputs.target;
