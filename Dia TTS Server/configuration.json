@@ -1,0 +1,76 @@
+{
+  "attributes": {
+    "models": [
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch",
+          "Safetensors"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text-to-Speech"
+        }
+      }
+    ],
+    "datasets": []
+  },
+  "arguments": [
+    {
+      "type": 0,
+      "name": "Tunnels",
+      "variable": "tunnels",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Domain Settings",
+          "variable": "domain_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 7,
+              "name": " ",
+              "variable": "provision_type",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ]
+            },
+            {
+              "type": 11,
+              "name": "Offer",
+              "variable": "tunnel_provisioner_order",
+              "description": "$VAR_TUNNELS_LAUNCHER_OFFER_ID - Tunnels Launcher",
+              "options": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "condition": {
+                "variable": "tunnels.domain_settings.provision_type",
+                "value": {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

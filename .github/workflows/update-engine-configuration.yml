@@ -12,6 +12,7 @@ on:
           - 'ComfyUI (GPU only)'
           - 'Text Generation Web UI (CPU only)'
           - 'Text Generation Web UI (GPU only)'
+          - 'Dia TTS Server (GPU)'
       target:
         description: 'Target environment where the offer exists.'
         required: true
@@ -44,6 +45,7 @@ jobs:
               'ComfyUI (GPU only)': { configFile: './ComfyUI/configuration-gpu.json', varName: 'COMFYUI_GPU_OFFER_ID' },
               'Text Generation Web UI (CPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_CPU_OFFER_ID' },
               'Text Generation Web UI (GPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_GPU_OFFER_ID' }
+              'Dia TTS Server (GPU)': { configFile: './Dia TTS Server/configuration.json', varName: 'DIA_TTS_GPU_OFFER_ID' }
             };
             const solution = context.payload.inputs.solution;
             const targetEnv = context.payload.inputs.target;
