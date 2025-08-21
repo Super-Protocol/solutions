@@ -21,7 +21,6 @@ parentPort?.on('message', (message) => {
 const run = async (): Promise<void> => {
   const serverConfig = getServerConfig();
 
-  // Записываем TLS сертификаты с ограниченными правами
   await fs.promises.writeFile(serverConfig.privateKeyFilePath, serverConfig.tlsKey, {
     mode: 0o600,
   });
@@ -29,7 +28,6 @@ const run = async (): Promise<void> => {
     mode: 0o600,
   });
 
-  // Запускаем Dia-TTS-Server с HTTPS через uvicorn
   spawn('uvicorn', [
     'server:app',
     '--ssl-keyfile', serverConfig.privateKeyFilePath,
