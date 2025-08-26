@@ -73,7 +73,7 @@ jobs:
             SUBMODULE_PATH="Dia TTS Server/dia-tts-server"
             DOCKERFILE="./Dia TTS Server/Dockerfile"
             DOCKERFILE_CONTEXT="./Dia TTS Server/"
-            
+
           else
             echo "Invalid solution name"
             exit 1
@@ -126,7 +126,7 @@ jobs:
 
       - name: Set SPCTL repository type
         run: |
-          if [ "$TARGET" == "develop" || "$TARGET" == "stage" ]; then
+          if [ "$TARGET" == "develop" || "$TARGET" == "stage" || "$TARGET" == "testnet" ]; then
             SPCTL_REPOSITORY_TYPE=private
           else
             SPCTL_REPOSITORY_TYPE=public
