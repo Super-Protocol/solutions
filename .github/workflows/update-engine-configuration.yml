@@ -14,6 +14,7 @@ on:
           - 'Text Generation Web UI (GPU only)'
           - 'Dia TTS Server (GPU)'
           - 'Dia TTS Server (CPU)'
+          - 'Jupyter'
       target:
         description: 'Target environment where the offer exists.'
         required: true
@@ -48,6 +49,7 @@ jobs:
               'Text Generation Web UI (GPU only)': { configFile: './Text Generation WebUI/configuration.json', varName: 'TEXT_GENERATION_WEB_UI_GPU_OFFER_ID' },
               'Dia TTS Server (GPU)': { configFile: './Dia TTS Server/configuration.json', varName: 'DIA_TTS_GPU_OFFER_ID' },
               'Dia TTS Server (CPU)': { configFile: './Dia TTS Server/configuration.json', varName: 'DIA_TTS_CPU_OFFER_ID' }
+              'Jupyter': { configFile: './Jupyter/configuration.json', varName: 'JUPYTER_OFFER_ID' }
             };
             const solution = context.payload.inputs.solution;
             const targetEnv = context.payload.inputs.target;

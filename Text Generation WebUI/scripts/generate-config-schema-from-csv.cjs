@@ -179,7 +179,7 @@ const addCondition = (obj, condition) => {
     };
   };
 
-  obj.useCondition = {
+  obj.condition = {
     variable: conditionVariablePath,
     ...parseValue(value),
   };
