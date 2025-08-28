@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json tsconfig*.json ./
 RUN npm ci
 COPY src ./src
-COPY .env.example .env
+COPY .env .env
 RUN npm run build && npm ci --omit=dev
 
 # Final image with PyTorch and Node.js
