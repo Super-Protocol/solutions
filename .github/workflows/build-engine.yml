@@ -75,6 +75,7 @@ jobs:
             SUBMODULE_PATH="Dia TTS Server/dia-tts-server"
             DOCKERFILE="./Dia TTS Server/Dockerfile"
             DOCKERFILE_CONTEXT="./Dia TTS Server/"
+            ALLOW_MULTIPLE_UPDATE="true"
 
           elif [ "$SOLUTION" == "jupyter" ]; then
             DOCKERFILE="./Jupyter/Dockerfile"
