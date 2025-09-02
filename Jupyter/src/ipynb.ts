@@ -64,7 +64,6 @@ export const runIpynbFile = async (filePath: string): Promise<void> => {
       commandProcess.on('error', reject);
     });
   } catch (error) {
-    logger.error({ err: error }, `Failed to run ipynb file: ${filePath}`);
-    throw error;
+    logger.error({ err: error }, `Failed to run ipynb file: ${filePath}. See errors in log file`);
   }
 };
