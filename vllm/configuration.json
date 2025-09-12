@@ -1,0 +1,1474 @@
+{
+  "attributes": {
+    "models": [
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text Generation"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text Classification"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Translation"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Text2Text Generation"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
+          "pipelineType": "Image-Text-to-Text"
+        }
+      }
+    ],
+    "datasets": []
+  },
+  "arguments": [
+    {
+      "type": 0,
+      "name": "Engine",
+      "variable": "engine",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Main settings",
+          "variable": "main_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 2,
+              "name": "Character",
+              "variable": "character",
+              "description": "The name of the character to load in chat mode by default.",
+              "children": [
+                {
+                  "type": 4,
+                  "name": "Character's name",
+                  "variable": "name",
+                  "description": "",
+                  "defaultValue": [
+                    {
+                      "stringValue": "Superprotocol AI"
+                    }
+                  ]
+                },
+                {
+                  "type": 5,
+                  "name": "Context",
+                  "variable": "context",
+                  "description": "",
+                  "defaultValue": [
+                    {
+                      "stringValue": "The following is a conversation with an AI Large Language Model. The AI has been trained to answer questions, provide recommendations, and help with decision making. The AI follows user requests. The AI thinks outside the box."
+                    }
+                  ]
+                },
+                {
+                  "type": 5,
+                  "name": "Greeting",
+                  "variable": "greeting",
+                  "description": "",
+                  "defaultValue": [
+                    {
+                      "stringValue": "How can I help you today?"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "API",
+              "variable": "api",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "api",
+                  "variable": "api_mode",
+                  "description": "Run Text Generation WebUI in OpenAPI-compatible API mode. GUI will not be started"
+                },
+                {
+                  "type": 4,
+                  "name": "api key",
+                  "variable": "api_key",
+                  "description": "API authentication key."
+                },
+                {
+                  "type": 4,
+                  "name": "admin key",
+                  "variable": "admin_key",
+                  "description": "API authentication key for admin tasks like loading and unloading models. If not set, will be the same as --api-key."
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "Mode",
+              "variable": "mode",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "Multi user",
+                  "variable": "multi_user",
+                  "description": "Multi-user mode. Chat histories are not saved or automatically loaded."
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "Extensions",
+              "variable": "extensions",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "Send pictures",
+                  "variable": "send_pictures",
+                  "description": "Creates an image upload field that can be used to send images to the bot in chat mode. Captions are automatically generated using BLIP.",
+                  "defaultValue": [
+                    {
+                      "boolValue": true,
+                      "condition": {
+                        "variable": "{{global.model.task.pipelineType}}",
+                        "value": {
+                          "stringValue": "Image-Text-to-Text"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "name": "Model",
+          "variable": "model",
+          "description": "",
+          "children": [
+            {
+              "type": 4,
+              "name": "Model Name",
+              "variable": "model_name",
+              "description": "Model name to lauch as default. Make sure to include it to order as data."
+            },
+            {
+              "type": 6,
+              "name": "chat_buttons",
+              "variable": "chat_buttons",
+              "description": "Show buttons on the chat tab instead of a hover menu."
+            },
+            {
+              "type": 2,
+              "name": "Parameters",
+              "variable": "parameters",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "temperature",
+                  "variable": "temperature",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0.01
+                  },
+                  "maxValue": {
+                    "doubleValue": 5
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "top_p",
+                  "variable": "top_p",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0
+                  },
+                  "maxValue": {
+                    "doubleValue": 1
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "top_k",
+                  "variable": "top_k",
+                  "description": "",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 0
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 0
+                  },
+                  "maxValue": {
+                    "uint32Value": 200
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "typical_p",
+                  "variable": "typical_p",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0
+                  },
+                  "maxValue": {
+                    "doubleValue": 1
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "max_new_tokens",
+                  "variable": "max_new_tokens",
+                  "description": "⚠️ Setting this too high can cause prompt truncation.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 128
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 1
+                  },
+                  "maxValue": {
+                    "uint32Value": 4096
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "Truncate the prompt up to this length (Transformers only)",
+                  "variable": "truncation_length",
+                  "description": "The leftmost tokens are removed if the prompt exceeds this length.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 1024
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "Parameters2",
+              "variable": "parameters2",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "min_p",
+                  "variable": "min_p",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 0.05
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0
+                  },
+                  "maxValue": {
+                    "doubleValue": 1
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "repetition_penalty",
+                  "variable": "repetition_penalty",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 1
+                  },
+                  "maxValue": {
+                    "doubleValue": 1.5
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "frequency_penalty",
+                  "variable": "frequency_penalty",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 0
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0
+                  },
+                  "maxValue": {
+                    "doubleValue": 2
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "presence_penalty",
+                  "variable": "presence_penalty",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 0
+                    }
+                  ],
+                  "minValue": {
+                    "doubleValue": 0
+                  },
+                  "maxValue": {
+                    "doubleValue": 2
+                  }
+                },
+                {
+                  "type": 6,
+                  "name": "auto_max_new_tokens",
+                  "variable": "auto_max_new_tokens",
+                  "description": "Expand max_new_tokens to the available context length.",
+                  "valueType": 13
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "name": "Model loader",
+          "variable": "model_loader",
+          "description": "",
+          "children": [
+            {
+              "type": 8,
+              "name": "Loader",
+              "variable": "loader_name",
+              "description": "Choose the model loader manually, otherwise, it will get autodetected",
+              "options": [
+                {
+                  "stringValue": "Autodetect"
+                },
+                {
+                  "stringValue": "Transformers"
+                },
+                {
+                  "stringValue": "llama.cpp"
+                },
+                {
+                  "stringValue": "llamacpp_HF"
+                },
+                {
+                  "stringValue": "ExLlamav2"
+                },
+                {
+                  "stringValue": "ExLlamav2_HF"
+                },
+                {
+                  "stringValue": "AutoGPTQ"
+                },
+                {
+                  "stringValue": "HQQ"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Autodetect"
+                }
+              ]
+            },
+            {
+              "type": 2,
+              "name": "Transformes options1",
+              "variable": "transformers_options1",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "CPU memory",
+                  "variable": "cpu-memory",
+                  "description": "",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 0
+                    }
+                  ],
+                  "minValue": {
+                    "uint64Value": 0
+                  },
+                  "maxValue": {
+                    "uint64Value": 4500000
+                  }
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "Transformers"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "Transformes options2",
+              "variable": "transformers_options2",
+              "description": "",
+              "children": [
+                {
+                  "type": 3,
+                  "name": "GPU memory",
+                  "variable": "gpu-memory",
+                  "description": "Maximum GPU memory in GiB to be allocated per GPU.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 10
+                    }
+                  ]
+                },
+                {
+                  "type": 8,
+                  "name": "compute_dtype",
+                  "variable": "compute_dtype",
+                  "description": "compute dtype for 4-bi",
+                  "options": [
+                    {
+                      "stringValue": "bfloat16"
+                    },
+                    {
+                      "stringValue": "float16"
+                    },
+                    {
+                      "stringValue": "float32"
+                    }
+                  ],
+                  "defaultValue": [
+                    {
+                      "stringValue": "float16"
+                    }
+                  ]
+                },
+                {
+                  "type": 6,
+                  "name": "load_in_4bit",
+                  "variable": "load-in-4bit",
+                  "description": "Load the model with 4-bit precision"
+                },
+                {
+                  "type": 6,
+                  "name": "use_double_quant",
+                  "variable": "use_double_quant",
+                  "description": "",
+                  "condition": {
+                    "variable": "engine.model_loader.transformers_options2.load-in-4bit",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 8,
+                  "name": "quant_type",
+                  "variable": "quant_type",
+                  "description": "",
+                  "options": [
+                    {
+                      "stringValue": "nf4"
+                    },
+                    {
+                      "stringValue": "fp4"
+                    }
+                  ],
+                  "defaultValue": [
+                    {
+                      "stringValue": "nf4"
+                    }
+                  ],
+                  "condition": {
+                    "variable": "engine.model_loader.transformers_options2.load-in-4bit",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "alpha_value",
+                  "variable": "alpha_value",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "condition": {
+                    "variable": "engine.model_loader.transformers_options2.load-in-4bit",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "compress_pos_emb",
+                  "variable": "compress_pos_emb",
+                  "description": "Positional embeddings alpha factor for NTK RoPE scaling. Recommended values (NTKv1): 1.75 for 1.5x context, 2.5 for 2x context. Use either this or compress_pos_emb, not both.",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ]
+                },
+                {
+                  "type": 6,
+                  "name": "load_in_8bit",
+                  "variable": "load-in-8bit",
+                  "description": "Load the model with 8-bit precision"
+                },
+                {
+                  "type": 6,
+                  "name": "use_flash_attention_2",
+                  "variable": "use_flash_attention_2",
+                  "description": "Set use_flash_attention_2=True while loading the model."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "Transformers"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "Transformes options3",
+              "variable": "transformers_options3",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "use_eager_attention",
+                  "variable": "use_eager_attention",
+                  "description": "Set attn_implementation= eager while loading the model."
+                },
+                {
+                  "type": 6,
+                  "name": "auto-devices",
+                  "variable": "auto-devices",
+                  "description": "Automatically split the model across the available GPU(s) and CPU."
+                },
+                {
+                  "type": 6,
+                  "name": "cpu",
+                  "variable": "cpu",
+                  "description": "Use the CPU to generate text. Warning: Training on CPU is extremely slow."
+                },
+                {
+                  "type": 6,
+                  "name": "disk",
+                  "variable": "disk",
+                  "description": "If the model is too large for your GPU(s) and CPU combined, send the remaining layers to the disk."
+                },
+                {
+                  "type": 6,
+                  "name": "bf16",
+                  "variable": "bf16",
+                  "description": "Load the model with bfloat16 precision. Requires NVIDIA Ampere GPU."
+                },
+                {
+                  "type": 6,
+                  "name": "trust-remote-code",
+                  "variable": "trust-remote-code",
+                  "description": "Set trust_remote_code=True while loading the model. Necessary for some models."
+                },
+                {
+                  "type": 6,
+                  "name": "no_use_fast",
+                  "variable": "no_use_fast",
+                  "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
+                },
+                {
+                  "type": 6,
+                  "name": "disable_exllama",
+                  "variable": "disable_exllama",
+                  "description": "Disable ExLlama kernel, which can improve inference speed on some systems."
+                },
+                {
+                  "type": 6,
+                  "name": "disable_exllamav2",
+                  "variable": "disable_exllamav2",
+                  "description": "Disable ExLlamav2 kernel."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "Transformers"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options1",
+              "variable": "llamacpp_llamacpp_hf_options1",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "n-gpu-layers",
+                  "variable": "n-gpu-layers",
+                  "description": "Must be set to more than 0 for your GPU to be used.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 33
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 0
+                  },
+                  "maxValue": {
+                    "uint32Value": 256
+                  }
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options2",
+              "variable": "llamacpp_llamacpp_hf_options2",
+              "description": "",
+              "children": [
+                {
+                  "type": 3,
+                  "name": "n_ctx",
+                  "variable": "n_ctx",
+                  "description": "Context length. Try lowering this if you run out of memory while loading the model.",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 4096
+                    }
+                  ]
+                },
+                {
+                  "type": 3,
+                  "name": "tensor_split",
+                  "variable": "tensor_split",
+                  "description": "List of proportions to split the model across multiple GPUs. Example: 60,40",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 0
+                    }
+                  ]
+                },
+                {
+                  "type": 10,
+                  "name": "n_batch",
+                  "variable": "n_batch",
+                  "description": "Maximum number of prompt tokens to batch together when calling llama_eval.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 512
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 0
+                  },
+                  "maxValue": {
+                    "uint32Value": 2048
+                  }
+                },
+                {
+                  "type": 10,
+                  "name": "threads",
+                  "variable": "threads",
+                  "description": "Number of threads to use.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 0
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 0
+                  },
+                  "maxValue": {
+                    "uint32Value": 256
+                  }
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options3",
+              "variable": "llamacpp_llamacpp_hf_options3",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "threads_batch",
+                  "variable": "threads-batch",
+                  "description": "Number of threads to use for batches/prompt processing.",
+                  "valueType": 5,
+                  "defaultValue": [
+                    {
+                      "uint32Value": 0
+                    }
+                  ],
+                  "minValue": {
+                    "uint32Value": 0
+                  },
+                  "maxValue": {
+                    "uint32Value": 256
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "rope_freq_base",
+                  "variable": "rope_freq_base",
+                  "description": "If greater than 0, will be used instead of alpha_value. Those two are related by rope_freq_base = 10000 * alpha_value ^ (64 / 63).",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 0
+                    }
+                  ]
+                },
+                {
+                  "type": 3,
+                  "name": "compress_pos_emb",
+                  "variable": "compress_pos_emb",
+                  "description": "Positional embeddings compression factor. Should be set to (context length) / (model's original context length). Equal to 1/rope_freq_scale.",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ]
+                },
+                {
+                  "type": 6,
+                  "name": "flash_attn",
+                  "variable": "flash-attn",
+                  "description": "Use flash-attention."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options4",
+              "variable": "llamacpp_llamacpp_hf_options4",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "tensorcores",
+                  "variable": "tensorcores",
+                  "description": "NVIDIA only: use llama-cpp-python compiled with tensor cores support. This may increase performance on newer cards."
+                },
+                {
+                  "type": 6,
+                  "name": "cache_8bit",
+                  "variable": "cache_8bit",
+                  "description": "Use 8-bit cache to save VRAM."
+                },
+                {
+                  "type": 6,
+                  "name": "cache_4bit",
+                  "variable": "cache_4bit",
+                  "description": "Use Q4 cache to save VRAM."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options5",
+              "variable": "llamacpp_llamacpp_hf_options5",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "streaming_llm",
+                  "variable": "streaming-llm",
+                  "description": "Activate StreamingLLM to avoid re-evaluating the entire prompt when old messages are removed."
+                },
+                {
+                  "type": 3,
+                  "name": "attention_sink_size",
+                  "variable": "attention-sink-size",
+                  "description": "StreamingLLM: number of sink tokens. Only used if the trimmed prompt does not share a prefix with the old prompt.",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 5
+                    }
+                  ],
+                  "condition": {
+                    "variable": "engine.model_loader.llamacpp_llamacpp_hf_options5.streaming-llm",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 6,
+                  "name": "cpu",
+                  "variable": "cpu",
+                  "description": "Use the CPU to generate text. Warning: Training on CPU is extremely slow."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options6",
+              "variable": "llamacpp_llamacpp_hf_options6",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "row_split",
+                  "variable": "row_split",
+                  "description": "Split the model by rows across GPUs. This may improve multi-gpu performance."
+                },
+                {
+                  "type": 6,
+                  "name": "no_offload_kqv",
+                  "variable": "no_offload_kqv",
+                  "description": "Do not offload the K, Q, V to the GPU. This saves VRAM but reduces the performance."
+                },
+                {
+                  "type": 6,
+                  "name": "no_mul_mat_q",
+                  "variable": "no_mul_mat_q",
+                  "description": "Disable the mulmat kernels."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_llamacpp_hf_options7",
+              "variable": "llamacpp_llamacpp_hf_options7",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "no-mmap",
+                  "variable": "no-mmap",
+                  "description": "Prevent mmap from being used."
+                },
+                {
+                  "type": 6,
+                  "name": "mlock",
+                  "variable": "mlock",
+                  "description": "Force the system to keep the model in RAM."
+                },
+                {
+                  "type": 6,
+                  "name": "numa",
+                  "variable": "numa",
+                  "description": "Activate NUMA task allocation for llama.cpp."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^llama.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "llamacpp_HF",
+              "variable": "llamacpp_hf_options",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "trust-remote-code",
+                  "variable": "trust-remote-code",
+                  "description": "Set trust_remote_code=True while loading the model. Necessary for some models."
+                },
+                {
+                  "type": 6,
+                  "name": "no_use_fast",
+                  "variable": "no_use_fast",
+                  "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
+                },
+                {
+                  "type": 6,
+                  "name": "logits_all",
+                  "variable": "logits_all",
+                  "description": "Needs to be set for perplexity evaluation to work. Otherwise, ignore it, as it makes prompt processing slower."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "llamacpp_HF"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "ExLlamav2_ExLlamav2_HF_options1",
+              "variable": "exllamav2_exllamav2_hf_options1",
+              "description": "",
+              "children": [
+                {
+                  "type": 4,
+                  "name": "gpu-split",
+                  "variable": "gpu-split",
+                  "description": "Comma-separated list of VRAM (in GB) to use per GPU device for model layers. Example: 20,7,7."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^ExLlamav2.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "ExLlamav2_ExLlamav2_HF_options2",
+              "variable": "exllamav2_exllamav2_hf_options2",
+              "description": "",
+              "children": [
+                {
+                  "type": 3,
+                  "name": "max_seq_len",
+                  "variable": "max_seq_len",
+                  "description": "Context length. Try lowering this if you run out of memory while loading the model.",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 16384
+                    }
+                  ]
+                },
+                {
+                  "type": 3,
+                  "name": "alpha_value",
+                  "variable": "alpha_value",
+                  "description": "",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ],
+                  "condition": {
+                    "variable": "engine.model_loader.transformers_options2.load-in-4bit",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 3,
+                  "name": "compress_pos_emb",
+                  "variable": "compress_pos_emb",
+                  "description": "Positional embeddings compression factor. Should be set to (context length) / (model's original context length). Equal to 1/rope_freq_scale.",
+                  "valueType": 1,
+                  "defaultValue": [
+                    {
+                      "doubleValue": 1
+                    }
+                  ]
+                },
+                {
+                  "type": 6,
+                  "name": "cache_8bit",
+                  "variable": "cache_8bit",
+                  "description": "Use 8-bit cache to save VRAM."
+                },
+                {
+                  "type": 6,
+                  "name": "cache_4bit",
+                  "variable": "cache_4bit",
+                  "description": "Use Q4 cache to save VRAM."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^ExLlamav2.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "ExLlamav2_ExLlamav2_HF_options3",
+              "variable": "exllamav2_exllamav2_hf_options3",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "autosplit",
+                  "variable": "autosplit",
+                  "description": "Autosplit the model tensors across the available GPUs. This causes gpu-split to be ignored."
+                },
+                {
+                  "type": 6,
+                  "name": "no_flash_attn",
+                  "variable": "no_flash_attn",
+                  "description": "Force flash-attention to not be used."
+                },
+                {
+                  "type": 6,
+                  "name": "no_xformers",
+                  "variable": "no_xformers",
+                  "description": "Force xformers to not be used."
+                },
+                {
+                  "type": 6,
+                  "name": "no_sdpa",
+                  "variable": "no_sdpa",
+                  "description": "Force Torch SDPA to not be used."
+                },
+                {
+                  "type": 3,
+                  "name": "Number of experts per token",
+                  "variable": "num_experts_per_token",
+                  "description": "Number of experts to use for generation. Applies to MoE models like Mixtral.",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 2
+                    }
+                  ]
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "matchRegexp": "^ExLlamav2.*"
+              }
+            },
+            {
+              "type": 2,
+              "name": "ExLlamav2_HF",
+              "variable": "exllamav2_hf_options",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "cfg-cache",
+                  "variable": "cfg-cache",
+                  "description": "Create an additional cache for CFG negative prompts. Necessary to use CFG with that loader."
+                },
+                {
+                  "type": 6,
+                  "name": "trust-remote-code",
+                  "variable": "trust-remote-code",
+                  "description": "Set trust_remote_code=True while loading the model. Necessary for some models."
+                },
+                {
+                  "type": 6,
+                  "name": "no_use_fast",
+                  "variable": "no_use_fast",
+                  "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "ExLlamav2_HF"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "AutoGPTQ options1",
+              "variable": "autogptq_options1",
+              "description": "",
+              "children": [
+                {
+                  "type": 10,
+                  "name": "CPU memory",
+                  "variable": "cpu-memory",
+                  "description": "",
+                  "valueType": 6,
+                  "defaultValue": [
+                    {
+                      "uint64Value": 0
+                    }
+                  ],
+                  "minValue": {
+                    "uint64Value": 4500000
+                  },
+                  "maxValue": {
+                    "uint64Value": 576000000
+                  }
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "AutoGPTQ"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "AutoGPTQ options2",
+              "variable": "autogptq_options2",
+              "description": "",
+              "children": [
+                {
+                  "type": 8,
+                  "name": "wbits",
+                  "variable": "wbits",
+                  "description": "Load a pre-quantized model with specified precision in bits. 2, 3, 4 and 8 are supported.",
+                  "valueType": 5,
+                  "options": [
+                    {
+                      "uint32Value": 0
+                    },
+                    {
+                      "uint32Value": 1
+                    },
+                    {
+                      "uint32Value": 2
+                    },
+                    {
+                      "uint32Value": 3
+                    },
+                    {
+                      "uint32Value": 4
+                    },
+                    {
+                      "uint32Value": 8
+                    }
+                  ]
+                },
+                {
+                  "type": 8,
+                  "name": "groupsize",
+                  "variable": "groupsize",
+                  "description": "Group size.",
+                  "valueType": 5,
+                  "options": [
+                    {
+                      "uint32Value": 32
+                    },
+                    {
+                      "uint32Value": 64
+                    },
+                    {
+                      "uint32Value": 128
+                    },
+                    {
+                      "uint32Value": 1024
+                    }
+                  ]
+                },
+                {
+                  "type": 6,
+                  "name": "auto-devices",
+                  "variable": "auto-devices",
+                  "description": "Automatically split the model across the available GPU(s) and CPU."
+                },
+                {
+                  "type": 6,
+                  "name": "cpu",
+                  "variable": "cpu",
+                  "description": "Use the CPU to generate text. Warning: Training on CPU is extremely slow."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "AutoGPTQ"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "AutoGPTQ options3",
+              "variable": "autogptq_options3",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "triton",
+                  "variable": "triton",
+                  "description": "Use triton"
+                },
+                {
+                  "type": 6,
+                  "name": "no_inject_fused_mlp",
+                  "variable": "no_inject_fused_mlp",
+                  "description": "disable the use of fused MLP, which will use less VRAM at the cost of slower inference",
+                  "condition": {
+                    "variable": "engine.model_loader.autogptq_options3.triton",
+                    "value": {
+                      "boolValue": true
+                    }
+                  }
+                },
+                {
+                  "type": 6,
+                  "name": "no_use_cuda_fp16",
+                  "variable": "no_use_cuda_fp16",
+                  "description": "This can make models faster on some systems."
+                },
+                {
+                  "type": 6,
+                  "name": "desc_act",
+                  "variable": "desc_act",
+                  "description": "For models that do not have a quantize_config.json, this parameter is used to define whether to set desc_act or not in BaseQuantizeConfig."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "AutoGPTQ"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "AutoGPTQ options4",
+              "variable": "autogptq_options4",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "disk",
+                  "variable": "disk",
+                  "description": "If the model is too large for your GPU(s) and CPU combined, send the remaining layers to the disk."
+                },
+                {
+                  "type": 6,
+                  "name": "trust-remote-code",
+                  "variable": "trust-remote-code",
+                  "description": "Set trust_remote_code=True while loading the model. Necessary for some models."
+                },
+                {
+                  "type": 6,
+                  "name": "no_use_fast",
+                  "variable": "no_use_fast",
+                  "description": "Set use_fast=False while loading the tokenizer (it's True by default). Use this if you have any problems related to use_fast."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "AutoGPTQ"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "AutoGPTQ options5",
+              "variable": "autogptq_options5",
+              "description": "",
+              "children": [
+                {
+                  "type": 6,
+                  "name": "disable_exllama",
+                  "variable": "disable_exllama",
+                  "description": "Disable ExLlama kernel, which can improve inference speed on some systems."
+                },
+                {
+                  "type": 6,
+                  "name": "disable_exllamav2",
+                  "variable": "disable_exllamav2",
+                  "description": "Disable ExLlamav2 kernel."
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "AutoGPTQ"
+                }
+              }
+            },
+            {
+              "type": 2,
+              "name": "HQQ",
+              "variable": "hqq_options",
+              "description": "",
+              "children": [
+                {
+                  "type": 8,
+                  "name": "hqq_backend",
+                  "variable": "hqq-backend",
+                  "description": "Backend for the HQQ loader. Valid options: PYTORCH, PYTORCH_COMPILE, ATEN.",
+                  "options": [
+                    {
+                      "stringValue": "PYTORCH"
+                    },
+                    {
+                      "stringValue": "PYTORCH_COMPILE"
+                    },
+                    {
+                      "stringValue": "ATEN"
+                    }
+                  ],
+                  "defaultValue": [
+                    {
+                      "stringValue": "PYTORCH"
+                    }
+                  ]
+                }
+              ],
+              "condition": {
+                "variable": "engine.model_loader.loader_name",
+                "value": {
+                  "stringValue": "HQQ"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "name": "Tunnels",
+      "variable": "tunnels",
+      "description": "",
+      "children": [
+        {
+          "type": 1,
+          "name": "Domain Settings",
+          "variable": "domain_settings",
+          "description": "",
+          "children": [
+            {
+              "type": 7,
+              "name": " ",
+              "variable": "provision_type",
+              "description": "",
+              "options": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              ]
+            },
+            {
+              "type": 11,
+              "name": "Offer",
+              "variable": "tunnel_provisioner_order",
+              "description": "$VAR_TUNNELS_LAUNCHER_OFFER_ID - Tunnels Launcher",
+              "options": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "defaultValue": [
+                {
+                  "stringValue": "$VAR_TUNNELS_LAUNCHER_OFFER_ID"
+                }
+              ],
+              "condition": {
+                "variable": "tunnels.domain_settings.provision_type",
+                "value": {
+                  "stringValue": "Temporary Domain (on *.superprotocol.io)"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
