@@ -5,7 +5,7 @@ export type RawParameters = Record<string, string | boolean | number>;
 export type VllmEngineConfiguration = {
   environment?: {
     VLLM_ATTENTION_BACKEND?: 'TORCH_SDPA' | 'FLASH_ATTN' | 'XFORMERS' | 'ROCM_FLASH' | 'FLASHINFER' | 'FLASHMLA';
-    
+
     // Performance optimizations
     VLLM_USE_TRITON_FLASH_ATTN?: boolean;
     VLLM_USE_FLASHINFER_SAMPLER?: boolean;
@@ -15,17 +15,17 @@ export type VllmEngineConfiguration = {
     VLLM_V1_USE_PREFILL_DECODE_ATTENTION?: boolean;
     VLLM_USE_AITER_UNIFIED_ATTENTION?: boolean;
     VLLM_FLASH_ATTN_VERSION?: 2 | 3;
-    
+
     // Ray distributed settings
     VLLM_USE_RAY_SPMD_WORKER?: boolean;
     VLLM_USE_RAY_COMPILED_DAG?: boolean;
     VLLM_USE_RAY_COMPILED_DAG_CHANNEL_TYPE?: 'auto' | 'nccl' | 'shm';
     VLLM_USE_RAY_COMPILED_DAG_OVERLAP_COMM?: boolean;
     VLLM_USE_RAY_WRAPPED_PP_COMM?: boolean;
-    
+
     // Process management
     VLLM_WORKER_MULTIPROC_METHOD?: 'fork' | 'spawn';
-    
+
     // Logging system
     VLLM_CONFIGURE_LOGGING?: boolean;
     VLLM_LOGGING_CONFIG_PATH?: string;
@@ -33,23 +33,23 @@ export type VllmEngineConfiguration = {
     VLLM_LOGGING_PREFIX?: string;
     VLLM_LOG_STATS_INTERVAL?: number;
     VLLM_TRACE_FUNCTION?: boolean;
-    
+
     // Model loading behavior  
     VLLM_USE_MODELSCOPE?: boolean;
     VLLM_MODEL_REDIRECT_PATH?: string;
     VLLM_ALLOW_LONG_MAX_MODEL_LEN?: boolean;
-    
+
     // Engine behavior
     VLLM_ENGINE_ITERATION_TIMEOUT_S?: number;
     VLLM_RINGBUFFER_WARNING_INTERVAL?: number;
     VLLM_SLEEP_WHEN_IDLE?: boolean;
     VLLM_KEEP_ALIVE_ON_ENGINE_DEATH?: boolean;
-    
+
     // Network timeouts
     VLLM_HTTP_TIMEOUT_KEEP_ALIVE?: number;
     VLLM_RPC_TIMEOUT?: number;
     VLLM_RPC_BASE_PATH?: string;
-    
+
     // Media processing
     VLLM_IMAGE_FETCH_TIMEOUT?: number;
     VLLM_VIDEO_FETCH_TIMEOUT?: number;
@@ -57,28 +57,28 @@ export type VllmEngineConfiguration = {
     VLLM_MAX_AUDIO_CLIP_FILESIZE_MB?: number;
     VLLM_MEDIA_LOADING_THREAD_COUNT?: number;
     VLLM_VIDEO_LOADER_BACKEND?: string;
-    
+
     // Usage stats and telemetry
     VLLM_NO_USAGE_STATS?: boolean;
     VLLM_DO_NOT_TRACK?: boolean;
     VLLM_USAGE_SOURCE?: string;
     VLLM_USAGE_STATS_SERVER?: string;
-    
+
     // Development flags
     VLLM_SERVER_DEV_MODE?: boolean;
     VLLM_DEBUG_LOG_API_SERVER_RESPONSE?: boolean;
     VLLM_SKIP_P2P_CHECK?: boolean;
     VLLM_DISABLED_KERNELS?: string[];
-    
+
     // Quantization kernels
     VLLM_USE_TRITON_AWQ?: boolean;
     VLLM_MARLIN_USE_ATOMIC_ADD?: boolean;
     VLLM_MXFP4_USE_MARLIN?: boolean;
-    
+
     // Plugin system
     VLLM_PLUGINS?: string[];
     VLLM_ALLOW_RUNTIME_LORA_UPDATING?: boolean;
-    
+
     // Additional custom environment variables
     [key: string]: string | number | boolean | string[] | undefined;
   };
@@ -220,11 +220,12 @@ export type VllmEngineConfiguration = {
   cache: {
     block_size?: 1 | 8 | 16 | 32 | 64 | 128;
     gpu_memory_utilization?: number;
+    kv_cache_memory_bytes?: string; // "25G", "30000M", etc.
     swap_space?: number;
     kv_cache_dtype?: 'auto' | 'fp8' | 'fp8_e4m3' | 'fp8_e5m2' | 'fp8_inc';
     num_gpu_blocks_override?: number;
     enable_prefix_caching?: boolean;
-    prefix_caching_hash_algo?: 'builtin' | 'sha256' | 'sha256_cbor_64bit';
+    prefix_caching_hash_algo?: 'sha256' | 'sha256_cbor';
     cpu_offload_gb?: number;
     calculate_kv_scales?: boolean;
     kv_sharing_fast_prefill?: boolean;

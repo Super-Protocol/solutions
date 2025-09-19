@@ -436,6 +436,10 @@ const setupCacheConfiguration = (
     cliParams.push('--kv-cache-dtype', cacheSettings.kv_cache_dtype);
   }
 
+  if (cacheSettings.kv_cache_memory_bytes) {
+    cliParams.push('--kv-cache-memory-bytes', cacheSettings.kv_cache_memory_bytes);
+  }
+
   if (cacheSettings.num_gpu_blocks_override) {
     cliParams.push('--num-gpu-blocks-override', String(cacheSettings.num_gpu_blocks_override));
   }

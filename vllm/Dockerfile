@@ -17,7 +17,7 @@ RUN npm ci &&\
     npm run build &&\
     npm ci --omit=dev
 
-FROM vllm/vllm-openai:v0.10.1.1
+FROM vllm/vllm-openai:v0.10.2
 
 RUN apt-get update && apt-get install -y \
     curl \
