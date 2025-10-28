@@ -100,7 +100,10 @@ const setupModelConfiguration = async (
   };
 
   const modelUserSettings = Object.fromEntries(
-    MODEL_USER_SETTINGS.map((setting) => [setting, `${parameters[setting]}`]),
+    MODEL_USER_SETTINGS.filter((setting) => Boolean(parameters[setting])).map((setting) => [
+      setting,
+      `${parameters[setting]}`,
+    ]),
   );
   if (Object.keys(modelUserSettings).length > 0 && modelInfo) {
     await updateModelUserSettings(modelUserSettings, modelInfo.folder);
