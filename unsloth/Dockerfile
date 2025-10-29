@@ -9,6 +9,8 @@ RUN npm run build && npm ci --omit=dev
 # Python base with Node.js runtime
 FROM unsloth/unsloth@sha256:0090e9aecad331e71ca4455a1582e9be0805f373f01788d20c0aef4b852149ff AS base
 
+USER root
+
 ENV NODE_VERSION 20.18.0
 
 RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
