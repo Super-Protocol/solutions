@@ -80,7 +80,7 @@ RUN comfy --version
 RUN comfy --skip-prompt tracking disable
 
 # Installing ComfyUI
-RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --commit $COMFYUI_COMMIT --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
+RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version nightly --commit $COMFYUI_COMMIT --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
 
 RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
 
