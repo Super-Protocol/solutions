@@ -75,7 +75,7 @@ RUN git config --global user.email "container@super-protocol.com" \
 
 # Installing ComfyUI CLI
 # see https://docs.comfy.org/comfy-cli/getting-started
-RUN pip install --break-system-packages "comfy-cli==1.5.0"
+RUN pip install --break-system-packages "comfy-cli==1.4.1"
 RUN comfy --version
 RUN comfy --skip-prompt tracking disable
 
