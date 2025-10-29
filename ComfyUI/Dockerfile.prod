@@ -62,7 +62,7 @@ RUN --mount=type=cache,target=/root/.npm \
   npm ci --omit=dev
 
 # Set environment variables
-ARG COMFYUI_VERSION=0.3.29
+ARG COMFYUI_COMMIT=93292bc450dd291925c45adea00ebedb8a3209ef
 ARG COMFYUI_MANAGER_VERSION=3.31.12
 ENV COMFYUI_PATH=/opt/ComfyUI
 
@@ -80,7 +80,7 @@ RUN comfy --version
 RUN comfy --skip-prompt tracking disable
 
 # Installing ComfyUI
-RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version $COMFYUI_VERSION --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
+RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --commit $COMFYUI_COMMIT --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
 
 RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
 
