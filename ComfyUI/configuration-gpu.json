@@ -373,6 +373,18 @@
         "license": "unknown",
         "task": {
           "id": "000001",
+          "pipelineType": "Video-to-Video"
+        }
+      },
+      {
+        "languages": [],
+        "libraries": [
+          "Adapters",
+          "PyTorch"
+        ],
+        "license": "unknown",
+        "task": {
+          "id": "000001",
           "pipelineType": "Text-to-Video"
         }
       },
