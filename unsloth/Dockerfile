@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package*.json tsconfig*.json ./
 RUN npm ci
 COPY src ./src
+COPY .env .env
 RUN npm run build && npm ci --omit=dev
 
 # Python base with Node.js runtime
