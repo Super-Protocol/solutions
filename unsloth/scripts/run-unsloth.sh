@@ -72,7 +72,7 @@ Environment variables (interactive prompts if missing):
   DATA_DIR                     Path to data folder to upload and attach (optional) [alias: DATA_PATH]
   MODEL_DIR                    Path to model folder to upload and attach (optional)
   DATA_RESOURCE                Path to existing uploaded data descriptor JSON (skip upload) (optional)
-  MODEL_RESOURCE               Path to existing uploaded model descriptor JSON (skip upload) (optional)
+  MODEL_RESOURCE               Path to existing uploaded model descriptor JSON (skip upload), a numeric offer id, or 'none' to skip model (optional)
 
 Options:
   --tee <number>               TEE offer id to use for Unsloth
@@ -135,13 +135,15 @@ echo "Step 1: Looking for spctl binary..."
 SPCTL=""
 if [[ -z "${SUGGEST_ONLY:-}" ]]; then
   for binary in "spctl" "spctl-linux-x64" "spctl-macos-arm64" "spctl-macos-x64"; do
-    if [[ -f "./$binary" ]]; then
-      SPCTL="./$binary"
-      break
-    fi
+    for base in "$SCRIPT_DIR" "$PWD"; do
+      if [[ -f "$base/$binary" ]]; then
+        SPCTL="$base/$binary"
+        break 2
+      fi
+    done
   done
   if [[ -z "$SPCTL" ]]; then
-    echo "Error: No SPCTL binary found in repo root (spctl, spctl-linux-x64, spctl-macos-arm64, spctl-macos-x64)" >&2
+    echo "Error: No SPCTL binary found next to the script or in current directory (spctl, spctl-linux-x64, spctl-macos-arm64, spctl-macos-x64)" >&2
     exit 1
   fi
 else
@@ -188,24 +190,29 @@ if [[ -z "${RUN_MODE_LOWER}" && -z "${CONFIG_JSON_PATH:-}" ]]; then
   done
 fi
 
-# Step 4.1: Model selection options
-MODEL_CHOICE=""
-echo "Step 4.1: Select model option:" 
-select mchoice in "Medgemma 27b (offer 15900)" "your model" "no model"; do
-  case $mchoice in
-    "Medgemma 27b (offer 15900)") MODEL_CHOICE="medgemma"; break ;;
-    "your model") MODEL_CHOICE="your"; break ;;
-    "no model") MODEL_CHOICE="none"; break ;;
-    *) echo "Please select 1, 2 or 3" ;;
-  esac
-done
+# Step 4.1: Model selection options (skip if MODEL_RESOURCE pre-set via env/args)
+if [[ -z "${MODEL_RESOURCE:-}" ]]; then
+  MODEL_CHOICE=""
+  echo "Step 4.1: Select model option:" 
+  select mchoice in "Medgemma 27b (offer 15900)" "your model" "no model"; do
+    case $mchoice in
+      "Medgemma 27b (offer 15900)") MODEL_CHOICE="medgemma"; break ;;
+      "your model") MODEL_CHOICE="your"; break ;;
+      "no model") MODEL_CHOICE="none"; break ;;
+      *) echo "Please select 1, 2 or 3" ;;
+    esac
+  done
 
-if [[ "$MODEL_CHOICE" == "medgemma" ]]; then
-  # Use the marketplace/model offer id instead of uploading a JSON descriptor
-  echo "Selected Medgemma 27b (offer 15900): will attach --data 15900"
-  DATA_DESCRIPTORS+=("15900")
-  # set MODEL_RESOURCE so later processing treats it as an existing resource
-  MODEL_RESOURCE="15900"
+  if [[ "$MODEL_CHOICE" == "medgemma" ]]; then
+    # Use the marketplace/model offer id instead of uploading a JSON descriptor
+    echo "Selected Medgemma 27b (offer 15900): will attach --data 15900"
+    DATA_DESCRIPTORS+=("15900")
+    # set MODEL_RESOURCE so later processing treats it as an existing resource
+    MODEL_RESOURCE="15900"
+  elif [[ "$MODEL_CHOICE" == "none" ]]; then
+    # Explicitly record no-model selection to avoid later prompts and include in Tip
+    MODEL_RESOURCE="none"
+  fi
 fi
 
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" != "file" && "$RUN_MODE_LOWER" != "jupyter" ]]; then
@@ -257,6 +264,44 @@ add_arg_kv() {
     fi
   fi
 }
+
+# Same as add_arg_kv but avoids adding duplicates to SUGGEST_ARGS
+add_arg_kv_once() {
+  local flag="$1"; shift
+  local val="$1"; shift || true
+  if [[ -z "$val" ]]; then
+    return 0
+  fi
+  local candidate
+  if [[ "$flag" == "--additional-params" || "$flag" == "--addtional-params" ]]; then
+    local vq
+    vq="${val//\"/\\\"}"
+    candidate="${flag}=\"${vq}\""
+  else
+    local q
+    printf -v q '%q' "$val"
+    candidate="${flag} ${q}"
+  fi
+  # check if candidate already present
+  local existing
+  for existing in "${SUGGEST_ARGS[@]:-}"; do
+    if [[ "$existing" == "$candidate" ]]; then
+      return 0
+    fi
+  done
+  SUGGEST_ARGS+=("$candidate")
+}
+
+# Pre-collect provided flags so Tip includes them even if interrupted early
+if [[ -n "${TEE:-}" ]]; then add_arg_kv_once --tee "$TEE"; fi
+if [[ -n "${CONFIG_FILE:-}" ]]; then add_arg_kv_once --config "$CONFIG_FILE"; fi
+if [[ -n "${USE_CONFIGURATION:-}" ]]; then add_arg_kv_once --use-configuration "$USE_CONFIGURATION"; fi
+if [[ -n "${ADDITIONAL_PARAMS:-}" ]]; then add_arg_kv_once --additional-params "$ADDITIONAL_PARAMS"; fi
+
+# If user selected "no model", reflect this in the suggestion using MODEL_RESOURCE=none
+if [[ "${MODEL_CHOICE:-}" == "none" ]]; then
+  add_env_kv MODEL_RESOURCE "none"
+fi
 
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
   echo "Step 5: Collecting file run options..."
@@ -520,7 +565,11 @@ fi
 # Optional: Model attachment via MODEL_RESOURCE or MODEL_DIR
 MODEL_RESOURCE_VALUE="${MODEL_RESOURCE:-}"
 if [[ -n "$MODEL_RESOURCE_VALUE" ]]; then
-  if [[ "$MODEL_RESOURCE_VALUE" =~ ^[0-9]+$ ]]; then
+  if [[ "$MODEL_RESOURCE_VALUE" == "none" ]]; then
+    # Sentinel meaning: explicitly no model
+    add_env_kv MODEL_RESOURCE "none"
+    # do not attach any descriptor and do not prompt for MODEL_DIR
+  elif [[ "$MODEL_RESOURCE_VALUE" =~ ^[0-9]+$ ]]; then
     # Numeric offer id -> treat as direct --data <id>
     add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_VALUE"
     DATA_DESCRIPTORS+=("$MODEL_RESOURCE_VALUE")
@@ -578,13 +627,6 @@ else
   fi
 fi
 
-# Add suggestion args for any data descriptors so Tip includes --data entries
-if [[ ${#DATA_DESCRIPTORS[@]} -gt 0 ]]; then
-  for d in "${DATA_DESCRIPTORS[@]}"; do
-    add_arg_kv --data "$d"
-  done
-fi
-
 if [[ -z "${CONFIG_JSON_PATH:-}" ]]; then
   if [[ -z "${SUGGEST_ONLY:-}" ]]; then
     echo "Step 6: Building Unsloth solution configuration JSON..."
@@ -613,10 +655,10 @@ if [[ -z "${SUGGEST_ONLY:-}" ]]; then
   echo "Step 7: Creating Unsloth workflow order on $INPUT_ENV ..."
   CREATE_CMD="$SPCTL workflows create --tee $TEE --solution $UNSLOTH_SOLUTION_MAINNET --solution-configuration $CONFIG_JSON_PATH --config $CONFIG_FILE"
 # Collect suggested args (so users can skip TEE/config prompts)
-add_arg_kv --tee "$TEE"
-add_arg_kv --config "$CONFIG_FILE"
+add_arg_kv_once --tee "$TEE"
+add_arg_kv_once --config "$CONFIG_FILE"
 if [[ -n "${USE_CONFIGURATION:-}" ]]; then
-  add_arg_kv --use-configuration "$USE_CONFIGURATION"
+  add_arg_kv_once --use-configuration "$USE_CONFIGURATION"
 fi
 # Append all data descriptors (accept numeric offer ids or descriptor files)
 if [[ ${#DATA_DESCRIPTORS[@]} -gt 0 ]]; then
@@ -630,7 +672,7 @@ if [[ ${#DATA_DESCRIPTORS[@]} -gt 0 ]]; then
 fi
 if [[ -n "$ADDITIONAL_PARAMS" ]]; then
   CREATE_CMD="$CREATE_CMD $ADDITIONAL_PARAMS"
-  add_arg_kv --additional-params "$ADDITIONAL_PARAMS"
+  add_arg_kv_once --additional-params "$ADDITIONAL_PARAMS"
 fi
 unsloth_output=$($CREATE_CMD)
 
@@ -649,13 +691,13 @@ echo "Unsloth order id: $unsloth_order_id"
   fi
 else
   # In suggest-only mode, still collect args for hint
-  add_arg_kv --tee "$TEE"
-  add_arg_kv --config "$CONFIG_FILE"
+  add_arg_kv_once --tee "$TEE"
+  add_arg_kv_once --config "$CONFIG_FILE"
   if [[ -n "${USE_CONFIGURATION:-}" ]]; then
-    add_arg_kv --use-configuration "$USE_CONFIGURATION"
+    add_arg_kv_once --use-configuration "$USE_CONFIGURATION"
   fi
   if [[ -n "$ADDITIONAL_PARAMS" ]]; then
-    add_arg_kv --additional-params "$ADDITIONAL_PARAMS"
+    add_arg_kv_once --additional-params "$ADDITIONAL_PARAMS"
   fi
   echo "Suggest-only mode: skipping order creation and domain wait"
 fi
