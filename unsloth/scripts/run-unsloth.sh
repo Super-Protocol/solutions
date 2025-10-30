@@ -10,7 +10,7 @@ printf -v SUGGEST_SCRIPT_Q '%q' "$SCRIPT_PATH"
 
 # Always print a short non-interactive hint on exit (success or error)
 print_noninteractive_hint() {
-  # Build suggested non-interactive command from collected params
+  # Build suggested non-interactive command from collected params/Users/vlado/Downloads/точно-работает.ipynb
   local suggest_env_str=""
   local suggest_args_str=""
   if [[ "${SUGGEST_ENV+x}" == "x" ]]; then
@@ -186,6 +186,26 @@ if [[ -z "${RUN_MODE_LOWER}" && -z "${CONFIG_JSON_PATH:-}" ]]; then
       *) echo "Please select 1 or 2" ;;
     esac
   done
+fi
+
+# Step 4.1: Model selection options
+MODEL_CHOICE=""
+echo "Step 4.1: Select model option:" 
+select mchoice in "Medgemma 27b (offer 15900)" "your model" "no model"; do
+  case $mchoice in
+    "Medgemma 27b (offer 15900)") MODEL_CHOICE="medgemma"; break ;;
+    "your model") MODEL_CHOICE="your"; break ;;
+    "no model") MODEL_CHOICE="none"; break ;;
+    *) echo "Please select 1, 2 or 3" ;;
+  esac
+done
+
+if [[ "$MODEL_CHOICE" == "medgemma" ]]; then
+  # Use the marketplace/model offer id instead of uploading a JSON descriptor
+  echo "Selected Medgemma 27b (offer 15900): will attach --data 15900"
+  DATA_DESCRIPTORS+=("15900")
+  # set MODEL_RESOURCE so later processing treats it as an existing resource
+  MODEL_RESOURCE="15900"
 fi
 
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" != "file" && "$RUN_MODE_LOWER" != "jupyter" ]]; then
@@ -500,18 +520,24 @@ fi
 # Optional: Model attachment via MODEL_RESOURCE or MODEL_DIR
 MODEL_RESOURCE_VALUE="${MODEL_RESOURCE:-}"
 if [[ -n "$MODEL_RESOURCE_VALUE" ]]; then
-  MODEL_RESOURCE_ABS="$(abs_path "$MODEL_RESOURCE_VALUE")"
-  add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_ABS"
-  if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-    if [[ ! -f "$MODEL_RESOURCE_ABS" ]]; then
-      echo "Suggest-only: MODEL_RESOURCE does not exist: $MODEL_RESOURCE_ABS (including in Tip anyway)"
-    fi
+  if [[ "$MODEL_RESOURCE_VALUE" =~ ^[0-9]+$ ]]; then
+    # Numeric offer id -> treat as direct --data <id>
+    add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_VALUE"
+    DATA_DESCRIPTORS+=("$MODEL_RESOURCE_VALUE")
   else
-    if [[ ! -f "$MODEL_RESOURCE_ABS" ]]; then
-      echo "Error: MODEL_RESOURCE file does not exist: $MODEL_RESOURCE_ABS" >&2
-      exit 1
+    MODEL_RESOURCE_ABS="$(abs_path "$MODEL_RESOURCE_VALUE")"
+    add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_ABS"
+    if [[ -n "${SUGGEST_ONLY:-}" ]]; then
+      if [[ ! -f "$MODEL_RESOURCE_ABS" ]]; then
+        echo "Suggest-only: MODEL_RESOURCE does not exist: $MODEL_RESOURCE_ABS (including in Tip anyway)"
+      fi
+    else
+      if [[ ! -f "$MODEL_RESOURCE_ABS" ]]; then
+        echo "Error: MODEL_RESOURCE file does not exist: $MODEL_RESOURCE_ABS" >&2
+        exit 1
+      fi
+      DATA_DESCRIPTORS+=("$MODEL_RESOURCE_ABS")
     fi
-    DATA_DESCRIPTORS+=("$MODEL_RESOURCE_ABS")
   fi
 else
   MODEL_DIR_VALUE="${MODEL_DIR:-}"
@@ -552,6 +578,13 @@ else
   fi
 fi
 
+# Add suggestion args for any data descriptors so Tip includes --data entries
+if [[ ${#DATA_DESCRIPTORS[@]} -gt 0 ]]; then
+  for d in "${DATA_DESCRIPTORS[@]}"; do
+    add_arg_kv --data "$d"
+  done
+fi
+
 if [[ -z "${CONFIG_JSON_PATH:-}" ]]; then
   if [[ -z "${SUGGEST_ONLY:-}" ]]; then
     echo "Step 6: Building Unsloth solution configuration JSON..."
@@ -585,10 +618,12 @@ add_arg_kv --config "$CONFIG_FILE"
 if [[ -n "${USE_CONFIGURATION:-}" ]]; then
   add_arg_kv --use-configuration "$USE_CONFIGURATION"
 fi
-# Append all data descriptors
+# Append all data descriptors (accept numeric offer ids or descriptor files)
 if [[ ${#DATA_DESCRIPTORS[@]} -gt 0 ]]; then
   for d in "${DATA_DESCRIPTORS[@]}"; do
-    if [[ -f "$d" ]]; then
+    if [[ "$d" =~ ^[0-9]+$ ]]; then
+      CREATE_CMD="$CREATE_CMD --data $d"
+    elif [[ -f "$d" ]]; then
       CREATE_CMD="$CREATE_CMD --data $d"
     fi
   done
