@@ -68,8 +68,12 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && SUDO_FORCE_REMOVE=yes apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     # smoke tests
-    && node --version \
-    && npm --version
+  && node --version \
+  && npm --version
+
+# Ensure sudo is present for base entrypoint scripts that invoke it
+RUN apt-get update && apt-get install -y sudo --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
