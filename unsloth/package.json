@@ -14,7 +14,7 @@
   "license": "BSL",
   "dependencies": {
     "@super-protocol/sdk-js": "^3.15.6",
-    "@super-protocol/solution-utils": "1.5.2",
+    "@super-protocol/solution-utils": "^1.6.0",
     "@super-protocol/tunnels-lib": "1.1.2",
     "dotenv": "^16.4.5",
     "pino": "^7.11.0",
