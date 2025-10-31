@@ -17,7 +17,7 @@ export const findFile = async (
     });
     for (const fileOrDir of filesOrDirectories) {
       if (fileOrDir.isDirectory()) {
-        const subFolderPath = `${folderPath}/${fileOrDir.name}`;
+        const subFolderPath = path.join(folderPath, fileOrDir.name);
         const foundFile = await findFile(subFolderPath, filename);
         if (foundFile) {
           return foundFile;

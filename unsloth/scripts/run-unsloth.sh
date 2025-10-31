@@ -10,7 +10,6 @@ printf -v SUGGEST_SCRIPT_Q '%q' "$SCRIPT_PATH"
 
 # Always print a short non-interactive hint on exit (success or error)
 print_noninteractive_hint() {
-  # Build suggested non-interactive command from collected params/Users/vlado/Downloads/точно-работает.ipynb
   local suggest_env_str=""
   local suggest_args_str=""
   if [[ "${SUGGEST_ENV+x}" == "x" ]]; then
@@ -86,17 +85,6 @@ EOF
 # Parse arguments (optional, keep minimal)
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    *=*)
-      name="${1%%=*}"
-      value="${1#*=}"
-      case "$name" in
-        RUN_MODE|RUN_FILE|RUN_FILE_PATH|JUPYTER_PASSWORD|RUN_JUPYTER_DOMAIN|RUN_JUPYTER_SSL_CERT|RUN_JUPYTER_SSL_PRIVATE_KEY|RUN_JUPYTER_TUNNEL_SERVER_TOKEN|DATA_DIR|DATA_PATH|MODEL_DIR|DATA_RESOURCE|MODEL_RESOURCE)
-          printf -v "$name" '%s' "$value"
-          shift 1
-          continue
-          ;;
-      esac
-      ;;
     --tee)
       val="$2"
       # Handle accidental concatenation like: --tee 2--additional-params=...

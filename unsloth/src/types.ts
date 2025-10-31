@@ -5,7 +5,7 @@ export interface IUnslothEngineConfiguration {
       filename: string;
     };
     run_jupyter_options?: {
-      password?: number;
+      password?: string;
     };
   };
 }
