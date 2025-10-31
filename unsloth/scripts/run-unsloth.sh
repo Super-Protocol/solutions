@@ -36,9 +36,9 @@ trap print_noninteractive_hint EXIT
 # Unsloth runner for Super Protocol
 # - Select TEE offer id via --tee or interactive prompt
 # - Environment: mainnet only (no prompt)
-# - RUN_MODE: "file" or "jupyter" (prompt if missing)
+# - RUN_MODE: "file" or "jupyter-server" (prompt if missing)
 # - If file: use RUN_FILE (prompt if missing). Validate .py or .ipynb, store basename in config
-# - If jupyter: optionally use JUPYTER_PASSWORD; then choose domain type:
+# - If jupyter-server: optionally use JUPYTER_PASSWORD; then choose domain type:
 #     - Temporary domain (*.superprotocol.io): create Tunnels Launcher order and embed reference into config
 #     - Own domain: read RUN_JUPYTER_SSL_CERT, RUN_JUPYTER_SSL_PRIVATE_KEY, RUN_JUPYTER_TUNNEL_SERVER_TOKEN (prompt if missing)
 # - Creates solution configuration JSON and runs spctl workflows create for Unsloth solution
@@ -62,7 +62,7 @@ usage() {
 Usage: ${0##*/} [--tee <number>] [--config <file>] [--use-configuration <file>] [--suggest-only]
 
 Environment variables (interactive prompts if missing):
-  RUN_MODE                      "file" or "jupyter"
+  RUN_MODE                      "file" or "jupyter-server"
   RUN_FILE                      Path to .py or .ipynb (used only when RUN_MODE=file)
   JUPYTER_PASSWORD             Password for Jupyter (optional)
   RUN_JUPYTER_DOMAIN           Domain for own-domain mode (e.g., my.lab.example.com)
@@ -86,6 +86,17 @@ EOF
 # Parse arguments (optional, keep minimal)
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    *=*)
+      name="${1%%=*}"
+      value="${1#*=}"
+      case "$name" in
+        RUN_MODE|RUN_FILE|RUN_FILE_PATH|JUPYTER_PASSWORD|RUN_JUPYTER_DOMAIN|RUN_JUPYTER_SSL_CERT|RUN_JUPYTER_SSL_PRIVATE_KEY|RUN_JUPYTER_TUNNEL_SERVER_TOKEN|DATA_DIR|DATA_PATH|MODEL_DIR|DATA_RESOURCE|MODEL_RESOURCE)
+          printf -v "$name" '%s' "$value"
+          shift 1
+          continue
+          ;;
+      esac
+      ;;
     --tee)
       val="$2"
       # Handle accidental concatenation like: --tee 2--additional-params=...
@@ -182,9 +193,9 @@ echo "Step 4: Selecting run mode..."
 RUN_MODE_LOWER="${RUN_MODE:-}"
 if [[ -z "${RUN_MODE_LOWER}" && -z "${CONFIG_JSON_PATH:-}" ]]; then
   echo "Choose run mode:"
-  select choice in "file" "jupyter"; do
+  select choice in "file" "jupyter-server"; do
     case $choice in
-      file|jupyter) RUN_MODE_LOWER="$choice"; break ;;
+      file|jupyter-server) RUN_MODE_LOWER="$choice"; break ;;
       *) echo "Please select 1 or 2" ;;
     esac
   done
@@ -215,8 +226,8 @@ if [[ -z "${MODEL_RESOURCE:-}" ]]; then
   fi
 fi
 
-if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" != "file" && "$RUN_MODE_LOWER" != "jupyter" ]]; then
-  echo "Error: RUN_MODE must be 'file' or 'jupyter'" >&2
+if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" != "file" && "$RUN_MODE_LOWER" != "jupyter-server" ]]; then
+  echo "Error: RUN_MODE must be 'file' or 'jupyter-server'" >&2
   exit 1
 fi
 
@@ -247,6 +258,23 @@ add_env_kv() {
     printf -v q '%q' "$val"
     SUGGEST_ENV+=("${name}=${q}")
   fi
+}
+add_env_kv_once() {
+  local name="$1"; shift
+  local val="$1"; shift || true
+  if [[ -z "$val" ]]; then
+    return 0
+  fi
+  local q
+  printf -v q '%q' "$val"
+  local candidate="${name}=${q}"
+  local existing
+  for existing in "${SUGGEST_ENV[@]:-}"; do
+    if [[ "$existing" == "$candidate" ]]; then
+      return 0
+    fi
+  done
+  SUGGEST_ENV+=("$candidate")
 }
 add_arg_kv() {
   local flag="$1"; shift
@@ -292,16 +320,18 @@ add_arg_kv_once() {
   SUGGEST_ARGS+=("$candidate")
 }
 
+# Ensure RUN_MODE is captured for Tip after helpers are defined (if already chosen)
+if [[ -n "${RUN_MODE_LOWER:-}" ]]; then
+  add_env_kv_once RUN_MODE "$RUN_MODE_LOWER"
+fi
+
 # Pre-collect provided flags so Tip includes them even if interrupted early
 if [[ -n "${TEE:-}" ]]; then add_arg_kv_once --tee "$TEE"; fi
 if [[ -n "${CONFIG_FILE:-}" ]]; then add_arg_kv_once --config "$CONFIG_FILE"; fi
 if [[ -n "${USE_CONFIGURATION:-}" ]]; then add_arg_kv_once --use-configuration "$USE_CONFIGURATION"; fi
 if [[ -n "${ADDITIONAL_PARAMS:-}" ]]; then add_arg_kv_once --additional-params "$ADDITIONAL_PARAMS"; fi
 
-# If user selected "no model", reflect this in the suggestion using MODEL_RESOURCE=none
-if [[ "${MODEL_CHOICE:-}" == "none" ]]; then
-  add_env_kv MODEL_RESOURCE "none"
-fi
+# (Suggestion will reflect MODEL_RESOURCE later in the unified handler)
 
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
   echo "Step 5: Collecting file run options..."
@@ -313,8 +343,8 @@ if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
     echo "Error: RUN_FILE not provided" >&2
     exit 1
   fi
-  add_env_kv RUN_MODE "$RUN_MODE_LOWER"
-  add_env_kv RUN_FILE_PATH "$RUN_FILE_PATH"
+  add_env_kv_once RUN_MODE "$RUN_MODE_LOWER"
+  add_env_kv_once RUN_FILE_PATH "$RUN_FILE_PATH"
   # Validate extension
   case "$RUN_FILE_PATH" in
     *.py|*.ipynb) ;;
@@ -350,14 +380,14 @@ if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
     }
 JSON
 )
-elif [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "jupyter" ]]; then
-  echo "Step 5: Collecting jupyter run options..."
+elif [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "jupyter-server" ]]; then
+  echo "Step 5: Collecting jupyter-server run options..."
   JUPYTER_PASSWORD_VALUE="${JUPYTER_PASSWORD:-}"
   if [[ -z "$JUPYTER_PASSWORD_VALUE" ]]; then
     read -r -p "Enter Jupyter password (optional, press Enter to skip): " JUPYTER_PASSWORD_VALUE || true
   fi
-  add_env_kv RUN_MODE "$RUN_MODE_LOWER"
-  add_env_kv JUPYTER_PASSWORD "$JUPYTER_PASSWORD_VALUE"
+  add_env_kv_once RUN_MODE "$RUN_MODE_LOWER"
+  add_env_kv_once JUPYTER_PASSWORD "$JUPYTER_PASSWORD_VALUE"
   # jq is required to safely encode password in JSON
   if ! command -v jq >/dev/null 2>&1; then
     echo "Error: 'jq' is required to encode Jupyter password into JSON. Please install jq and retry." >&2
@@ -380,8 +410,8 @@ fi
 TUNNELS_JSON=""
 LAUNCHER_ORDER_ID=""
 
-if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "jupyter" ]]; then
-  echo "Step 6: Choosing domain type for Jupyter..."
+if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "jupyter-server" ]]; then
+  echo "Step 6: Choosing domain type for Jupyter server..."
   DOMAIN_TYPE=""
   echo "Select domain option:"
   select dchoice in "Temporary Domain (*.superprotocol.io)" "Own domain"; do
@@ -511,7 +541,7 @@ DATA_RESOURCE_VALUE="${DATA_RESOURCE:-}"
 if [[ -n "$DATA_RESOURCE_VALUE" ]]; then
   # Prefer existing resource if provided
   DATA_RESOURCE_ABS="$(abs_path "$DATA_RESOURCE_VALUE")"
-  add_env_kv DATA_RESOURCE "$DATA_RESOURCE_ABS"
+  add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
   if [[ -n "${SUGGEST_ONLY:-}" ]]; then
     if [[ ! -f "$DATA_RESOURCE_ABS" ]]; then
       echo "Suggest-only: DATA_RESOURCE does not exist: $DATA_RESOURCE_ABS (including in Tip anyway)"
@@ -534,7 +564,7 @@ else
     DATA_ARCHIVE_NAME="${DATA_DIR_BASE}-data.tar.gz"
     DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
     # In suggestion, prefer *_RESOURCE form
-  add_env_kv DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
+  add_env_kv_once DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
     if [[ ! -d "$DATA_DIR_VALUE" ]]; then
       if [[ -n "${SUGGEST_ONLY:-}" ]]; then
         echo "Suggest-only: DATA_DIR is not a directory: $DATA_DIR_VALUE (including DATA_RESOURCE in Tip anyway)"
@@ -567,15 +597,15 @@ MODEL_RESOURCE_VALUE="${MODEL_RESOURCE:-}"
 if [[ -n "$MODEL_RESOURCE_VALUE" ]]; then
   if [[ "$MODEL_RESOURCE_VALUE" == "none" ]]; then
     # Sentinel meaning: explicitly no model
-    add_env_kv MODEL_RESOURCE "none"
+    add_env_kv_once MODEL_RESOURCE "none"
     # do not attach any descriptor and do not prompt for MODEL_DIR
   elif [[ "$MODEL_RESOURCE_VALUE" =~ ^[0-9]+$ ]]; then
     # Numeric offer id -> treat as direct --data <id>
-    add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_VALUE"
+    add_env_kv_once MODEL_RESOURCE "$MODEL_RESOURCE_VALUE"
     DATA_DESCRIPTORS+=("$MODEL_RESOURCE_VALUE")
   else
     MODEL_RESOURCE_ABS="$(abs_path "$MODEL_RESOURCE_VALUE")"
-    add_env_kv MODEL_RESOURCE "$MODEL_RESOURCE_ABS"
+    add_env_kv_once MODEL_RESOURCE "$MODEL_RESOURCE_ABS"
     if [[ -n "${SUGGEST_ONLY:-}" ]]; then
       if [[ ! -f "$MODEL_RESOURCE_ABS" ]]; then
         echo "Suggest-only: MODEL_RESOURCE does not exist: $MODEL_RESOURCE_ABS (including in Tip anyway)"
@@ -599,7 +629,7 @@ else
     MODEL_ARCHIVE_NAME="${MODEL_DIR_BASE}-model.tar.gz"
     MODEL_DESCRIPTOR_NAME="${MODEL_DIR_BASE}-model.json"
     # In suggestion, prefer *_RESOURCE form
-  add_env_kv MODEL_RESOURCE "$(abs_path "$MODEL_DESCRIPTOR_NAME")"
+  add_env_kv_once MODEL_RESOURCE "$(abs_path "$MODEL_DESCRIPTOR_NAME")"
     if [[ ! -d "$MODEL_DIR_VALUE" ]]; then
       if [[ -n "${SUGGEST_ONLY:-}" ]]; then
         echo "Suggest-only: MODEL_DIR is not a directory: $MODEL_DIR_VALUE (including MODEL_RESOURCE in Tip anyway)"
