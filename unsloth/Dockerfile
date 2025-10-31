@@ -16,7 +16,6 @@ USER root
 # Download and install nvm:
 ENV NODE_VERSION=22.21.1
 ENV NVM_DIR=/usr/local/nvm
-ENV NODE_OPTIONS="--enable-source-maps --experimental-websocket --experimental-require-module"
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 RUN . $NVM_DIR/nvm.sh \
