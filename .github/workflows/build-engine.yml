@@ -176,6 +176,7 @@ jobs:
         uses: Super-Protocol/sp-build-tools/actions/upload-file@v1
         with:
           file_to_upload: ${{ env.IMAGE_FILE }}
+          show_resource: true
 
       - name: Choose commit type
         run: |
