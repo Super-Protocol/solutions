@@ -48,7 +48,9 @@ const run = async (): Promise<void> => {
     const configuration = await readConfiguration(serverConfig.configurationPath);
     logger.info('Configuration loaded successfully');
 
-    const vllmConfiguration = configuration?.solution?.engine as VllmEngineConfiguration | undefined;
+    const vllmConfiguration = configuration?.solution?.engine as
+      | VllmEngineConfiguration
+      | undefined;
     if (vllmConfiguration) {
       vllmConfiguration.cache.gpu_memory_utilization = await getGpuAvailableCores();
     }
@@ -65,18 +67,18 @@ const run = async (): Promise<void> => {
     logger.info(`Starting vLLM server with arguments: ${cliArgs.join(' ')}`);
 
     await new Promise<void>((resolve, reject) => {
-      const vllmProcess = spawn('python3', [
-        '-m', 'vllm.entrypoints.openai.api_server',
-        ...cliArgs,
-      ], {
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          VLLM_LOGGING_LEVEL: 'INFO',
-          ...envVars
+      const vllmProcess = spawn(
+        'python3',
+        ['-m', 'vllm.entrypoints.openai.api_server', ...cliArgs],
+        {
+          stdio: 'inherit',
+          env: {
+            ...process.env,
+            VLLM_LOGGING_LEVEL: 'INFO',
+            ...envVars,
+          },
         },
-
-      });
+      );
 
       vllmProcess.on('spawn', () => {
         logger.info('vLLM server process spawned successfully');
@@ -116,7 +118,7 @@ const run = async (): Promise<void> => {
       });
 
       // Graceful shutdown handling
-      const shutdown = (signal: string) => {
+      const shutdown = (signal: string): void => {
         logger.info(`Received ${signal}, shutting down vLLM server gracefully`);
         vllmProcess.kill('SIGTERM');
 
@@ -130,7 +132,6 @@ const run = async (): Promise<void> => {
       process.on('SIGTERM', () => shutdown('SIGTERM'));
       process.on('SIGINT', () => shutdown('SIGINT'));
     });
-
   } catch (error) {
     logger.fatal({ error }, 'Failed to start vLLM server');
     throw error;

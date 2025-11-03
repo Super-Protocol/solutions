@@ -20,5 +20,7 @@ export const config = {
   clientServerPort: 8000,
   serverFilePath: path.join(__dirname, './server.js'),
   configurationPath: process.env.CONFIGURATION_PATH || '/sp/configurations/configuration.json',
-  localServerStartTimeoutMs: Number.parseInt(process.env.LOCAL_SERVER_START_TIMEOUT_MS || '9000000'), // 150 min
+  localServerStartTimeoutMs: Number.parseInt(
+    process.env.LOCAL_SERVER_START_TIMEOUT_MS || '9000000',
+  ), // 150 min
 };

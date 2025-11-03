@@ -3,20 +3,20 @@ import { VllmEngineConfiguration } from './types';
 import { ModelDetector } from './model-detector';
 
 // Main function to generate CLI parameters for vLLM
-export const getVllmCliParams = async (params: {
+export const getVllmCliParams = (params: {
   configuration?: VllmEngineConfiguration;
   engineFolder: string;
   inputDataFolder: string;
   serverPort: number;
   logger: Logger;
-}): Promise<{ cliArgs: string[], envVars: Record<string, string> }> => {
+}): { cliArgs: string[]; envVars: Record<string, string> } => {
   const { configuration, serverPort, inputDataFolder, logger } = params;
 
   if (!configuration) {
     logger.info('Configuration not found. Run with default params');
     return {
       cliArgs: ['--port', String(serverPort), '--host', '0.0.0.0'],
-      envVars: {}
+      envVars: {},
     };
   }
 
@@ -43,7 +43,7 @@ export const getVllmCliParams = async (params: {
 };
 
 // Helper function to safely serialize JSON parameters
-const serializeJsonParam = (value: any): string => {
+const serializeJsonParam = (value: unknown): string => {
   if (typeof value === 'string') {
     const trimmed = value.trim();
     if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
@@ -57,7 +57,7 @@ const serializeJsonParam = (value: any): string => {
 // Helper function to add string array parameters
 const addStringArrayParam = (cliParams: string[], flag: string, values?: string[]): void => {
   if (values && values.length > 0) {
-    values.forEach(value => {
+    values.forEach((value) => {
       cliParams.push(`--${flag}`, value);
     });
   }
@@ -127,7 +127,9 @@ const setupServerConfiguration = (
     cliParams.push('--log-config-file', serverSettings.log_config_file);
   }
 
-  logger.info(`Server configuration: host=${serverSettings?.host || '0.0.0.0'}, port=${serverPort}`);
+  logger.info(
+    `Server configuration: host=${serverSettings?.host || '0.0.0.0'}, port=${serverPort}`,
+  );
   return cliParams;
 };
 
@@ -183,7 +185,10 @@ const setupFrontendConfiguration = (
   }
 
   if (frontendSettings.h11_max_incomplete_event_size) {
-    cliParams.push('--h11-max-incomplete-event-size', String(frontendSettings.h11_max_incomplete_event_size));
+    cliParams.push(
+      '--h11-max-incomplete-event-size',
+      String(frontendSettings.h11_max_incomplete_event_size),
+    );
   }
 
   if (frontendSettings.max_log_len) {
@@ -198,18 +203,54 @@ const setupFrontendConfiguration = (
 
   // Boolean flags
   addBooleanFlag(cliParams, 'disable-fastapi-docs', frontendSettings.disable_fastapi_docs);
-  addBooleanFlag(cliParams, 'disable-frontend-multiprocessing', frontendSettings.disable_frontend_multiprocessing);
-  addBooleanFlag(cliParams, 'disable-uvicorn-access-log', frontendSettings.disable_uvicorn_access_log);
+  addBooleanFlag(
+    cliParams,
+    'disable-frontend-multiprocessing',
+    frontendSettings.disable_frontend_multiprocessing,
+  );
+  addBooleanFlag(
+    cliParams,
+    'disable-uvicorn-access-log',
+    frontendSettings.disable_uvicorn_access_log,
+  );
   addBooleanFlag(cliParams, 'enable-auto-tool-choice', frontendSettings.enable_auto_tool_choice);
-  addBooleanFlag(cliParams, 'enable-force-include-usage', frontendSettings.enable_force_include_usage);
+  addBooleanFlag(
+    cliParams,
+    'enable-force-include-usage',
+    frontendSettings.enable_force_include_usage,
+  );
   addBooleanFlag(cliParams, 'enable-log-outputs', frontendSettings.enable_log_outputs);
-  addBooleanFlag(cliParams, 'enable-prompt-tokens-details', frontendSettings.enable_prompt_tokens_details);
-  addBooleanFlag(cliParams, 'enable-request-id-headers', frontendSettings.enable_request_id_headers);
-  addBooleanFlag(cliParams, 'enable-server-load-tracking', frontendSettings.enable_server_load_tracking);
+  addBooleanFlag(
+    cliParams,
+    'enable-prompt-tokens-details',
+    frontendSettings.enable_prompt_tokens_details,
+  );
+  addBooleanFlag(
+    cliParams,
+    'enable-request-id-headers',
+    frontendSettings.enable_request_id_headers,
+  );
+  addBooleanFlag(
+    cliParams,
+    'enable-server-load-tracking',
+    frontendSettings.enable_server_load_tracking,
+  );
   addBooleanFlag(cliParams, 'enable-ssl-refresh', frontendSettings.enable_ssl_refresh);
-  addBooleanFlag(cliParams, 'enable-tokenizer-info-endpoint', frontendSettings.enable_tokenizer_info_endpoint);
-  addBooleanFlag(cliParams, 'exclude-tools-when-tool-choice-none', frontendSettings.exclude_tools_when_tool_choice_none);
-  addBooleanFlag(cliParams, 'return-tokens-as-token-ids', frontendSettings.return_tokens_as_token_ids);
+  addBooleanFlag(
+    cliParams,
+    'enable-tokenizer-info-endpoint',
+    frontendSettings.enable_tokenizer_info_endpoint,
+  );
+  addBooleanFlag(
+    cliParams,
+    'exclude-tools-when-tool-choice-none',
+    frontendSettings.exclude_tools_when_tool_choice_none,
+  );
+  addBooleanFlag(
+    cliParams,
+    'return-tokens-as-token-ids',
+    frontendSettings.return_tokens_as_token_ids,
+  );
   addBooleanFlag(cliParams, 'enable-log-requests', frontendSettings.enable_log_requests);
   addBooleanFlag(cliParams, 'disable-log-requests', frontendSettings.disable_log_requests);
 
@@ -389,7 +430,10 @@ const setupParallelConfiguration = (
   }
 
   if (parallelSettings.max_parallel_loading_workers) {
-    cliParams.push('--max-parallel-loading-workers', String(parallelSettings.max_parallel_loading_workers));
+    cliParams.push(
+      '--max-parallel-loading-workers',
+      String(parallelSettings.max_parallel_loading_workers),
+    );
   }
 
   if (parallelSettings.worker_cls) {
@@ -406,8 +450,16 @@ const setupParallelConfiguration = (
   addBooleanFlag(cliParams, 'enable-eplb', parallelSettings.enable_eplb);
   addBooleanFlag(cliParams, 'eplb-log-balancedness', parallelSettings.eplb_log_balancedness);
   addBooleanFlag(cliParams, 'ray-workers-use-nsight', parallelSettings.ray_workers_use_nsight);
-  addBooleanFlag(cliParams, 'disable-custom-all-reduce', parallelSettings.disable_custom_all_reduce);
-  addBooleanFlag(cliParams, 'enable-multimodal-encoder-data-parallel', parallelSettings.enable_multimodal_encoder_data_parallel);
+  addBooleanFlag(
+    cliParams,
+    'disable-custom-all-reduce',
+    parallelSettings.disable_custom_all_reduce,
+  );
+  addBooleanFlag(
+    cliParams,
+    'enable-multimodal-encoder-data-parallel',
+    parallelSettings.enable_multimodal_encoder_data_parallel,
+  );
 
   return cliParams;
 };
@@ -531,11 +583,17 @@ const setupSchedulerConfiguration = (
   }
 
   if (schedulerSettings.max_num_partial_prefills) {
-    cliParams.push('--max-num-partial-prefills', String(schedulerSettings.max_num_partial_prefills));
+    cliParams.push(
+      '--max-num-partial-prefills',
+      String(schedulerSettings.max_num_partial_prefills),
+    );
   }
 
   if (schedulerSettings.max_long_partial_prefills) {
-    cliParams.push('--max-long-partial-prefills', String(schedulerSettings.max_long_partial_prefills));
+    cliParams.push(
+      '--max-long-partial-prefills',
+      String(schedulerSettings.max_long_partial_prefills),
+    );
   }
 
   if (schedulerSettings.cuda_graph_sizes?.length) {
@@ -543,7 +601,10 @@ const setupSchedulerConfiguration = (
   }
 
   if (schedulerSettings.long_prefill_token_threshold) {
-    cliParams.push('--long-prefill-token-threshold', String(schedulerSettings.long_prefill_token_threshold));
+    cliParams.push(
+      '--long-prefill-token-threshold',
+      String(schedulerSettings.long_prefill_token_threshold),
+    );
   }
 
   if (schedulerSettings.num_lookahead_slots) {
@@ -569,7 +630,11 @@ const setupSchedulerConfiguration = (
   // Boolean flags
   addBooleanFlag(cliParams, 'enable-chunked-prefill', schedulerSettings.enable_chunked_prefill);
   addBooleanFlag(cliParams, 'disable-chunked-mm-input', schedulerSettings.disable_chunked_mm_input);
-  addBooleanFlag(cliParams, 'disable-hybrid-kv-cache-manager', schedulerSettings.disable_hybrid_kv_cache_manager);
+  addBooleanFlag(
+    cliParams,
+    'disable-hybrid-kv-cache-manager',
+    schedulerSettings.disable_hybrid_kv_cache_manager,
+  );
   addBooleanFlag(cliParams, 'async-scheduling', schedulerSettings.async_scheduling);
 
   return cliParams;
@@ -614,7 +679,10 @@ const setupQuantizationConfiguration = (
 
   // JSON parameters
   if (settings.override_generation_config) {
-    cliParams.push('--override-generation-config', serializeJsonParam(settings.override_generation_config));
+    cliParams.push(
+      '--override-generation-config',
+      serializeJsonParam(settings.override_generation_config),
+    );
   }
 
   if (settings.override_neuron_config) {
@@ -654,7 +722,10 @@ const setupLoadingConfiguration = (
   addStringArrayParam(cliParams, 'ignore-patterns', settings.ignore_patterns);
 
   if (settings.model_loader_extra_config) {
-    cliParams.push('--model-loader-extra-config', serializeJsonParam(settings.model_loader_extra_config));
+    cliParams.push(
+      '--model-loader-extra-config',
+      serializeJsonParam(settings.model_loader_extra_config),
+    );
   }
 
   addBooleanFlag(cliParams, 'use-tqdm-on-load', settings.use_tqdm_on_load);
@@ -685,7 +756,11 @@ const setupMultimodalConfiguration = (
     cliParams.push('--mm-processor-kwargs', serializeJsonParam(settings.mm_processor_kwargs));
   }
 
-  addBooleanFlag(cliParams, 'disable-mm-preprocessor-cache', settings.disable_mm_preprocessor_cache);
+  addBooleanFlag(
+    cliParams,
+    'disable-mm-preprocessor-cache',
+    settings.disable_mm_preprocessor_cache,
+  );
   addBooleanFlag(cliParams, 'interleave-mm-strings', settings.interleave_mm_strings);
   addBooleanFlag(cliParams, 'skip-mm-profiling', settings.skip_mm_profiling);
 
@@ -707,9 +782,21 @@ const setupDecodingConfiguration = (
     cliParams.push('--reasoning-parser', settings.reasoning_parser);
   }
 
-  addBooleanFlag(cliParams, 'guided-decoding-disable-fallback', settings.guided_decoding_disable_fallback);
-  addBooleanFlag(cliParams, 'guided-decoding-disable-any-whitespace', settings.guided_decoding_disable_any_whitespace);
-  addBooleanFlag(cliParams, 'guided-decoding-disable-additional-properties', settings.guided_decoding_disable_additional_properties);
+  addBooleanFlag(
+    cliParams,
+    'guided-decoding-disable-fallback',
+    settings.guided_decoding_disable_fallback,
+  );
+  addBooleanFlag(
+    cliParams,
+    'guided-decoding-disable-any-whitespace',
+    settings.guided_decoding_disable_any_whitespace,
+  );
+  addBooleanFlag(
+    cliParams,
+    'guided-decoding-disable-additional-properties',
+    settings.guided_decoding_disable_additional_properties,
+  );
 
   return cliParams;
 };
@@ -730,8 +817,9 @@ const setupObservabilityConfiguration = (
   }
 
   if (settings.collect_detailed_traces?.length) {
-    settings.collect_detailed_traces.forEach(trace => {
-      if (trace) { // Skip null values
+    settings.collect_detailed_traces.forEach((trace) => {
+      if (trace) {
+        // Skip null values
         cliParams.push('--collect-detailed-traces', trace);
       }
     });
@@ -741,7 +829,11 @@ const setupObservabilityConfiguration = (
   addBooleanFlag(cliParams, 'enable-prompt-tokens-details', settings.enable_prompt_tokens_details);
   addBooleanFlag(cliParams, 'enable-server-load-tracking', settings.enable_server_load_tracking);
   addBooleanFlag(cliParams, 'enable-force-include-usage', settings.enable_force_include_usage);
-  addBooleanFlag(cliParams, 'enable-tokenizer-info-endpoint', settings.enable_tokenizer_info_endpoint);
+  addBooleanFlag(
+    cliParams,
+    'enable-tokenizer-info-endpoint',
+    settings.enable_tokenizer_info_endpoint,
+  );
   addBooleanFlag(cliParams, 'disable-log-stats', settings.disable_log_stats);
   addBooleanFlag(cliParams, 'enable-log-requests', settings.enable_log_requests);
   addBooleanFlag(cliParams, 'disable-log-requests', settings.disable_log_requests);
