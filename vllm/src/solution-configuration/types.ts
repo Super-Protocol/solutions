@@ -4,7 +4,13 @@ export type RawParameters = Record<string, string | boolean | number>;
 
 export type VllmEngineConfiguration = {
   environment?: {
-    VLLM_ATTENTION_BACKEND?: 'TORCH_SDPA' | 'FLASH_ATTN' | 'XFORMERS' | 'ROCM_FLASH' | 'FLASHINFER' | 'FLASHMLA';
+    VLLM_ATTENTION_BACKEND?:
+      | 'TORCH_SDPA'
+      | 'FLASH_ATTN'
+      | 'XFORMERS'
+      | 'ROCM_FLASH'
+      | 'FLASHINFER'
+      | 'FLASHMLA';
 
     // Performance optimizations
     VLLM_USE_TRITON_FLASH_ATTN?: boolean;
@@ -34,7 +40,7 @@ export type VllmEngineConfiguration = {
     VLLM_LOG_STATS_INTERVAL?: number;
     VLLM_TRACE_FUNCTION?: boolean;
 
-    // Model loading behavior  
+    // Model loading behavior
     VLLM_USE_MODELSCOPE?: boolean;
     VLLM_MODEL_REDIRECT_PATH?: string;
     VLLM_ALLOW_LONG_MAX_MODEL_LEN?: boolean;
@@ -115,7 +121,27 @@ export type VllmEngineConfiguration = {
     exclude_tools_when_tool_choice_none?: boolean;
     h11_max_header_count?: number;
     h11_max_incomplete_event_size?: number;
-    tool_call_parser?: 'deepseek_v3' | 'glm45' | 'granite-20b-fc' | 'granite' | 'hermes' | 'hunyuan_a13b' | 'internlm' | 'jamba' | 'kimi_k2' | 'llama4_pythonic' | 'llama4_json' | 'llama3_json' | 'minimax' | 'mistral' | 'phi4_mini_json' | 'pythonic' | 'qwen3_coder' | 'step3' | 'xlam' | string;
+    tool_call_parser?:
+      | 'deepseek_v3'
+      | 'glm45'
+      | 'granite-20b-fc'
+      | 'granite'
+      | 'hermes'
+      | 'hunyuan_a13b'
+      | 'internlm'
+      | 'jamba'
+      | 'kimi_k2'
+      | 'llama4_pythonic'
+      | 'llama4_json'
+      | 'llama3_json'
+      | 'minimax'
+      | 'mistral'
+      | 'phi4_mini_json'
+      | 'pythonic'
+      | 'qwen3_coder'
+      | 'step3'
+      | 'xlam'
+      | string;
     tool_parser_plugin?: string;
     tool_server?: string;
     chat_template?: string;
@@ -152,7 +178,17 @@ export type VllmEngineConfiguration = {
     allowed_local_media_path?: string;
     runner?: 'auto' | 'draft' | 'generate' | 'pooling';
     convert?: 'auto' | 'classify' | 'embed' | 'none' | 'reward';
-    task?: 'auto' | 'classify' | 'draft' | 'embed' | 'embedding' | 'generate' | 'reward' | 'score' | 'transcription' | null;
+    task?:
+      | 'auto'
+      | 'classify'
+      | 'draft'
+      | 'embed'
+      | 'embedding'
+      | 'generate'
+      | 'reward'
+      | 'score'
+      | 'transcription'
+      | null;
     config_format?: 'auto' | 'hf' | 'mistral';
     model_impl?: 'auto' | 'vllm' | 'transformers';
     enable_sleep_mode?: boolean;
@@ -181,7 +217,19 @@ export type VllmEngineConfiguration = {
 
   // Loading configuration
   loading: {
-    load_format?: 'auto' | 'pt' | 'safetensors' | 'npcache' | 'dummy' | 'tensorizer' | 'runai_streamer' | 'bitsandbytes' | 'sharded_state' | 'gguf' | 'mistral' | string;
+    load_format?:
+      | 'auto'
+      | 'pt'
+      | 'safetensors'
+      | 'npcache'
+      | 'dummy'
+      | 'tensorizer'
+      | 'runai_streamer'
+      | 'bitsandbytes'
+      | 'sharded_state'
+      | 'gguf'
+      | 'mistral'
+      | string;
     download_dir?: string;
     model_loader_extra_config?: RawParameters;
     ignore_patterns?: string[];
@@ -283,7 +331,15 @@ export type VllmEngineConfiguration = {
     guided_decoding_disable_fallback?: boolean;
     guided_decoding_disable_any_whitespace?: boolean;
     guided_decoding_disable_additional_properties?: boolean;
-    reasoning_parser?: 'deepseek_r1' | 'glm45' | 'GptOss' | 'granite' | 'hunyuan_a13b' | 'mistral' | 'qwen3' | 'step3';
+    reasoning_parser?:
+      | 'deepseek_r1'
+      | 'glm45'
+      | 'GptOss'
+      | 'granite'
+      | 'hunyuan_a13b'
+      | 'mistral'
+      | 'qwen3'
+      | 'step3';
   };
 
   // Speculative decoding and advanced features
@@ -321,7 +377,17 @@ export type VllmEngineConfiguration = {
   // Deprecated/Legacy options
   legacy: {
     enable_prompt_adapter?: boolean; // Deprecated - has no effect
-    task?: 'auto' | 'classify' | 'draft' | 'embed' | 'embedding' | 'generate' | 'reward' | 'score' | 'transcription' | null; // Deprecated
+    task?:
+      | 'auto'
+      | 'classify'
+      | 'draft'
+      | 'embed'
+      | 'embedding'
+      | 'generate'
+      | 'reward'
+      | 'score'
+      | 'transcription'
+      | null; // Deprecated
   };
 };
 

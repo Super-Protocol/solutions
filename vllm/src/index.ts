@@ -16,7 +16,7 @@ exitOnSignals(rootLogger);
 
 const run = async (): Promise<void> => {
   const logger = rootLogger.child({ method: run.name });
-  let configuration = await readConfiguration(config.configurationPath);
+  const configuration = await readConfiguration(config.configurationPath);
 
   const tunnelsConfiguration = configuration?.solution?.tunnels as TunnelsConfiguration | undefined;
 
