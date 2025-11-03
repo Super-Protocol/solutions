@@ -5,7 +5,7 @@ on:
     inputs:
       solution:
         required: true
-        description: 'Solution to build'
+        description: "Solution to build"
         type: choice
         options:
           - text-generation-webui-gpu
@@ -15,8 +15,9 @@ on:
           - dia-tts
           - jupyter
           - unsloth
+          - vllm
       target:
-        description: 'Target'
+        description: "Target"
         required: true
         type: choice
         options:
@@ -26,16 +27,16 @@ on:
           - mainnet
 
 env:
-  IMAGE_FILE: ''
-  IMAGE_RESOURCE: ''
+  IMAGE_FILE: ""
+  IMAGE_RESOURCE: ""
   SOLUTION: ${{ inputs.solution }}
   PR_REPO_ARGO: super-protocol/argocd-clusters
-  DOCKERFILE: ''
-  DOCKERFILE_CONTEXT: ''
-  SUBMODULE_PATH: ''
+  DOCKERFILE: ""
+  DOCKERFILE_CONTEXT: ""
+  SUBMODULE_PATH: ""
   TARGET: ${{ inputs.target }}
   ALLOW_MULTIPLE_UPDATE: false
-  ARGO_COMMIT_TYPE: ''
+  ARGO_COMMIT_TYPE: ""
 
 jobs:
   build-engine:
@@ -85,6 +86,11 @@ jobs:
           elif [ "$SOLUTION" == "unsloth" ]; then
             DOCKERFILE="./unsloth/Dockerfile"
             DOCKERFILE_CONTEXT="./unsloth/"
+            
+
+          elif [ "$SOLUTION" == "vllm" ]; then
+            DOCKERFILE="./vllm/Dockerfile"
+            DOCKERFILE_CONTEXT="./vllm/"
             
           else
             echo "Invalid solution name"
