@@ -91,8 +91,8 @@ Environment variables (interactive prompts if missing):
   RUN_JUPYTER_TUNNEL_SERVER_TOKEN Auth token for tunnel server (own-domain)
   DATA_DIR                     Path to data folder to upload and attach (optional) [alias: DATA_PATH]
   MODEL_DIR                    Path to model folder to upload and attach (optional)
-  DATA_RESOURCE                Path to existing uploaded data descriptor JSON (skip upload) (optional)
-  MODEL_RESOURCE               Path to existing uploaded model descriptor JSON (skip upload), a numeric offer id, or 'none' to skip model (optional)
+  DATA_RESOURCE                Path to existing uploaded data resource JSON (skip upload) (optional)
+  MODEL_RESOURCE               Path to existing uploaded model resource JSON (skip upload), a numeric offer id, or 'none' to skip model (optional)
 
 Options:
   --tee <number>               TEE offer id to use for Unsloth
@@ -233,13 +233,13 @@ if [[ -z "${MODEL_RESOURCE:-}" ]]; then
     # Explicitly record no-model selection to avoid later prompts and include in Tip
     MODEL_RESOURCE="none"
   elif [[ "$MODEL_CHOICE" == "your" ]]; then
-    echo "Provide your model as one of: descriptor JSON path, numeric offer id, or folder path"
+    echo "Provide your model as one of: resource JSON path, numeric offer id, or folder path"
     read -r -p "Model input: " MODEL_USER_INPUT || true
     if [[ -n "$MODEL_USER_INPUT" ]]; then
       if [[ "$MODEL_USER_INPUT" =~ ^[0-9]+$ ]]; then
         MODEL_RESOURCE="$MODEL_USER_INPUT"
       elif [[ -f "$MODEL_USER_INPUT" ]]; then
-        # Assume descriptor JSON; later block will validate/attach
+        # Assume resource JSON; later block will validate/attach
         MODEL_RESOURCE="$MODEL_USER_INPUT"
       elif [[ -d "$MODEL_USER_INPUT" ]]; then
         MODEL_DIR="$MODEL_USER_INPUT"
@@ -360,19 +360,38 @@ if [[ -n "${ADDITIONAL_PARAMS:-}" ]]; then add_arg_kv_once --additional-params "
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
   echo "Step 5: Collecting file run options..."
   INPUT_PATH="${RUN_FILE_PATH:-${RUN_FILE:-}}"
-  if [[ -z "$INPUT_PATH" ]]; then
-    read -r -p "Enter path to a .py/.ipynb file OR a directory: " INPUT_PATH
-  fi
-  if [[ -z "$INPUT_PATH" ]]; then
-    echo "Error: RUN_FILE not provided" >&2
-    exit 1
+  # Non-interactive fast-path: if RUN_DIR and RUN_FILE are provided, use them together
+  if [[ -z "${RUN_FILE_PATH:-}" && -n "${RUN_DIR:-}" && -n "${RUN_FILE:-}" ]]; then
+    RUN_DIR_ABS="$(cd "${RUN_DIR}" 2>/dev/null && pwd || true)"
+    if [[ -z "${RUN_DIR_ABS:-}" || ! -d "${RUN_DIR_ABS}" ]]; then
+      echo "Error: RUN_DIR is not a directory: ${RUN_DIR:-}" >&2
+      exit 1
+    fi
+    RUN_FILE_BASENAME="$(basename -- "${RUN_FILE}")"
+    FULL_PATH="${RUN_DIR_ABS}/${RUN_FILE_BASENAME}"
+    if [[ ! -f "$FULL_PATH" ]]; then
+      echo "Error: File not found in RUN_DIR: $FULL_PATH" >&2
+      exit 1
+    fi
+    RUN_FILE_DIRNAME="$RUN_DIR_ABS"
+    DIR_SELECTED=1
+    # Record provided envs for Tip
+    add_env_kv_once RUN_DIR "$RUN_FILE_DIRNAME"
+    add_env_kv_once RUN_FILE "$RUN_FILE_BASENAME"
+  else
+    if [[ -z "$INPUT_PATH" ]]; then
+      read -r -p "Enter path to a .py/.ipynb file OR a directory: " INPUT_PATH
+    fi
+    if [[ -z "$INPUT_PATH" ]]; then
+      echo "Error: RUN_FILE not provided" >&2
+      exit 1
+    fi
   fi
   add_env_kv_once RUN_MODE "$RUN_MODE_LOWER"
 
-  FULL_PATH=""
-  RUN_FILE_BASENAME=""
-  RUN_FILE_DIRNAME=""
-  if [[ -d "$INPUT_PATH" ]]; then
+  if [[ "${DIR_SELECTED:-0}" -eq 1 ]]; then
+    : # already set RUN_FILE_BASENAME, RUN_FILE_DIRNAME, FULL_PATH above
+  elif [[ -d "$INPUT_PATH" ]]; then
     # Directory mode: list first 10 .py/.ipynb files and let user select by number or filename
     RUN_DIR_ABS="$(cd "$INPUT_PATH" && pwd)"
     DIR_SELECTED=0
@@ -679,9 +698,16 @@ if [[ -n "$DATA_RESOURCE_VALUE" ]]; then
 else
   DATA_DIR_VALUE="${DATA_DIR:-${DATA_PATH:-}}"
   if [[ -z "$DATA_DIR_VALUE" ]]; then
-    read -r -p "Enter path to data folder to upload (optional, press Enter to skip): " DATA_DIR_VALUE || true
+    read -r -p "Provide your dataset as a resource JSON path or folder path (optional, press Enter to skip): " DATA_DIR_VALUE || true
   fi
   if [[ -n "$DATA_DIR_VALUE" ]]; then
+    # Treat explicit DATA_DIR=none (case-insensitive) as skip, since suggestions include it
+    case "$DATA_DIR_VALUE" in
+      none|NONE|None)
+        add_env_kv_once DATA_DIR "none"
+        echo "Skipping dataset attachment (DATA_DIR=none)"
+        ;;
+      *)
     # If a JSON descriptor is provided instead of a folder, treat it as DATA_RESOURCE
     if [[ -f "$DATA_DIR_VALUE" ]] \
        && grep -q '"hash"' "$DATA_DIR_VALUE" \
@@ -724,6 +750,11 @@ else
         DATA_DESCRIPTORS+=("$(abs_path "$DATA_DESCRIPTOR_NAME")")
       fi
     fi
+        ;;
+    esac
+  else
+    # User skipped dataset (pressed Enter or DATA_DIR unset). Record this in Tip for reproducibility.
+    add_env_kv_once DATA_DIR "none"
   fi
 fi
 
