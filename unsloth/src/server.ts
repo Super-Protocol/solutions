@@ -74,7 +74,7 @@ const run = async (): Promise<void> => {
       `--certfile=${serverConfig.certificateFilePath}`,
       `--keyfile=${serverConfig.privateKeyFilePath}`,
       `--port=${serverConfig.port}`,
-      `--notebook-dir=/workspace`,
+      `--notebook-dir=${runJupyterParams?.start_dir || `/workspace`}`,
       `--NotebookApp.allow_origin='*'`,
       `--NotebookApp.disable_check_xsrf=True`,
       `--allow-root`,

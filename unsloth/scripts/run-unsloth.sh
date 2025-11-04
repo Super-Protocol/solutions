@@ -10,6 +10,10 @@ printf -v SUGGEST_SCRIPT_Q '%q' "$SCRIPT_PATH"
 
 # Always print a short non-interactive hint on exit (success or error)
 print_noninteractive_hint() {
+  # Only print suggestion in suggest-only mode
+  if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+    return 0
+  fi
   local suggest_env_str=""
   local suggest_args_str=""
   if [[ "${SUGGEST_ENV+x}" == "x" ]]; then
@@ -211,6 +215,21 @@ if [[ -z "${MODEL_RESOURCE:-}" ]]; then
   elif [[ "$MODEL_CHOICE" == "none" ]]; then
     # Explicitly record no-model selection to avoid later prompts and include in Tip
     MODEL_RESOURCE="none"
+  elif [[ "$MODEL_CHOICE" == "your" ]]; then
+    echo "Provide your model as one of: descriptor JSON path, numeric offer id, or folder path"
+    read -r -p "Model input: " MODEL_USER_INPUT || true
+    if [[ -n "$MODEL_USER_INPUT" ]]; then
+      if [[ "$MODEL_USER_INPUT" =~ ^[0-9]+$ ]]; then
+        MODEL_RESOURCE="$MODEL_USER_INPUT"
+      elif [[ -f "$MODEL_USER_INPUT" ]]; then
+        # Assume descriptor JSON; later block will validate/attach
+        MODEL_RESOURCE="$MODEL_USER_INPUT"
+      elif [[ -d "$MODEL_USER_INPUT" ]]; then
+        MODEL_DIR="$MODEL_USER_INPUT"
+      else
+        echo "Warning: provided model input not found, proceeding to later prompts..."
+      fi
+    fi
   fi
 fi
 
@@ -387,7 +406,8 @@ elif [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "jupyter-server" ]]; 
       "main_settings": {
         "run_mode": "${RUN_MODE_HUMAN}",
         "run_jupyter_options": {
-          "password": $(jq -rn --arg v "$JUPYTER_PASSWORD_VALUE" '$v|@json')
+          "password": $(jq -rn --arg v "$JUPYTER_PASSWORD_VALUE" '$v|@json'),
+          "start_dir": "/sp"
         }
       }
     }
@@ -547,35 +567,47 @@ else
     read -r -p "Enter path to data folder to upload (optional, press Enter to skip): " DATA_DIR_VALUE || true
   fi
   if [[ -n "$DATA_DIR_VALUE" ]]; then
-    # Compute descriptor name for suggestion regardless of existence
-    DATA_DIR_BASE="$(basename -- "$DATA_DIR_VALUE")"
-    DATA_ARCHIVE_NAME="${DATA_DIR_BASE}-data.tar.gz"
-    DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
-    # In suggestion, prefer *_RESOURCE form
-  add_env_kv_once DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
-    if [[ ! -d "$DATA_DIR_VALUE" ]]; then
-      if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-        echo "Suggest-only: DATA_DIR is not a directory: $DATA_DIR_VALUE (including DATA_RESOURCE in Tip anyway)"
-      else
-        echo "Error: DATA_DIR is not a directory: $DATA_DIR_VALUE" >&2
-        exit 1
+    # If a JSON descriptor is provided instead of a folder, treat it as DATA_RESOURCE
+    if [[ -f "$DATA_DIR_VALUE" ]] \
+       && grep -q '"hash"' "$DATA_DIR_VALUE" \
+       && grep -q '"encryption"' "$DATA_DIR_VALUE" \
+       && grep -q '"resource"' "$DATA_DIR_VALUE"; then
+      DATA_RESOURCE_ABS="$(abs_path "$DATA_DIR_VALUE")"
+      add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
+      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+        DATA_DESCRIPTORS+=("$DATA_RESOURCE_ABS")
       fi
     else
-      DATA_DIR_ABS="$(cd "$DATA_DIR_VALUE" && pwd)"
-    DATA_DIR_BASE="$(basename -- "$DATA_DIR_ABS")"
-    DATA_TS="$(date +%s)"
-    DATA_STORJ_NAME="${DATA_DIR_BASE}-data-${DATA_TS}"
-    DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
-
-      echo "Step 6.X: Preparing data folder upload (no archiving)..."
-      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-        echo "Uploading data folder via spctl files upload..."
-        "$SPCTL" files upload "$DATA_DIR_ABS" --filename "$DATA_STORJ_NAME" --output "$DATA_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
-        echo "Upload descriptor saved to: $DATA_DESCRIPTOR_NAME"
+      # Compute descriptor name for suggestion regardless of existence
+      DATA_DIR_BASE="$(basename -- "$DATA_DIR_VALUE")"
+      DATA_ARCHIVE_NAME="${DATA_DIR_BASE}-data.tar.gz"
+      DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
+      # In suggestion, prefer *_RESOURCE form
+      add_env_kv_once DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
+      if [[ ! -d "$DATA_DIR_VALUE" ]]; then
+        if [[ -n "${SUGGEST_ONLY:-}" ]]; then
+          echo "Suggest-only: DATA_DIR is not a directory: $DATA_DIR_VALUE (including DATA_RESOURCE in Tip anyway)"
+        else
+          echo "Error: DATA_DIR is not a directory: $DATA_DIR_VALUE" >&2
+          exit 1
+        fi
       else
-        echo "Suggest-only: would upload folder $DATA_DIR_ABS as name $DATA_STORJ_NAME and produce $DATA_DESCRIPTOR_NAME"
+        DATA_DIR_ABS="$(cd "$DATA_DIR_VALUE" && pwd)"
+        DATA_DIR_BASE="$(basename -- "$DATA_DIR_ABS")"
+        DATA_TS="$(date +%s)"
+        DATA_STORJ_NAME="${DATA_DIR_BASE}-data-${DATA_TS}"
+        DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
+
+        echo "Step 6.X: Preparing data folder upload (no archiving)..."
+        if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+          echo "Uploading data folder via spctl files upload..."
+          "$SPCTL" files upload "$DATA_DIR_ABS" --filename "$DATA_STORJ_NAME" --output "$DATA_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
+          echo "Upload descriptor saved to: $DATA_DESCRIPTOR_NAME"
+        else
+          echo "Suggest-only: would upload folder $DATA_DIR_ABS as name $DATA_STORJ_NAME and produce $DATA_DESCRIPTOR_NAME"
+        fi
+        DATA_DESCRIPTORS+=("$(abs_path "$DATA_DESCRIPTOR_NAME")")
       fi
-      DATA_DESCRIPTORS+=("$(abs_path "$DATA_DESCRIPTOR_NAME")")
     fi
   fi
 fi
@@ -612,35 +644,47 @@ else
     read -r -p "Enter path to model folder to upload (optional, press Enter to skip): " MODEL_DIR_VALUE || true
   fi
   if [[ -n "$MODEL_DIR_VALUE" ]]; then
-    # Compute descriptor name for suggestion regardless of existence
-    MODEL_DIR_BASE="$(basename -- "$MODEL_DIR_VALUE")"
-    MODEL_ARCHIVE_NAME="${MODEL_DIR_BASE}-model.tar.gz"
-    MODEL_DESCRIPTOR_NAME="${MODEL_DIR_BASE}-model.json"
-    # In suggestion, prefer *_RESOURCE form
-  add_env_kv_once MODEL_RESOURCE "$(abs_path "$MODEL_DESCRIPTOR_NAME")"
-    if [[ ! -d "$MODEL_DIR_VALUE" ]]; then
-      if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-        echo "Suggest-only: MODEL_DIR is not a directory: $MODEL_DIR_VALUE (including MODEL_RESOURCE in Tip anyway)"
-      else
-        echo "Error: MODEL_DIR is not a directory: $MODEL_DIR_VALUE" >&2
-        exit 1
+    # If a JSON descriptor is provided instead of a folder, treat it as MODEL_RESOURCE
+    if [[ -f "$MODEL_DIR_VALUE" ]] \
+       && grep -q '"hash"' "$MODEL_DIR_VALUE" \
+       && grep -q '"encryption"' "$MODEL_DIR_VALUE" \
+       && grep -q '"resource"' "$MODEL_DIR_VALUE"; then
+      MODEL_RESOURCE_ABS="$(abs_path "$MODEL_DIR_VALUE")"
+      add_env_kv_once MODEL_RESOURCE "$MODEL_RESOURCE_ABS"
+      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+        DATA_DESCRIPTORS+=("$MODEL_RESOURCE_ABS")
       fi
     else
-      MODEL_DIR_ABS="$(cd "$MODEL_DIR_VALUE" && pwd)"
-    MODEL_DIR_BASE="$(basename -- "$MODEL_DIR_ABS")"
-    MODEL_TS="$(date +%s)"
-    MODEL_STORJ_NAME="${MODEL_DIR_BASE}-model-${MODEL_TS}"
-    MODEL_DESCRIPTOR_NAME="${MODEL_DIR_BASE}-model.json"
-
-      echo "Step 6.Y: Preparing model folder upload (no archiving)..."
-      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-        echo "Uploading model folder via spctl files upload..."
-        "$SPCTL" files upload "$MODEL_DIR_ABS" --filename "$MODEL_STORJ_NAME" --output "$MODEL_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
-        echo "Upload descriptor saved to: $MODEL_DESCRIPTOR_NAME"
+      # Compute descriptor name for suggestion regardless of existence
+      MODEL_DIR_BASE="$(basename -- "$MODEL_DIR_VALUE")"
+      MODEL_ARCHIVE_NAME="${MODEL_DIR_BASE}-model.tar.gz"
+      MODEL_DESCRIPTOR_NAME="${MODEL_DIR_BASE}-model.json"
+      # In suggestion, prefer *_RESOURCE form
+      add_env_kv_once MODEL_RESOURCE "$(abs_path "$MODEL_DESCRIPTOR_NAME")"
+      if [[ ! -d "$MODEL_DIR_VALUE" ]]; then
+        if [[ -n "${SUGGEST_ONLY:-}" ]]; then
+          echo "Suggest-only: MODEL_DIR is not a directory: $MODEL_DIR_VALUE (including MODEL_RESOURCE in Tip anyway)"
+        else
+          echo "Error: MODEL_DIR is not a directory: $MODEL_DIR_VALUE" >&2
+          exit 1
+        fi
       else
-        echo "Suggest-only: would upload folder $MODEL_DIR_ABS as name $MODEL_STORJ_NAME and produce $MODEL_DESCRIPTOR_NAME"
+        MODEL_DIR_ABS="$(cd "$MODEL_DIR_VALUE" && pwd)"
+        MODEL_DIR_BASE="$(basename -- "$MODEL_DIR_ABS")"
+        MODEL_TS="$(date +%s)"
+        MODEL_STORJ_NAME="${MODEL_DIR_BASE}-model-${MODEL_TS}"
+        MODEL_DESCRIPTOR_NAME="${MODEL_DIR_BASE}-model.json"
+
+        echo "Step 6.Y: Preparing model folder upload (no archiving)..."
+        if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+          echo "Uploading model folder via spctl files upload..."
+          "$SPCTL" files upload "$MODEL_DIR_ABS" --filename "$MODEL_STORJ_NAME" --output "$MODEL_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
+          echo "Upload descriptor saved to: $MODEL_DESCRIPTOR_NAME"
+        else
+          echo "Suggest-only: would upload folder $MODEL_DIR_ABS as name $MODEL_STORJ_NAME and produce $MODEL_DESCRIPTOR_NAME"
+        fi
+        DATA_DESCRIPTORS+=("$(abs_path "$MODEL_DESCRIPTOR_NAME")")
       fi
-      DATA_DESCRIPTORS+=("$(abs_path "$MODEL_DESCRIPTOR_NAME")")
     fi
   fi
 fi
