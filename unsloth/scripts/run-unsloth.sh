@@ -36,6 +36,22 @@ print_noninteractive_hint() {
 }
 trap print_noninteractive_hint EXIT
 
+# Make Ctrl+C (SIGINT) and SIGTERM exit cleanly and return control to the terminal
+on_abort() {
+  echo ""
+  echo "Aborted by user (Ctrl+C)"
+  # Try to terminate any direct child processes of this script
+  local children
+  children=$(pgrep -P $$ || true)
+  if [[ -n "${children:-}" ]]; then
+    kill -TERM $children 2>/dev/null || true
+  fi
+  # Restore terminal to a sane state just in case
+  stty sane 2>/dev/null || true
+  exit 130
+}
+trap on_abort INT TERM
+
 # Unsloth runner for Super Protocol
 # - Select TEE offer id via --tee or interactive prompt
 # - Environment: mainnet only (no prompt)
@@ -66,7 +82,8 @@ Usage: ${0##*/} [--tee <number>] [--config <file>] [--use-configuration <file>] 
 
 Environment variables (interactive prompts if missing):
   RUN_MODE                      "file" or "jupyter-server"
-  RUN_FILE                      Path to .py or .ipynb (used only when RUN_MODE=file)
+  RUN_FILE                      When RUN_MODE=file: either a path to .py/.ipynb file, or a filename inside RUN_DIR
+  RUN_DIR                       Optional when RUN_MODE=file and selecting from a directory; absolute or relative path
   JUPYTER_PASSWORD             Password for Jupyter (optional)
   RUN_JUPYTER_DOMAIN           Domain for own-domain mode (e.g., my.lab.example.com)
   RUN_JUPYTER_SSL_CERT         PEM certificate string or path to file (own-domain)
@@ -342,35 +359,133 @@ if [[ -n "${ADDITIONAL_PARAMS:-}" ]]; then add_arg_kv_once --additional-params "
 
 if [[ -z "${CONFIG_JSON_PATH:-}" && "$RUN_MODE_LOWER" == "file" ]]; then
   echo "Step 5: Collecting file run options..."
-  RUN_FILE_PATH="${RUN_FILE:-${RUN_FILE_PATH:-}}"
-  if [[ -z "$RUN_FILE_PATH" ]]; then
-    read -r -p "Enter path to .py or .ipynb file: " RUN_FILE_PATH
+  INPUT_PATH="${RUN_FILE_PATH:-${RUN_FILE:-}}"
+  if [[ -z "$INPUT_PATH" ]]; then
+    read -r -p "Enter path to a .py/.ipynb file OR a directory: " INPUT_PATH
   fi
-  if [[ -z "$RUN_FILE_PATH" ]]; then
+  if [[ -z "$INPUT_PATH" ]]; then
     echo "Error: RUN_FILE not provided" >&2
     exit 1
   fi
   add_env_kv_once RUN_MODE "$RUN_MODE_LOWER"
-  add_env_kv_once RUN_FILE_PATH "$RUN_FILE_PATH"
+
+  FULL_PATH=""
+  RUN_FILE_BASENAME=""
+  RUN_FILE_DIRNAME=""
+  if [[ -d "$INPUT_PATH" ]]; then
+    # Directory mode: list first 10 .py/.ipynb files and let user select by number or filename
+    RUN_DIR_ABS="$(cd "$INPUT_PATH" && pwd)"
+    DIR_SELECTED=0
+    while true; do
+      # Collect first-level .py/.ipynb files (portable across macOS/Linux)
+      CANDIDATES=()
+      for _f in "$RUN_DIR_ABS"/*.py "$RUN_DIR_ABS"/*.ipynb; do
+        if [[ -f "$_f" ]]; then
+          CANDIDATES+=("$(basename -- "$_f")")
+        fi
+      done
+      # Sort and limit to first 10 entries
+      if [[ ${#CANDIDATES[@]} -gt 0 ]]; then
+        IFS=$'\n' read -r -d '' -a CANDIDATES < <(printf '%s\n' "${CANDIDATES[@]}" | sort | head -n 10 && printf '\0')
+      fi
+      if [[ ${#CANDIDATES[@]} -eq 0 ]]; then
+        echo "No .py or .ipynb files found in $RUN_DIR_ABS"
+        read -r -p "Type a filename present in this directory, or press Enter to choose a different path: " TRY_NAME || true
+        if [[ -z "$TRY_NAME" ]]; then
+          # reprompt for input path
+          read -r -p "Enter path to a .py/.ipynb file OR a directory: " INPUT_PATH
+          if [[ -z "$INPUT_PATH" ]]; then echo "Error: RUN_FILE not provided" >&2; exit 1; fi
+          if [[ -d "$INPUT_PATH" ]]; then RUN_DIR_ABS="$(cd "$INPUT_PATH" && pwd)"; continue; fi
+          # fall back to file path processing
+          FULL_PATH="$(abs_path "$INPUT_PATH")"
+          RUN_FILE_BASENAME="$(basename -- "$FULL_PATH")"
+          RUN_FILE_DIRNAME="$(cd "$(dirname -- "$FULL_PATH")" && pwd)"
+          break
+        else
+          if [[ -f "$RUN_DIR_ABS/$TRY_NAME" ]]; then
+            RUN_FILE_BASENAME="$TRY_NAME"
+            RUN_FILE_DIRNAME="$RUN_DIR_ABS"
+            FULL_PATH="$RUN_DIR_ABS/$RUN_FILE_BASENAME"
+            DIR_SELECTED=1
+            break
+          else
+            echo "File not found: $TRY_NAME"
+            continue
+          fi
+        fi
+      fi
+      echo "Select a file to run (first 10 shown):"
+      i=1
+      for f in "${CANDIDATES[@]}"; do
+        echo "  $i) $f"
+        i=$((i+1))
+      done
+      read -r -p "Enter number or filename: " CHOICE
+      if [[ "$CHOICE" =~ ^[0-9]+$ ]] && (( CHOICE >= 1 && CHOICE <= ${#CANDIDATES[@]} )); then
+        RUN_FILE_BASENAME="${CANDIDATES[$((CHOICE-1))]}"
+        RUN_FILE_DIRNAME="$RUN_DIR_ABS"
+        FULL_PATH="$RUN_DIR_ABS/$RUN_FILE_BASENAME"
+        DIR_SELECTED=1
+        break
+      else
+        # treat as filename
+        if [[ -f "$RUN_DIR_ABS/$CHOICE" ]]; then
+          RUN_FILE_BASENAME="$CHOICE"
+          RUN_FILE_DIRNAME="$RUN_DIR_ABS"
+          FULL_PATH="$RUN_DIR_ABS/$RUN_FILE_BASENAME"
+          DIR_SELECTED=1
+          break
+        else
+          echo "No such file in directory: $CHOICE"
+        fi
+      fi
+    done
+    # Suggestions: record DIR and filename envs
+    add_env_kv_once RUN_DIR "$RUN_FILE_DIRNAME"
+    add_env_kv_once RUN_FILE "$RUN_FILE_BASENAME"
+  else
+    # File path mode
+    FULL_PATH="$(abs_path "$INPUT_PATH")"
+    RUN_FILE_BASENAME="$(basename -- "$FULL_PATH")"
+    RUN_FILE_DIRNAME="$(cd "$(dirname -- "$FULL_PATH")" && pwd)"
+    add_env_kv_once RUN_FILE_PATH "$FULL_PATH"
+  fi
+
   # Validate extension
-  case "$RUN_FILE_PATH" in
+  case "$RUN_FILE_BASENAME" in
     *.py|*.ipynb) ;;
     *) echo "Error: RUN_FILE must end with .py or .ipynb" >&2; exit 1 ;;
   esac
-  RUN_FILE_BASENAME="$(basename -- "$RUN_FILE_PATH")"
-  RUN_FILE_DIRNAME="$(cd "$(dirname -- "$RUN_FILE_PATH")" && pwd)"
-  RUN_FILE_BASE_NO_EXT="${RUN_FILE_BASENAME%.*}"
-  RUN_TS="$(date +%s)"
-  STORJ_NAME="${RUN_FILE_BASE_NO_EXT}-${RUN_TS}"
-  DATA_JSON_NAME="${RUN_FILE_BASE_NO_EXT}.json"
 
-  echo "Step 5.1: Preparing run file upload (no archiving)..."
-  if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-    echo "Step 5.2: Uploading run file via spctl files upload..."
-    "$SPCTL" files upload "$RUN_FILE_PATH" --filename "$STORJ_NAME" --output "$DATA_JSON_NAME" --config "$CONFIG_FILE" --use-addon
-    echo "Upload descriptor saved to: $DATA_JSON_NAME"
+  RUN_TS="$(date +%s)"
+  if [[ "${DIR_SELECTED:-0}" -eq 1 ]]; then
+    # When a directory was chosen, upload the entire directory; filename still points to the chosen file inside it
+    DIR_BASE_NAME="$(basename -- "$RUN_FILE_DIRNAME")"
+    STORJ_NAME="${DIR_BASE_NAME}-run-${RUN_TS}"
+    DATA_JSON_NAME="${DIR_BASE_NAME}-run.json"
+    UPLOAD_SOURCE="$RUN_FILE_DIRNAME"
+    echo "Step 5.1: Preparing run directory upload (no archiving)..."
+    if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+      echo "Step 5.2: Uploading run directory via spctl files upload..."
+      "$SPCTL" files upload "$UPLOAD_SOURCE" --filename "$STORJ_NAME" --output "$DATA_JSON_NAME" --config "$CONFIG_FILE" --use-addon
+      echo "Upload descriptor saved to: $DATA_JSON_NAME"
+    else
+      echo "Suggest-only: would upload folder $UPLOAD_SOURCE as name $STORJ_NAME and produce $DATA_JSON_NAME"
+    fi
   else
-    echo "Suggest-only: would upload $RUN_FILE_PATH as name $STORJ_NAME and produce $DATA_JSON_NAME"
+    # Single file upload
+    RUN_FILE_BASE_NO_EXT="${RUN_FILE_BASENAME%.*}"
+    STORJ_NAME="${RUN_FILE_BASE_NO_EXT}-${RUN_TS}"
+    DATA_JSON_NAME="${RUN_FILE_BASE_NO_EXT}.json"
+    UPLOAD_SOURCE="$FULL_PATH"
+    echo "Step 5.1: Preparing run file upload (no archiving)..."
+    if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+      echo "Step 5.2: Uploading run file via spctl files upload..."
+      "$SPCTL" files upload "$UPLOAD_SOURCE" --filename "$STORJ_NAME" --output "$DATA_JSON_NAME" --config "$CONFIG_FILE" --use-addon
+      echo "Upload descriptor saved to: $DATA_JSON_NAME"
+    else
+      echo "Suggest-only: would upload $UPLOAD_SOURCE as name $STORJ_NAME and produce $DATA_JSON_NAME"
+    fi
   fi
 
   # Remember the data json descriptor to attach to the workflow creation
