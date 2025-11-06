@@ -210,6 +210,11 @@ if [[ -z "${RUN_MODE_LOWER}" && -z "${CONFIG_JSON_PATH:-}" ]]; then
   done
 fi
 
+# Collect data descriptors to attach via repeated --data flags
+declare -a DATA_DESCRIPTORS=()
+declare -a SUGGEST_ENV=()
+declare -a SUGGEST_ARGS=()
+
 # Step 4.1: Model selection options (skip if MODEL_RESOURCE pre-set via env/args)
 if [[ -z "${MODEL_RESOURCE:-}" ]]; then
   MODEL_CHOICE=""
@@ -258,10 +263,6 @@ fi
 # Prepare engine settings JSON snippet
 ENGINE_JSON=""
 RUN_MODE_HUMAN=""
-# Collect data descriptors to attach via repeated --data flags
-declare -a DATA_DESCRIPTORS=()
-declare -a SUGGEST_ENV=()
-declare -a SUGGEST_ARGS=()
 
 # helpers to collect suggestion parts
 abs_path() {
