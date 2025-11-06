@@ -99,7 +99,7 @@ if [[ -n "$result_path" && -f "$result_path" ]]; then
         if [[ -n "$domain" ]]; then
             echo ""
             echo "==================================================="
-            echo "n8n instance is available at: https://$domain"
+            echo "Usloth Jupyter server instance is available at: https://$domain"
             echo "==================================================="
         else
             echo "Error: Could not extract domain from result.json"
