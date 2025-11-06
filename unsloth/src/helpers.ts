@@ -41,6 +41,11 @@ export const runPythonFile = async (filePath: string): Promise<void> => {
   const filename = path.basename(filePath);
 
   try {
+    if (!fs.existsSync(config.outputDataFolder)) {
+      throw new Error(
+        `Output folder does not exist: ${config.outputDataFolder}`,
+      );
+    }
     const logPath = path.join(config.outputDataFolder, `${filename}.log`);
     const logStream = fs.createWriteStream(logPath);
 
@@ -85,6 +90,11 @@ export const runIpynbFile = async (filePath: string): Promise<void> => {
       `--stdout`,
     ];
 
+    if (!fs.existsSync(config.outputDataFolder)) {
+      throw new Error(
+        `Output folder does not exist: ${config.outputDataFolder}`,
+      );
+    }
     const logPath = path.join(config.outputDataFolder, `${filename}.log`);
     const logStream = fs.createWriteStream(logPath);
 
