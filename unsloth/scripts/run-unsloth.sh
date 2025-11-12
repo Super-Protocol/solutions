@@ -216,9 +216,6 @@ declare -a DATA_DESCRIPTORS=()
 declare -a SUGGEST_ENV=()
 declare -a SUGGEST_ARGS=()
 
-# Will hold optional descriptor for packaged spctl+config bundle
-SPCTL_PACKAGE_DESCRIPTOR=""
-
 # Step 4.1: Model selection options (skip if MODEL_RESOURCE pre-set via env/args)
 if [[ -z "${MODEL_RESOURCE:-}" ]]; then
   MODEL_CHOICE=""
