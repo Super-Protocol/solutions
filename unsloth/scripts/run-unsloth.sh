@@ -93,7 +93,7 @@ Environment variables (interactive prompts if missing):
   MODEL_DIR                    Path to model folder to upload and attach (optional)
   DATA_RESOURCE                Path to existing uploaded data resource JSON (skip upload) (optional)
   MODEL_RESOURCE               Path to existing uploaded model resource JSON (skip upload), a numeric offer id, or 'none' to skip model (optional)
-  SPCTL_RESOURCE               Path to existing uploaded spctl+config bundle JSON (skip packaging/upload) (optional)
+  UPLOAD_SPCTL_CONFIG         'true' or 'false'. When 'true', uploads only the config (from --config) renamed to config.spct.json as a resource (no spctl binary)
 
 Options:
   --tee <number>               TEE offer id to use for Unsloth
@@ -840,61 +840,50 @@ else
   fi
 fi
 
-# Optional: Package spctl and config.json into a bundle and attach as data
-SPCTL_RESOURCE_VALUE="${SPCTL_RESOURCE:-}"
-if [[ -n "$SPCTL_RESOURCE_VALUE" ]]; then
-  # If provided, consume as existing resource and skip proposing packaging
-  SPCTL_RESOURCE_ABS="$(abs_path "$SPCTL_RESOURCE_VALUE")"
-  add_env_kv_once SPCTL_RESOURCE "$SPCTL_RESOURCE_ABS"
-  if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-    if [[ ! -f "$SPCTL_RESOURCE_ABS" ]]; then
-      echo "Suggest-only: SPCTL_RESOURCE does not exist: $SPCTL_RESOURCE_ABS (including in Tip anyway)"
+# Optional: Upload only config as a resource (interactive if not set)
+UPLOAD_SPCTL_CONFIG_VAL="${UPLOAD_SPCTL_CONFIG:-}"
+if [[ -z "$UPLOAD_SPCTL_CONFIG_VAL" ]]; then
+  read -r -p "Upload SPCTL config file (renamed to config.spct.json) as a resource? [y/N]: " _ans || true
+  case "$_ans" in
+    y|Y|yes|YES) UPLOAD_SPCTL_CONFIG_VAL="true" ;;
+    *)           UPLOAD_SPCTL_CONFIG_VAL="false" ;;
+  esac
+fi
+add_env_kv_once UPLOAD_SPCTL_CONFIG "$UPLOAD_SPCTL_CONFIG_VAL"
+
+if [[ "$UPLOAD_SPCTL_CONFIG_VAL" == "true" || "$UPLOAD_SPCTL_CONFIG_VAL" == "True" || "$UPLOAD_SPCTL_CONFIG_VAL" == "TRUE" ]]; then
+  echo "Step 6.Z: Handling config-as-resource (renamed to config.spct.json)..."
+  CFG_DESCRIPTOR_NAME="config-spct.json"
+  if [[ -f "$CFG_DESCRIPTOR_NAME" ]]; then
+    # Reuse existing descriptor, do not re-upload
+    if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+      echo "Reusing existing descriptor: $CFG_DESCRIPTOR_NAME (skipping upload)"
+      DATA_DESCRIPTORS+=("$(abs_path "$CFG_DESCRIPTOR_NAME")")
+    else
+      echo "Suggest-only: would reuse existing descriptor $CFG_DESCRIPTOR_NAME (no upload)"
     fi
   else
-    if [[ ! -f "$SPCTL_RESOURCE_ABS" ]]; then
-      echo "Error: SPCTL_RESOURCE file does not exist: $SPCTL_RESOURCE_ABS" >&2
-      exit 1
+    # No existing descriptor; perform upload
+    TS_NOW="$(date +%s)"
+    TMP_DIR="$(mktemp -d 2>/dev/null || echo "$PWD/.tmp-config-$TS_NOW")"
+    mkdir -p "$TMP_DIR"
+    CFG_COPY="$TMP_DIR/config.spct.json"
+    cp -f "$CONFIG_FILE" "$CFG_COPY"
+
+    CFG_STORJ_NAME="config-spct-$TS_NOW"
+    if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+      echo "Uploading config via spctl files upload..."
+      "$SPCTL" files upload "$CFG_COPY" --filename "$CFG_STORJ_NAME" --output "$CFG_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
+      echo "Upload descriptor saved to: $CFG_DESCRIPTOR_NAME"
+      DATA_DESCRIPTORS+=("$(abs_path "$CFG_DESCRIPTOR_NAME")")
+    else
+      echo "Suggest-only: would upload file $CFG_COPY as name $CFG_STORJ_NAME and produce $CFG_DESCRIPTOR_NAME"
     fi
-    DATA_DESCRIPTORS+=("$SPCTL_RESOURCE_ABS")
-    SPCTL_PACKAGE_DESCRIPTOR="$SPCTL_RESOURCE_ABS"
+    rm -rf "$TMP_DIR" || true
   fi
 else
-  echo "Step 6.Z: Optional packaging of spctl and config.json"
-  read -r -p "Package spctl binary and config.json? [y/N]: " PACK_SPCTL || true
-  case "$PACK_SPCTL" in
-    y|Y|yes|YES)
-      # Create a bundle directory next to the spctl binary
-      SPCTL_PARENT_DIR="$(cd "$(dirname -- "$SPCTL")" && pwd)"
-      TS_NOW="$(date +%s)"
-      SPCTL_BUNDLE_DIR="$SPCTL_PARENT_DIR/spctl-bundle-$TS_NOW"
-      mkdir -p "$SPCTL_BUNDLE_DIR"
-  # Copy spctl binary and normalize the name to 'spctl' inside the bundle
-  cp -f "$SPCTL" "$SPCTL_BUNDLE_DIR/spctl"
-      # Copy config under the name config.json regardless of original name
-      cp -f "$CONFIG_FILE" "$SPCTL_BUNDLE_DIR/config.json"
-
-      # Prepare upload names
-      SPCTL_STORJ_NAME="spctl-bundle-$TS_NOW"
-      SPCTL_DESCRIPTOR_NAME="spctl-bundle.json"
-      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-        echo "Uploading spctl bundle via spctl files upload..."
-        "$SPCTL" files upload "$SPCTL_BUNDLE_DIR" --filename "$SPCTL_STORJ_NAME" --output "$SPCTL_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
-        echo "Upload descriptor saved to: $SPCTL_DESCRIPTOR_NAME"
-        SPCTL_PACKAGE_DESCRIPTOR="$(abs_path "$SPCTL_DESCRIPTOR_NAME")"
-        DATA_DESCRIPTORS+=("$SPCTL_PACKAGE_DESCRIPTOR")
-      else
-        echo "Suggest-only: would upload folder $SPCTL_BUNDLE_DIR as name $SPCTL_STORJ_NAME and produce $SPCTL_DESCRIPTOR_NAME"
-        SPCTL_PACKAGE_DESCRIPTOR="$(abs_path "$SPCTL_DESCRIPTOR_NAME")"
-      fi
-      # Cleanup temporary bundle directory after upload/simulation
-      rm -rf "$SPCTL_BUNDLE_DIR" || true
-      # Record in Tip as SPCTL_RESOURCE for reproducibility
-      add_env_kv_once SPCTL_RESOURCE "$SPCTL_PACKAGE_DESCRIPTOR"
-      ;;
-    *)
-      : # no packaging requested
-      ;;
-  esac
+  # Explicit skip, nothing to upload
+  :
 fi
 
 if [[ -z "${CONFIG_JSON_PATH:-}" ]]; then
