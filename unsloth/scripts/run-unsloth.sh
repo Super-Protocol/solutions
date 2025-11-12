@@ -93,7 +93,7 @@ Environment variables (interactive prompts if missing):
   MODEL_DIR                    Path to model folder to upload and attach (optional)
   DATA_RESOURCE                Path to existing uploaded data resource JSON (skip upload) (optional)
   MODEL_RESOURCE               Path to existing uploaded model resource JSON (skip upload), a numeric offer id, or 'none' to skip model (optional)
-  UPLOAD_SPCTL_CONFIG         'true' or 'false'. When 'true', uploads only the config (from --config) renamed to config.spct.json as a resource (no spctl binary)
+  UPLOAD_SPCTL_CONFIG         'true' or 'false'. When 'true', uploads only the config (from --config) renamed to config.spctl.json as a resource (no spctl binary)
 
 Options:
   --tee <number>               TEE offer id to use for Unsloth
@@ -843,7 +843,7 @@ fi
 # Optional: Upload only config as a resource (interactive if not set)
 UPLOAD_SPCTL_CONFIG_VAL="${UPLOAD_SPCTL_CONFIG:-}"
 if [[ -z "$UPLOAD_SPCTL_CONFIG_VAL" ]]; then
-  read -r -p "Upload SPCTL config file (renamed to config.spct.json) as a resource? [y/N]: " _ans || true
+  read -r -p "Upload SPCTL config file (renamed to config.spctl.json) as a resource? [y/N]: " _ans || true
   case "$_ans" in
     y|Y|yes|YES) UPLOAD_SPCTL_CONFIG_VAL="true" ;;
     *)           UPLOAD_SPCTL_CONFIG_VAL="false" ;;
@@ -852,8 +852,8 @@ fi
 add_env_kv_once UPLOAD_SPCTL_CONFIG "$UPLOAD_SPCTL_CONFIG_VAL"
 
 if [[ "$UPLOAD_SPCTL_CONFIG_VAL" == "true" || "$UPLOAD_SPCTL_CONFIG_VAL" == "True" || "$UPLOAD_SPCTL_CONFIG_VAL" == "TRUE" ]]; then
-  echo "Step 6.Z: Handling config-as-resource (renamed to config.spct.json)..."
-  CFG_DESCRIPTOR_NAME="config-spct.json"
+  echo "Step 6.Z: Handling config-as-resource (renamed to config.spctl.json)..."
+  CFG_DESCRIPTOR_NAME="config-spctl.json"
   if [[ -f "$CFG_DESCRIPTOR_NAME" ]]; then
     # Reuse existing descriptor, do not re-upload
     if [[ -z "${SUGGEST_ONLY:-}" ]]; then
@@ -867,10 +867,10 @@ if [[ "$UPLOAD_SPCTL_CONFIG_VAL" == "true" || "$UPLOAD_SPCTL_CONFIG_VAL" == "Tru
     TS_NOW="$(date +%s)"
     TMP_DIR="$(mktemp -d 2>/dev/null || echo "$PWD/.tmp-config-$TS_NOW")"
     mkdir -p "$TMP_DIR"
-    CFG_COPY="$TMP_DIR/config.spct.json"
+  CFG_COPY="$TMP_DIR/config.spctl.json"
     cp -f "$CONFIG_FILE" "$CFG_COPY"
 
-    CFG_STORJ_NAME="config-spct-$TS_NOW"
+  CFG_STORJ_NAME="config-spctl-$TS_NOW"
     if [[ -z "${SUGGEST_ONLY:-}" ]]; then
       echo "Uploading config via spctl files upload..."
       "$SPCTL" files upload "$CFG_COPY" --filename "$CFG_STORJ_NAME" --output "$CFG_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
