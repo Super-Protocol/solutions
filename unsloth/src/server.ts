@@ -77,6 +77,7 @@ const run = async (): Promise<void> => {
       `--notebook-dir=${runJupyterParams?.start_dir || `/workspace`}`,
       `--NotebookApp.allow_origin='*'`,
       `--NotebookApp.disable_check_xsrf=True`,
+      `--ServerApp.allow_remote_access=True`,
       `--allow-root`,
       `--no-browser`,
       `-y`,
