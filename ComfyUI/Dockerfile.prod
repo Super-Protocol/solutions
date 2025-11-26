@@ -62,8 +62,8 @@ RUN --mount=type=cache,target=/root/.npm \
   npm ci --omit=dev
 
 # Set environment variables
-ARG COMFYUI_COMMIT=93292bc450dd291925c45adea00ebedb8a3209ef
-ARG COMFYUI_MANAGER_VERSION=3.31.12
+ARG COMFYUI_COMMIT=c55fd7481626d8bee8044ea7512ea996d13a1b90
+ARG COMFYUI_MANAGER_VERSION=3.37.1
 ENV COMFYUI_PATH=/opt/ComfyUI
 
 RUN git config --global user.email "container@super-protocol.com" \

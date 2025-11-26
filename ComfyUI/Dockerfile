@@ -89,7 +89,7 @@ ENV COMFYUI_PATH /home/node/app/ComfyUI
 RUN mkdir -p /sp/inputs /sp/output /sp/run
 
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git ./ComfyUI &&\
-    cd ./ComfyUI && git checkout af8cf79a2dbdd541493d49c4f26c60d60d85ceae && cd .. &&\
+    cd ./ComfyUI && git checkout v0.3.71 && cd .. &&\
     pip install -r ./ComfyUI/requirements.txt &&\
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./ComfyUI/custom_nodes/ComfyUI-Manager &&\
     pip install -r ./ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt &&\
