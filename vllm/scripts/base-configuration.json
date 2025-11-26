@@ -1,0 +1,47 @@
+{
+    "engine": {
+        "environment": {
+            "VLLM_ATTENTION_BACKEND": "FLASH_ATTN",
+            "VLLM_USE_V1": true,
+            "VLLM_LOGGING_LEVEL": "INFO",
+            "VLLM_USE_TRITON_FLASH_ATTN": true
+        },
+        "frontend": {
+            "api_key": [
+                "{API_KEY_PLACEHOLDER}"
+            ],
+            "enable-auto-tool-choice": true,
+            "tool-call-parser": "hermes"
+        },
+        "model": {
+            "trust_remote_code": true,
+            "max_model_len": 128000
+        },
+        "cache": {
+            "gpu_memory_utilization": 0.95,
+            "kv_cache_dtype": "auto"
+        },
+        "scheduler": {
+            "max_num_seqs": 256,
+            "max_num_batched_tokens": 65536,
+            "enable_chunked_prefill": true
+        },
+        "advanced": {
+            "compilation_config": {
+                "level": 3,
+                "use_inductor": true
+            }
+        }
+    },
+    "tunnels": {
+        "domain_settings": {
+            "provision_type": "Manual Configuration",
+            "manual_domain_config": {
+                "auth_token": "...",
+                "domain": "....",
+                "tls_certificate": "....",
+                "certificate_private_key": "..."
+            }
+        }
+    }
+}
