@@ -227,8 +227,6 @@ if [[ -z "${USE_CONFIGURATION:-}" ]]; then
     # Try common locations relative to this script
     if [[ -f "$SCRIPT_DIR/base-configuration.json" ]]; then
       BASE_CONFIGURATION="$SCRIPT_DIR/base-configuration.json"
-    elif [[ -f "$SCRIPT_DIR/../scritps/base-configuration.json" ]]; then
-      BASE_CONFIGURATION="$SCRIPT_DIR/../scritps/base-configuration.json"
     elif [[ -f "$SCRIPT_DIR/../scripts/base-configuration.json" ]]; then
       BASE_CONFIGURATION="$SCRIPT_DIR/../scripts/base-configuration.json"
     fi
@@ -311,9 +309,6 @@ if [[ -z "${API_KEY_VALUE:-}" && -z "${USE_CONFIGURATION:-}" ]]; then
 fi
 if [[ -z "${API_KEY_VALUE:-}" ]]; then
   API_KEY_VALUE="$(generate_uuid)"
-  GENERATED_API=1
-else
-  GENERATED_API=0
 fi
 add_env_kv_once VLLM_API_KEY "$API_KEY_VALUE"
 
