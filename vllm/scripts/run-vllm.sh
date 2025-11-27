@@ -484,12 +484,12 @@ if [[ -z "${USE_CONFIGURATION:-}" ]]; then
              "provision_type": "Temporary Domain (on *.superprotocol.io)",
              "tunnel_provisioner_order": {
                "order_id": $order,
-               "encryption_key": $enc,
-               "storage": {
+               "order_key": $enc,
+               "credentials": {
                  "type": $stype,
                  "bucket": $sbucket,
                  "prefix": $sprefix,
-                 "readAccessToken": $sread
+                 "token": $sread
                }
              }
            }' "$BASE_CONFIGURATION" > "$CONFIG_JSON_PATH"
