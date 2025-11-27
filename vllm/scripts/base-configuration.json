@@ -1,11 +1,6 @@
 {
     "engine": {
-        "environment": {
-            "VLLM_ATTENTION_BACKEND": "FLASH_ATTN",
-            "VLLM_USE_V1": true,
-            "VLLM_LOGGING_LEVEL": "INFO",
-            "VLLM_USE_TRITON_FLASH_ATTN": true
-        },
+        "environment": {},
         "frontend": {
             "api_key": [
                 "{API_KEY_PLACEHOLDER}"
