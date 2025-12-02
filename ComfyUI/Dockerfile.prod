@@ -62,8 +62,8 @@ RUN --mount=type=cache,target=/root/.npm \
   npm ci --omit=dev
 
 # Set environment variables
-ARG COMFYUI_COMMIT=93292bc450dd291925c45adea00ebedb8a3209ef
-ARG COMFYUI_MANAGER_VERSION=3.31.12
+ARG COMFYUI_VERSION=0.3.71
+ARG COMFYUI_MANAGER_VERSION=3.37.1
 ENV COMFYUI_PATH=/opt/ComfyUI
 
 RUN git config --global user.email "container@super-protocol.com" \
@@ -75,12 +75,12 @@ RUN git config --global user.email "container@super-protocol.com" \
 
 # Installing ComfyUI CLI
 # see https://docs.comfy.org/comfy-cli/getting-started
-RUN pip install --break-system-packages "comfy-cli==1.4.1"
+RUN pip install --break-system-packages comfy-cli
 RUN comfy --version
 RUN comfy --skip-prompt tracking disable
 
 # Installing ComfyUI
-RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version nightly --commit $COMFYUI_COMMIT --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
+RUN comfy --skip-prompt --workspace $COMFYUI_PATH install --version $COMFYUI_VERSION --manager-commit $COMFYUI_MANAGER_VERSION --nvidia --cuda-version=12.4
 
 RUN comfy --skip-prompt set-default ${COMFYUI_PATH}
 
