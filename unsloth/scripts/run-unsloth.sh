@@ -239,8 +239,8 @@ if [[ -z "${MODEL_RESOURCE:-}" ]]; then
     # Explicitly record no-model selection to avoid later prompts and include in Tip
     MODEL_RESOURCE="none"
   elif [[ "$MODEL_CHOICE" == "your" ]]; then
-    echo "Provide your model as one of: resource JSON path, numeric offer id, or folder path"
-    read -r -p "Model input: " MODEL_USER_INPUT || true
+    echo "Provide your model as a resource JSON path, numeric offer id, or folder path"
+    read -r -p "Model inputc: " MODEL_USER_INPUT || true
     if [[ -n "$MODEL_USER_INPUT" ]]; then
       if [[ "$MODEL_USER_INPUT" =~ ^[0-9]+$ ]]; then
         MODEL_RESOURCE="$MODEL_USER_INPUT"
@@ -683,24 +683,30 @@ fi
 # Optional: Data attachment via DATA_RESOURCE or DATA_DIR (DATA_PATH alias supported)
 DATA_RESOURCE_VALUE="${DATA_RESOURCE:-}"
 if [[ -n "$DATA_RESOURCE_VALUE" ]]; then
-  # Prefer existing resource if provided
-  DATA_RESOURCE_ABS="$(abs_path "$DATA_RESOURCE_VALUE")"
-  add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
-  if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-    if [[ ! -f "$DATA_RESOURCE_ABS" ]]; then
-      echo "Suggest-only: DATA_RESOURCE does not exist: $DATA_RESOURCE_ABS (including in Tip anyway)"
-    fi
+  if [[ "$DATA_RESOURCE_VALUE" =~ ^[0-9]+$ ]]; then
+    # Numeric dataset offer id -> treat as direct --data <id>
+    add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_VALUE"
+    DATA_DESCRIPTORS+=("$DATA_RESOURCE_VALUE")
   else
-    if [[ ! -f "$DATA_RESOURCE_ABS" ]]; then
-      echo "Error: DATA_RESOURCE file does not exist: $DATA_RESOURCE_ABS" >&2
-      exit 1
+    # Prefer existing resource if provided
+    DATA_RESOURCE_ABS="$(abs_path "$DATA_RESOURCE_VALUE")"
+    add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
+    if [[ -n "${SUGGEST_ONLY:-}" ]]; then
+      if [[ ! -f "$DATA_RESOURCE_ABS" ]]; then
+        echo "Suggest-only: DATA_RESOURCE does not exist: $DATA_RESOURCE_ABS (including in Tip anyway)"
+      fi
+    else
+      if [[ ! -f "$DATA_RESOURCE_ABS" ]]; then
+        echo "Error: DATA_RESOURCE file does not exist: $DATA_RESOURCE_ABS" >&2
+        exit 1
+      fi
+      DATA_DESCRIPTORS+=("$DATA_RESOURCE_ABS")
     fi
-    DATA_DESCRIPTORS+=("$DATA_RESOURCE_ABS")
   fi
 else
   DATA_DIR_VALUE="${DATA_DIR:-${DATA_PATH:-}}"
   if [[ -z "$DATA_DIR_VALUE" ]]; then
-    read -r -p "Provide your dataset as a resource JSON path or folder path (optional, press Enter to skip): " DATA_DIR_VALUE || true
+    read -r -p "Provide your dataset as a resource JSON path, numeric offer id, or folder path (optional, press Enter to skip): " DATA_DIR_VALUE || true
   fi
   if [[ -n "$DATA_DIR_VALUE" ]]; then
     # Treat explicit DATA_DIR=none (case-insensitive) as skip, since suggestions include it
@@ -710,48 +716,52 @@ else
         echo "Skipping dataset attachment (DATA_DIR=none)"
         ;;
       *)
-    # If a JSON descriptor is provided instead of a folder, treat it as DATA_RESOURCE
-    if [[ -f "$DATA_DIR_VALUE" ]] \
-       && grep -q '"hash"' "$DATA_DIR_VALUE" \
-       && grep -q '"encryption"' "$DATA_DIR_VALUE" \
-       && grep -q '"resource"' "$DATA_DIR_VALUE"; then
-      DATA_RESOURCE_ABS="$(abs_path "$DATA_DIR_VALUE")"
-      add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
-      if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-        DATA_DESCRIPTORS+=("$DATA_RESOURCE_ABS")
-      fi
-    else
-      # Compute descriptor name for suggestion regardless of existence
-      DATA_DIR_BASE="$(basename -- "$DATA_DIR_VALUE")"
-      DATA_ARCHIVE_NAME="${DATA_DIR_BASE}-data.tar.gz"
-      DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
-      # In suggestion, prefer *_RESOURCE form
-      add_env_kv_once DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
-      if [[ ! -d "$DATA_DIR_VALUE" ]]; then
-        if [[ -n "${SUGGEST_ONLY:-}" ]]; then
-          echo "Suggest-only: DATA_DIR is not a directory: $DATA_DIR_VALUE (including DATA_RESOURCE in Tip anyway)"
+        if [[ "$DATA_DIR_VALUE" =~ ^[0-9]+$ ]]; then
+          # Numeric dataset offer id -> treat as direct --data <id>
+          add_env_kv_once DATA_RESOURCE "$DATA_DIR_VALUE"
+          DATA_DESCRIPTORS+=("$DATA_DIR_VALUE")
+        # If a JSON descriptor is provided instead of a folder, treat it as DATA_RESOURCE
+        elif [[ -f "$DATA_DIR_VALUE" ]] \
+             && grep -q '"hash"' "$DATA_DIR_VALUE" \
+             && grep -q '"encryption"' "$DATA_DIR_VALUE" \
+             && grep -q '"resource"' "$DATA_DIR_VALUE"; then
+          DATA_RESOURCE_ABS="$(abs_path "$DATA_DIR_VALUE")"
+          add_env_kv_once DATA_RESOURCE "$DATA_RESOURCE_ABS"
+          if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+            DATA_DESCRIPTORS+=("$DATA_RESOURCE_ABS")
+          fi
         else
-          echo "Error: DATA_DIR is not a directory: $DATA_DIR_VALUE" >&2
-          exit 1
-        fi
-      else
-        DATA_DIR_ABS="$(cd "$DATA_DIR_VALUE" && pwd)"
-        DATA_DIR_BASE="$(basename -- "$DATA_DIR_ABS")"
-        DATA_TS="$(date +%s)"
-        DATA_STORJ_NAME="${DATA_DIR_BASE}-data-${DATA_TS}"
-        DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
+          # Compute descriptor name for suggestion regardless of existence
+          DATA_DIR_BASE="$(basename -- "$DATA_DIR_VALUE")"
+          DATA_ARCHIVE_NAME="${DATA_DIR_BASE}-data.tar.gz"
+          DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
+          # In suggestion, prefer *_RESOURCE form
+          add_env_kv_once DATA_RESOURCE "$(abs_path "$DATA_DESCRIPTOR_NAME")"
+          if [[ ! -d "$DATA_DIR_VALUE" ]]; then
+            if [[ -n "${SUGGEST_ONLY:-}" ]]; then
+              echo "Suggest-only: DATA_DIR is not a directory: $DATA_DIR_VALUE (including DATA_RESOURCE in Tip anyway)"
+            else
+              echo "Error: DATA_DIR is not a directory: $DATA_DIR_VALUE" >&2
+              exit 1
+            fi
+          else
+            DATA_DIR_ABS="$(cd "$DATA_DIR_VALUE" && pwd)"
+            DATA_DIR_BASE="$(basename -- "$DATA_DIR_ABS")"
+            DATA_TS="$(date +%s)"
+            DATA_STORJ_NAME="${DATA_DIR_BASE}-data-${DATA_TS}"
+            DATA_DESCRIPTOR_NAME="${DATA_DIR_BASE}-data.json"
 
-        echo "Step 6.X: Preparing data folder upload (no archiving)..."
-        if [[ -z "${SUGGEST_ONLY:-}" ]]; then
-          echo "Uploading data folder via spctl files upload..."
-          "$SPCTL" files upload "$DATA_DIR_ABS" --filename "$DATA_STORJ_NAME" --output "$DATA_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
-          echo "Upload descriptor saved to: $DATA_DESCRIPTOR_NAME"
-        else
-          echo "Suggest-only: would upload folder $DATA_DIR_ABS as name $DATA_STORJ_NAME and produce $DATA_DESCRIPTOR_NAME"
+            echo "Step 6.X: Preparing data folder upload (no archiving)..."
+            if [[ -z "${SUGGEST_ONLY:-}" ]]; then
+              echo "Uploading data folder via spctl files upload..."
+              "$SPCTL" files upload "$DATA_DIR_ABS" --filename "$DATA_STORJ_NAME" --output "$DATA_DESCRIPTOR_NAME" --config "$CONFIG_FILE" --use-addon
+              echo "Upload descriptor saved to: $DATA_DESCRIPTOR_NAME"
+            else
+              echo "Suggest-only: would upload folder $DATA_DIR_ABS as name $DATA_STORJ_NAME and produce $DATA_DESCRIPTOR_NAME"
+            fi
+            DATA_DESCRIPTORS+=("$(abs_path "$DATA_DESCRIPTOR_NAME")")
+          fi
         fi
-        DATA_DESCRIPTORS+=("$(abs_path "$DATA_DESCRIPTOR_NAME")")
-      fi
-    fi
         ;;
     esac
   else
@@ -759,6 +769,7 @@ else
     add_env_kv_once DATA_DIR "none"
   fi
 fi
+
 
 # Optional: Model attachment via MODEL_RESOURCE or MODEL_DIR
 MODEL_RESOURCE_VALUE="${MODEL_RESOURCE:-}"
