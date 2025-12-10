@@ -11,12 +11,12 @@ export const links = [
   },
   {
     id: 'faq',
-    title: 'FAQ',
-    href: 'https://docs.superprotocol.com/faq',
+    title: 'Docs',
+    href: 'https://docs.superprotocol.com',
   },
   {
     id: 'developers',
-    title: 'Developers',
-    href: 'https://docs.superprotocol.com/developers/',
+    title: 'Super Protocol CLI',
+    href: 'https://docs.superprotocol.com/cli',
   },
 ];

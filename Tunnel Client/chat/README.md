@@ -2,10 +2,6 @@
 
 This is NextJS application SuperProtocol Secret Chat.
 
-Detailed project description you can find in our docs [here](https://docs.superprotocol.com/developers/offers/superchat/)
-
-Up and run instructions you can find [here](https://docs.superprotocol.com/developers/deployment_guides/tunnels/superchat)
-
 # Develop
 
 * Touch .env file with [env](#env)
