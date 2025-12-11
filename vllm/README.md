@@ -1,6 +1,6 @@
 # Super Protocol vLLM
 
-This repository contains the Super Protocol packaging of [vLLM](https://www.vllm.ai/), an inference and serving engine for LLMs. It includes a Dockerfile and helper scripts for running Unsloth workloads on Super Protocol.
+This repository contains the Super Protocol packaging of [vLLM](https://www.vllm.ai/), an inference and serving engine for LLMs. It includes a Dockerfile and helper scripts for running vLLM workloads on Super Protocol.
 
 The solution allows you to run LLM inference within Super Protocol's Trusted Execution Environment (TEE).
 

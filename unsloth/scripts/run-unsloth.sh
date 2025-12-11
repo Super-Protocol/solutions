@@ -240,7 +240,7 @@ if [[ -z "${MODEL_RESOURCE:-}" ]]; then
     MODEL_RESOURCE="none"
   elif [[ "$MODEL_CHOICE" == "your" ]]; then
     echo "Provide your model as a resource JSON path, numeric offer id, or folder path"
-    read -r -p "Model inputc: " MODEL_USER_INPUT || true
+    read -r -p "Model input: " MODEL_USER_INPUT || true
     if [[ -n "$MODEL_USER_INPUT" ]]; then
       if [[ "$MODEL_USER_INPUT" =~ ^[0-9]+$ ]]; then
         MODEL_RESOURCE="$MODEL_USER_INPUT"
