@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  "exclude": ["**/*/__mocks__"]
+}

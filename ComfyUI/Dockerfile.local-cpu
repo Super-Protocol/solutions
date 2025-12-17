@@ -26,8 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
 # Set environment variables
-ARG COMFYUI_VERSION=0.3.29
-ARG COMFYUI_MANAGER_VERSION=3.31.12
+ARG COMFYUI_VERSION=0.3.71
+ARG COMFYUI_MANAGER_VERSION=3.37.1
 ARG COMFYUI_PATH=/opt/ComfyUI
 
 RUN git config --global user.email "container@super-protocol.com" \

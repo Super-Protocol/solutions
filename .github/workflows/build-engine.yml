@@ -5,12 +5,16 @@ on:
     inputs:
       solution:
         required: true
+        description: 'Solution to build'
         type: choice
         options:
           - text-generation-webui-gpu
           - text-generation-webui-cpu
           - comfyui
           - n8n
+          - dia-tts
+          - jupyter
+          - unsloth
       target:
         description: 'Target'
         required: true
@@ -55,7 +59,7 @@ jobs:
             if [[ "$SOLUTION" == *cpu ]]; then
               BUILD_ARGS="--build-arg GPU_CHOICE=N"
             elif [[ "$SOLUTION" == *gpu ]]; then
-              BUILD_ARGS="--build-arg GPU_CHOICE=A"
+              BUILD_ARGS="--build-arg GPU_CHOICE=E"
             fi
 
           elif [ "$SOLUTION" == "comfyui" ]; then
@@ -67,6 +71,20 @@ jobs:
           elif [ "$SOLUTION" == "n8n" ]; then
             DOCKERFILE="./n8n/Dockerfile"
             DOCKERFILE_CONTEXT="./n8n/"
+
+          elif [ "$SOLUTION" == "dia-tts" ]; then
+            SUBMODULE_PATH="Dia TTS Server/dia-tts-server"
+            DOCKERFILE="./Dia TTS Server/Dockerfile"
+            DOCKERFILE_CONTEXT="./Dia TTS Server/"
+            ALLOW_MULTIPLE_UPDATE="true"
+
+          elif [ "$SOLUTION" == "jupyter" ]; then
+            DOCKERFILE="./Jupyter/Dockerfile"
+            DOCKERFILE_CONTEXT="./Jupyter/"
+
+          elif [ "$SOLUTION" == "unsloth" ]; then
+            DOCKERFILE="./unsloth/Dockerfile"
+            DOCKERFILE_CONTEXT="./unsloth/"
             
           else
             echo "Invalid solution name"
@@ -120,7 +138,7 @@ jobs:
 
       - name: Set SPCTL repository type
         run: |
-          if [ "$TARGET" == "develop" || "$TARGET" == "stage" ]; then
+          if [ "$TARGET" == "develop" || "$TARGET" == "stage" || "$TARGET" == "testnet" ]; then
             SPCTL_REPOSITORY_TYPE=private
           else
             SPCTL_REPOSITORY_TYPE=public

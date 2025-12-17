@@ -1,0 +1,17 @@
+services:
+
+  dia-tts-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    volumes:
+      - ./certs:/sp/certs
+      - ./tunnel-client-certs:/sp/inputs/input-0002
+      # Mount standard model_cache and create separate model folder
+      - ./dia-tts-server/model_cache:/sp/inputs/input-0001
+    environment:
+      # Standard settings
+      - DIA_MODEL_REPO_ID=ttj/dia-1.6b-safetensors
+      - DIA_MODEL_CONFIG_FILENAME=config.json
+      - DIA_MODEL_WEIGHTS_FILENAME=dia-v0_1_bf16.safetensors

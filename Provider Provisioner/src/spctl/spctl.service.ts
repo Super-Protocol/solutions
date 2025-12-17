@@ -79,7 +79,6 @@ export class SpctlService {
     await completeOrderService({
       status: params.status,
       resourcePath: params.resultPath,
-      pccsApiUrl: config.tii.pccsServiceApiUrl,
       accessToken: config.backend.accessToken,
       backendUrl: config.backend.url,
       id: params.orderId,

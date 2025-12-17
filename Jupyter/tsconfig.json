@@ -1,0 +1,5 @@
+{
+  "extends": "@super-protocol/eslint-config-typescript/tsconfig/node-cjs",
+  "include": ["src", "test"],
+  "exclude": []
+}
