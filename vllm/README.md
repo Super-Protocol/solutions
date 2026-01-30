@@ -10,7 +10,7 @@ The repository includes a Dockerfile and a helper script `run-vllm.sh` that faci
 
 ### Prerequisites
 
-- [SPCTL](https://docs.develop.superprotocol.com/cli/): Super Protocol CLI tool and its configuration file (`config.json`).
+- [SPCTL](https://docs.superprotocol.com/cli/): Super Protocol CLI tool and its configuration file (`config.json`).
 - BNB and SPPI tokens (opBNB) to pay for transactions and orders.
 
 Copy SPCTL’s binary and `config.json` to the `vllm/scripts` directory inside the cloned Super-Protocol/solutions repository.

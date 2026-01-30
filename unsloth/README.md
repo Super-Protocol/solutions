@@ -2,7 +2,7 @@
 
 This repository contains the Super Protocol packaging of [Unsloth](https://unsloth.ai/), an open-source framework for LLM fine-tuning and reinforcement learning.
 
-The solution allows you to run fine-tuning within Super Protocol's Trusted Execution Environment (TEE). This provides enhanced security and privacy and enables a range of [confidential collaboration](https://docs.develop.superprotocol.com/cli/guides/fine-tune) scenarios.
+The solution allows you to run fine-tuning within Super Protocol's Trusted Execution Environment (TEE). This provides enhanced security and privacy and enables a range of [confidential collaboration](https://docs.superprotocol.com/cli/guides/multi-party-collab) scenarios.
 
 The repository includes a Dockerfile and a helper script `run-unsloth.sh` that facilitates workflow creation. Note that `run-unsloth.sh` does not build an image and instead uses a pre-existing solution offer.
 
@@ -10,7 +10,7 @@ The repository includes a Dockerfile and a helper script `run-unsloth.sh` that f
 
 ### Prerequisites
 
-- [SPCTL](https://docs.develop.superprotocol.com/cli/): Super Protocol CLI tool and its configuration file (`config.json`).
+- [SPCTL](https://docs.superprotocol.com/cli/): Super Protocol CLI tool and its configuration file (`config.json`).
 - BNB and SPPI tokens (opBNB) to pay for transactions and orders.
 
 Copy SPCTL’s binary and `config.json` to the `unsloth/scripts` directory inside the cloned Super-Protocol/solutions repository.
