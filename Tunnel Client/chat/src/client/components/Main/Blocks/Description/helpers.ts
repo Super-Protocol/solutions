@@ -25,7 +25,7 @@ export const contentLinkBoxes = [
     title: 'Join Developer Community',
     text: 'Super Protocol is operating on the forward edge of innovations: decentralized confidential computing for Web3. We strongly believe that this is the future. Do you? Be with us for the Next Big Thing!',
     hrefText: 'Learn About Devs Community',
-    href: 'https://docs.superprotocol.com/developers/',
+    href: 'https://docs.superprotocol.com/cli/',
   },
 ];
 

@@ -5,7 +5,7 @@ export const content = [
     text: 'Want to see it for yourself? We have launched Testnet 4 - the next phase of our protocol. Introducing the system of offer requirements and compute configurations, critical for proper resource utilization, pricing, monetization and marketplace economics. Be with us for the revolution!',
     footer: {
       text: 'Apply for Testnet 4',
-      href: 'https://docs.superprotocol.com/testnet',
+      href: 'https://docs.superprotocol.com/',
     },
   },
   {
@@ -13,7 +13,7 @@ export const content = [
     text: 'Take part in building your solutions for decentralized confidential environments. We have prepared developers documentation with CLI deployment guides and examples.',
     footer: {
       text: 'Start Building on Super Protocol',
-      href: 'https://docs.superprotocol.com/developers',
+      href: 'https://docs.superprotocol.com/cli/guides/quick-guide',
     },
   },
 ];

@@ -12,11 +12,11 @@ export const list = [
 
 export const linksDoc = [
   {
-    text: 'Read Marketplace GUI Guide',
-    href: 'https://docs.superprotocol.com/developers/marketplace/walkthrough',
+    text: 'Read Marketplace GUI overview',
+    href: 'https://docs.superprotocol.com/marketplace',
   },
   {
-    text: 'Read CLI Deployment Guides',
-    href: 'https://docs.superprotocol.com/developers/deployment_guides',
+    text: 'Read CLI Deployment Guide',
+    href: 'https://docs.superprotocol.com/cli/guides/quick-guide',
   },
 ];
